@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+/* Signature ZURI : un filet "tresse" doré, écho du Z du logo.
+   Utilisé comme accent vertical discret sur les panneaux. */
+.tresse {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    theme("colors.or") 0 6px,
+    transparent 6px 12px
+  );
+  opacity: 0.5;
+}
+
+/* Focus visible accessible partout */
+:where(a, button, input, select):focus-visible {
+  outline: 2px solid theme("colors.or");
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
