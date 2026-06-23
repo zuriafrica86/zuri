@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/logo";
@@ -41,10 +42,18 @@ export default async function DashboardPage() {
           </p>
         )}
         {role === "prestataire" && (
-          <p className="mt-4 text-cacao/70">
-            Bientôt ici : ton profil public, tes services, ton portfolio,
-            tes demandes de RDV et tes statistiques de contacts.
-          </p>
+          <div className="mt-4 space-y-4">
+            <p className="text-cacao/70">
+              Crée et gère ton profil public : photo, présentation, localisation
+              et disponibilité. (Services et portfolio arrivent juste après.)
+            </p>
+            <Link
+              href="/dashboard/profil"
+              className="inline-block rounded-xl2 bg-or px-5 py-3 font-medium text-cacao shadow-soft transition hover:bg-or-clair"
+            >
+              Gérer mon profil →
+            </Link>
+          </div>
         )}
         {role === "admin" && (
           <p className="mt-4 text-cacao/70">
