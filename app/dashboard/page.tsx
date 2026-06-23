@@ -44,15 +44,28 @@ export default async function DashboardPage() {
         {role === "prestataire" && (
           <div className="mt-4 space-y-4">
             <p className="text-cacao/70">
-              Crée et gère ton profil public : photo, présentation, localisation
-              et disponibilité. (Services et portfolio arrivent juste après.)
+              Gère ton profil public, tes prestations et tes réalisations.
             </p>
-            <Link
-              href="/dashboard/profil"
-              className="inline-block rounded-xl2 bg-or px-5 py-3 font-medium text-cacao shadow-soft transition hover:bg-or-clair"
-            >
-              Gérer mon profil →
-            </Link>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/dashboard/profil"
+                className="inline-block rounded-xl2 bg-or px-5 py-3 font-medium text-cacao shadow-soft transition hover:bg-or-clair"
+              >
+                Mon profil →
+              </Link>
+              <Link
+                href="/dashboard/services"
+                className="inline-block rounded-xl2 border border-sable px-5 py-3 font-medium text-cacao transition hover:bg-rose/30"
+              >
+                Mes services →
+              </Link>
+              <Link
+                href="/dashboard/portfolio"
+                className="inline-block rounded-xl2 border border-sable px-5 py-3 font-medium text-cacao transition hover:bg-rose/30"
+              >
+                Mon portfolio →
+              </Link>
+            </div>
           </div>
         )}
         {role === "admin" && (
