@@ -1,6 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { notifyNewBooking } from "@/lib/notify";
 import type { BookingResult } from "./booking-types";
 
 export async function requestBooking(
@@ -34,6 +36,40 @@ export async function requestBooking(
     note,
   });
   if (error) return { error: "Échec de l'envoi de la demande. Réessaie." };
+
+  // Notifier la coiffeuse (sans bloquer si l'email échoue).
+  try {
+    const admin = createAdminClient();
+    const { data: prov } = await admin
+      .from("providers")
+      .select("user_id")
+      .eq("id", provider_id)
+      .maybeSingle();
+    if (prov?.user_id) {
+      const { data: coiffeuse } = await admin
+        .from("profiles")
+        .select("email")
+        .eq("id", prov.user_id)
+        .maybeSingle();
+      let serviceName = "Prestation non précisée";
+      if (service_id) {
+        const { data: svc } = await admin
+          .from("services")
+          .select("name")
+          .eq("id", service_id)
+          .maybeSingle();
+        if (svc?.name) serviceName = svc.name;
+      }
+      if (coiffeuse?.email) {
+        await notifyNewBooking(coiffeuse.email, {
+          serviceName,
+          dateLabel: date_souhaitee,
+        });
+      }
+    }
+  } catch {
+    // notif non bloquante
+  }
 
   return { ok: true };
 }
