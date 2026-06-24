@@ -19,7 +19,7 @@ export function SearchFilters({
   const cats = univers ? categoriesOf(univers).map((c) => c.nom) : [];
 
   const input =
-    "rounded-xl2 border border-sable bg-ivoire px-3 py-2.5 text-sm text-cacao placeholder:text-cacao/30 focus:border-or disabled:opacity-50";
+    "rounded-xl2 border border-sable bg-white px-3 py-2.5 text-sm text-cacao placeholder:text-cacao/30 focus:border-or disabled:opacity-50";
 
   return (
     <form

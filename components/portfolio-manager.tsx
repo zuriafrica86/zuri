@@ -170,7 +170,7 @@ export function PortfolioManager({
           <input
             name="caption"
             placeholder="Box braids bordeaux"
-            className="w-full rounded-xl2 border border-sable bg-ivoire px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+            className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
           />
         </label>
 
