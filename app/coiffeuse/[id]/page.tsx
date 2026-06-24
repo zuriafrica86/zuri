@@ -122,14 +122,14 @@ export default async function CoiffeusePage({
           </div>
         </div>
 
-        {/* CTA RDV (la prise de RDV s'active au prochain bloc) */}
+        {/* CTA RDV */}
         <div className="mt-6 rounded-xl2 border border-sable bg-white p-4">
-          <button
-            disabled
-            className="w-full cursor-not-allowed rounded-xl2 bg-or/50 px-5 py-3 font-medium text-cacao"
+          <Link
+            href={`/coiffeuse/${provider.id}/rdv`}
+            className="block w-full rounded-xl2 bg-or px-5 py-3 text-center font-medium text-cacao shadow-soft transition hover:bg-or-clair"
           >
-            📅 Demander un RDV (bientôt)
-          </button>
+            📅 Demander un RDV
+          </Link>
           <p className="mt-2 text-center text-sm text-cacao/60">
             🔒 Le contact de la coiffeuse se débloque après confirmation du RDV.
           </p>
