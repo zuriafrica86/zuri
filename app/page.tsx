@@ -34,7 +34,7 @@ export default function HomePage() {
         </p>
         <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
-            href="/signup"
+            href="/recherche"
             className="rounded-xl2 bg-or px-7 py-3.5 font-medium text-cacao shadow-soft transition hover:bg-or-clair"
           >
             Trouver une coiffeuse
@@ -47,7 +47,7 @@ export default function HomePage() {
           </Link>
         </div>
         <p className="mt-10 text-sm text-cacao/50">
-          La recherche, les profils et la prise de RDV arrivent au prochain bloc.
+          Découvre les profils et les réalisations. La prise de RDV arrive très bientôt.
         </p>
       </section>
     </main>

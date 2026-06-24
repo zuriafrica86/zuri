@@ -35,35 +35,53 @@ export async function saveProfile(
     ? dispo
     : "sur_rdv";
 
-  const payload = {
+  // Infos publiques du profil (sans les contacts).
+  const corePayload = {
     business_name,
     bio: bio || null,
     ville,
     quartier,
-    whatsapp_number: normalizePhone(whatsapp_raw),
-    phone_number: phone_raw ? normalizePhone(phone_raw) : null,
     dispo: dispoVal,
     profile_photo,
   };
 
-  // Le profil existe-t-il déjà pour cette coiffeuse ?
+  // Le profil existe-t-il déjà ?
   const { data: existing } = await supabase
     .from("providers")
     .select("id")
     .eq("user_id", user.id)
     .maybeSingle();
 
+  let providerId: string;
   if (existing) {
     const { error } = await supabase
       .from("providers")
-      .update(payload)
+      .update(corePayload)
       .eq("id", existing.id);
     if (error) return { error: "Échec de l'enregistrement. Réessaie." };
+    providerId = existing.id as string;
   } else {
-    const { error } = await supabase
+    const { data: inserted, error } = await supabase
       .from("providers")
-      .insert({ ...payload, user_id: user.id });
-    if (error) return { error: "Échec de la création du profil. Réessaie." };
+      .insert({ ...corePayload, user_id: user.id })
+      .select("id")
+      .single();
+    if (error || !inserted) {
+      return { error: "Échec de la création du profil. Réessaie." };
+    }
+    providerId = inserted.id as string;
+  }
+
+  // Contacts dans la table isolée et protégée.
+  const { error: contactError } = await supabase
+    .from("provider_contacts")
+    .upsert({
+      provider_id: providerId,
+      whatsapp_number: normalizePhone(whatsapp_raw),
+      phone_number: phone_raw ? normalizePhone(phone_raw) : null,
+    });
+  if (contactError) {
+    return { error: "Échec de l'enregistrement du contact. Réessaie." };
   }
 
   revalidatePath("/dashboard/profil");
