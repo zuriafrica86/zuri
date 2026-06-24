@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { CreateResult } from "./types";
 
 // Garantit que l'appelant est bien un admin. Renvoie null sinon.
 async function assertAdmin() {
@@ -71,4 +72,48 @@ export async function toggleAmbassadrice(formData: FormData) {
       .eq("id", id);
   }
   revalidatePath("/admin");
+}
+
+export async function createZuriste(
+  _prev: CreateResult,
+  formData: FormData
+): Promise<CreateResult> {
+  const ctx = await assertAdmin();
+  if (!ctx) return { error: "Non autorisé." };
+
+  const email = String(formData.get("email") || "").trim().toLowerCase();
+  const password = String(formData.get("password") || "");
+  const full_name = String(formData.get("full_name") || "").trim() || "Zuriste";
+
+  if (!email.includes("@") || password.length < 6) {
+    return {
+      error: "Email valide et mot de passe d'au moins 6 caractères requis.",
+    };
+  }
+
+  // Création directe du compte, email déjà confirmé (pas d'email d'activation).
+  const admin = createAdminClient();
+  const { error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { role: "prestataire", full_name },
+  });
+
+  if (error) {
+    const msg = (error.message || "").toLowerCase();
+    if (
+      msg.includes("already") ||
+      msg.includes("registered") ||
+      msg.includes("exist")
+    ) {
+      return { error: "Un compte existe déjà avec cet email." };
+    }
+    return { error: "Échec de la création du compte. Réessaie." };
+  }
+
+  revalidatePath("/admin");
+  return {
+    ok: `Compte créé pour ${email}. Elle peut se connecter dès maintenant avec ce mot de passe.`,
+  };
 }

@@ -83,7 +83,7 @@ export default async function CoiffeuseRdvPage() {
               return (
                 <li
                   key={b.id}
-                  className="rounded-xl2 border border-sable bg-ivoire p-4"
+                  className="rounded-xl2 border border-sable bg-white p-4"
                 >
                   <div className="flex items-start justify-between">
                     <div>

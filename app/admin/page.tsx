@@ -9,6 +9,7 @@ import {
   deleteUser,
   toggleAmbassadrice,
 } from "@/app/admin/actions";
+import { CreateZuristeForm } from "@/components/create-zuriste-form";
 
 interface PendingProvider {
   id: string;
@@ -103,6 +104,11 @@ export default async function AdminPage() {
           <Stat label="Contacts" value={contactsCount ?? 0} />
         </div>
 
+        {/* Créer une Zuriste */}
+        <section className="mt-10">
+          <CreateZuristeForm />
+        </section>
+
         {/* À valider */}
         <section className="mt-10">
           <h2 className="font-display text-xl">
@@ -117,7 +123,7 @@ export default async function AdminPage() {
               {pending.map((p) => (
                 <li
                   key={p.id}
-                  className="flex items-center justify-between rounded-xl2 border border-sable bg-ivoire p-3"
+                  className="flex items-center justify-between rounded-xl2 border border-sable bg-white p-3"
                 >
                   <div className="flex items-center gap-3">
                     <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-rose/40">
@@ -173,7 +179,7 @@ export default async function AdminPage() {
               Aucune Zuriste validée pour l&apos;instant.
             </p>
           ) : (
-            <ul className="mt-3 divide-y divide-sable rounded-xl2 border border-sable bg-ivoire">
+            <ul className="mt-3 divide-y divide-sable rounded-xl2 border border-sable bg-white">
               {approved.map((a) => (
                 <li
                   key={a.id}
@@ -210,7 +216,7 @@ export default async function AdminPage() {
         {/* Comptes */}
         <section className="mt-10">
           <h2 className="font-display text-xl">Tous les comptes</h2>
-          <ul className="mt-3 divide-y divide-sable rounded-xl2 border border-sable bg-ivoire">
+          <ul className="mt-3 divide-y divide-sable rounded-xl2 border border-sable bg-white">
             {users.map((u) => (
               <li
                 key={u.id}
@@ -247,7 +253,7 @@ export default async function AdminPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl2 border border-sable bg-ivoire p-4 text-center">
+    <div className="rounded-xl2 border border-sable bg-white p-4 text-center">
       <p className="font-display text-3xl text-cacao">{value}</p>
       <p className="mt-1 text-xs text-cacao/60">{label}</p>
     </div>

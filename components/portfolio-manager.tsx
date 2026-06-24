@@ -85,7 +85,7 @@ export function PortfolioManager({
         {items.map((it) => (
           <div
             key={it.id}
-            className="overflow-hidden rounded-xl2 border border-sable bg-ivoire"
+            className="overflow-hidden rounded-xl2 border border-sable bg-white"
           >
             {it.type === "avant_apres" && it.image_url_after ? (
               <div className="grid grid-cols-2">
@@ -118,7 +118,7 @@ export function PortfolioManager({
       <form
         key={formKey}
         action={action}
-        className="space-y-4 rounded-xl2 border border-sable bg-ivoire p-5"
+        className="space-y-4 rounded-xl2 border border-sable bg-white p-5"
       >
         <h2 className="font-display text-xl">Ajouter une réalisation</h2>
 

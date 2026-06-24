@@ -46,7 +46,7 @@ export default async function MesRdvPage() {
         </div>
 
         {bookings.length === 0 ? (
-          <div className="rounded-xl2 border border-dashed border-sable bg-ivoire p-10 text-center text-cacao/50">
+          <div className="rounded-xl2 border border-dashed border-sable bg-white p-10 text-center text-cacao/50">
             Tu n&apos;as pas encore de demande.{" "}
             <Link href="/recherche" className="text-or underline">
               Trouve une Zuriste
@@ -58,7 +58,7 @@ export default async function MesRdvPage() {
             {bookings.map((b) => (
               <li
                 key={b.id}
-                className="rounded-xl2 border border-sable bg-ivoire p-4"
+                className="rounded-xl2 border border-sable bg-white p-4"
               >
                 <div className="flex items-start justify-between">
                   <div>

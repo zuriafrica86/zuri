@@ -54,7 +54,7 @@ export default async function PortfolioPage() {
         </div>
 
         {!provider ? (
-          <div className="rounded-xl2 border border-sable bg-ivoire p-5">
+          <div className="rounded-xl2 border border-sable bg-white p-5">
             <p className="text-cacao/70">
               Tu dois d&apos;abord créer ton profil avant d&apos;ajouter des
               photos.

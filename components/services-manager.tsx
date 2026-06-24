@@ -54,7 +54,7 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
         {services.map((s) => (
           <div
             key={s.id}
-            className="flex items-start justify-between rounded-xl2 border border-sable bg-ivoire p-4"
+            className="flex items-start justify-between rounded-xl2 border border-sable bg-white p-4"
           >
             <div>
               <p className="font-medium">{s.name}</p>
@@ -88,7 +88,7 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
       <form
         key={formKey}
         action={action}
-        className="space-y-4 rounded-xl2 border border-sable bg-ivoire p-5"
+        className="space-y-4 rounded-xl2 border border-sable bg-white p-5"
       >
         <h2 className="font-display text-xl">Ajouter un service</h2>
 

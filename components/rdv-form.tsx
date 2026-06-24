@@ -27,7 +27,7 @@ export function RdvForm({
 
   if (state?.ok) {
     return (
-      <div className="mt-6 rounded-xl2 border border-sable bg-ivoire p-6 text-center">
+      <div className="mt-6 rounded-xl2 border border-sable bg-white p-6 text-center">
         <p className="text-3xl">✅</p>
         <h2 className="mt-2 font-display text-xl">Demande envoyée !</h2>
         <p className="mt-2 text-cacao/70">

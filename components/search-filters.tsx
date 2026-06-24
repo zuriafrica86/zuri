@@ -24,7 +24,7 @@ export function SearchFilters({
   return (
     <form
       method="get"
-      className="mt-6 grid grid-cols-2 gap-3 rounded-xl2 border border-sable bg-ivoire p-4 md:grid-cols-6"
+      className="mt-6 grid grid-cols-2 gap-3 rounded-xl2 border border-sable bg-white p-4 md:grid-cols-6"
     >
       <select name="ville" defaultValue={current.ville} className={input}>
         <option value="">Toutes les villes</option>

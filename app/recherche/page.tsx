@@ -113,7 +113,7 @@ export default async function RecherchePage({
         </p>
 
         {providers.length === 0 ? (
-          <div className="mt-4 rounded-xl2 border border-dashed border-sable bg-ivoire p-10 text-center text-cacao/50">
+          <div className="mt-4 rounded-xl2 border border-dashed border-sable bg-white p-10 text-center text-cacao/50">
             Aucune Zuriste ne correspond. Essaie d&apos;élargir tes filtres.
           </div>
         ) : (
