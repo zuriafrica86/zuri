@@ -90,9 +90,17 @@ export default async function DashboardPage() {
           </div>
         )}
         {role === "admin" && (
-          <p className="mt-4 text-cacao/70">
-            Bientôt ici : validation des coiffeuses, modération et statistiques.
-          </p>
+          <div className="mt-4 space-y-4">
+            <p className="text-cacao/70">
+              Valide les coiffeuses, suis tes statistiques et gère les comptes.
+            </p>
+            <Link
+              href="/admin"
+              className="inline-block rounded-xl2 bg-cacao px-5 py-3 font-medium text-ivoire shadow-soft transition hover:bg-cacao/90"
+            >
+              Ouvrir l&apos;administration →
+            </Link>
+          </div>
         )}
 
         <div className="mt-8 rounded-xl2 border border-sable bg-white p-5 shadow-soft">
