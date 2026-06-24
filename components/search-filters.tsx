@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { universList, categoriesOf } from "@/lib/catalog";
+import { universList, categoriesOf, VILLES } from "@/lib/catalog";
 
 export function SearchFilters({
   current,
@@ -26,12 +26,14 @@ export function SearchFilters({
       method="get"
       className="mt-6 grid grid-cols-2 gap-3 rounded-xl2 border border-sable bg-white p-4 md:grid-cols-6"
     >
-      <input
-        name="ville"
-        defaultValue={current.ville}
-        placeholder="Ville"
-        className={input}
-      />
+      <select name="ville" defaultValue={current.ville} className={input}>
+        <option value="">Toutes les villes</option>
+        {VILLES.map((v) => (
+          <option key={v} value={v}>
+            {v}
+          </option>
+        ))}
+      </select>
 
       <select
         name="univers"

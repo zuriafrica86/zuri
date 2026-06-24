@@ -153,3 +153,6 @@ export function prestationsOf(univers: string, categorie: string): string[] {
     categoriesOf(univers).find((c) => c.nom === categorie)?.prestations ?? [];
   return base.length ? [...base, AUTRE] : [];
 }
+
+// Villes proposées (étendre cette liste pour ouvrir de nouvelles villes).
+export const VILLES = ["Libreville", "Port-Gentil"];

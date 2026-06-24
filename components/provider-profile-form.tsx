@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { saveProfile } from "@/app/dashboard/profil/actions";
 import type { ProfileResult } from "@/app/dashboard/profil/types";
 import { SubmitButton } from "@/components/submit-button";
+import { VILLES } from "@/lib/catalog";
 
 export interface ProviderInitial {
   business_name?: string | null;
@@ -137,12 +138,14 @@ export function ProviderProfileForm({
         />
 
         <div className="grid grid-cols-2 gap-3">
-          <Field
+          <Select
             label="Ville"
             name="ville"
             defaultValue={initial?.ville ?? ""}
-            placeholder="Libreville"
-            required
+            options={[
+              ["", "Choisis ta ville"] as [string, string],
+              ...VILLES.map((v) => [v, v] as [string, string]),
+            ]}
           />
           <Field
             label="Quartier (optionnel)"
