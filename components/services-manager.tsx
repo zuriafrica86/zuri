@@ -54,7 +54,7 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
         {services.map((s) => (
           <div
             key={s.id}
-            className="flex items-start justify-between rounded-xl2 border border-sable bg-white p-4"
+            className="flex items-start justify-between rounded-xl2 border border-sable bg-ivoire p-4"
           >
             <div>
               <p className="font-medium">{s.name}</p>
@@ -88,7 +88,7 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
       <form
         key={formKey}
         action={action}
-        className="space-y-4 rounded-xl2 border border-sable bg-white p-5"
+        className="space-y-4 rounded-xl2 border border-sable bg-ivoire p-5"
       >
         <h2 className="font-display text-xl">Ajouter un service</h2>
 
@@ -207,7 +207,7 @@ function Select({
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao disabled:opacity-50"
+        className="w-full rounded-xl2 border border-sable bg-ivoire px-4 py-3 text-cacao disabled:opacity-50"
       >
         <option value="">{placeholder}</option>
         {options.map((o) => (
@@ -231,7 +231,7 @@ function Field({
       </span>
       <input
         {...props}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+        className="w-full rounded-xl2 border border-sable bg-ivoire px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
       />
     </label>
   );
@@ -249,7 +249,7 @@ function Textarea({
       <textarea
         {...props}
         rows={2}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+        className="w-full rounded-xl2 border border-sable bg-ivoire px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
       />
     </label>
   );

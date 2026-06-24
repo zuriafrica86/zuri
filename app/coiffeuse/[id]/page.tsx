@@ -139,7 +139,7 @@ export default async function CoiffeusePage({
         </div>
 
         {/* CTA RDV */}
-        <div className="mt-6 rounded-xl2 border border-sable bg-white p-4">
+        <div className="mt-6 rounded-xl2 border border-sable bg-ivoire p-4">
           <Link
             href={`/coiffeuse/${provider.id}/rdv`}
             className="block w-full rounded-xl2 bg-or px-5 py-3 text-center font-medium text-cacao shadow-soft transition hover:bg-or-clair"
@@ -169,7 +169,7 @@ export default async function CoiffeusePage({
               {services.map((s) => (
                 <li
                   key={s.id}
-                  className="flex items-start justify-between rounded-xl2 border border-sable bg-white p-3"
+                  className="flex items-start justify-between rounded-xl2 border border-sable bg-ivoire p-3"
                 >
                   <div>
                     <p className="font-medium">{s.name}</p>
@@ -199,7 +199,7 @@ export default async function CoiffeusePage({
               {portfolio.map((it) => (
                 <div
                   key={it.id}
-                  className="overflow-hidden rounded-xl2 border border-sable bg-white"
+                  className="overflow-hidden rounded-xl2 border border-sable bg-ivoire"
                 >
                   {it.type === "avant_apres" && it.image_url_after ? (
                     <div className="grid grid-cols-2">
@@ -230,7 +230,7 @@ export default async function CoiffeusePage({
               {reviews.map((r, i) => (
                 <li
                   key={i}
-                  className="rounded-xl2 border border-sable bg-white p-3"
+                  className="rounded-xl2 border border-sable bg-ivoire p-3"
                 >
                   <p className="text-or">{"⭐".repeat(r.rating)}</p>
                   {r.comment && (

@@ -48,7 +48,7 @@ export default async function RdvPage({
         <p className="mt-1 text-cacao/60">avec {provider.business_name}</p>
 
         {!user ? (
-          <div className="mt-6 rounded-xl2 border border-sable bg-white p-5">
+          <div className="mt-6 rounded-xl2 border border-sable bg-ivoire p-5">
             <p className="text-cacao/70">
               Connecte-toi pour envoyer ta demande de rendez-vous.
             </p>

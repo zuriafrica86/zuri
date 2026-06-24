@@ -20,7 +20,7 @@ const config: Config = {
         soft: "0 1px 2px rgba(42,26,18,0.04), 0 8px 24px rgba(42,26,18,0.06)",
       },
       borderRadius: {
-        xl2: "1.25rem",
+        xl2: "15px",
       },
     },
   },

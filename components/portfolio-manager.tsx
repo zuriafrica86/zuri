@@ -85,7 +85,7 @@ export function PortfolioManager({
         {items.map((it) => (
           <div
             key={it.id}
-            className="overflow-hidden rounded-xl2 border border-sable bg-white"
+            className="overflow-hidden rounded-xl2 border border-sable bg-ivoire"
           >
             {it.type === "avant_apres" && it.image_url_after ? (
               <div className="grid grid-cols-2">
@@ -118,7 +118,7 @@ export function PortfolioManager({
       <form
         key={formKey}
         action={action}
-        className="space-y-4 rounded-xl2 border border-sable bg-white p-5"
+        className="space-y-4 rounded-xl2 border border-sable bg-ivoire p-5"
       >
         <h2 className="font-display text-xl">Ajouter une réalisation</h2>
 
@@ -130,7 +130,7 @@ export function PortfolioManager({
               type="button"
               onClick={() => setMode(m)}
               className={`rounded-xl2 px-3 py-2 text-sm font-medium transition ${
-                mode === m ? "bg-white text-cacao shadow-soft" : "text-cacao/60"
+                mode === m ? "bg-ivoire text-cacao shadow-soft" : "text-cacao/60"
               }`}
             >
               {m === "general" ? "Photo simple" : "Avant / Après"}
@@ -170,7 +170,7 @@ export function PortfolioManager({
           <input
             name="caption"
             placeholder="Box braids bordeaux"
-            className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+            className="w-full rounded-xl2 border border-sable bg-ivoire px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
           />
         </label>
 

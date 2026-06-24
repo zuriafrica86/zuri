@@ -41,7 +41,7 @@ export default function HomePage() {
           </Link>
           <Link
             href="/login"
-            className="rounded-xl2 border border-sable px-7 py-3.5 font-medium text-cacao transition hover:bg-white"
+            className="rounded-xl2 border border-sable px-7 py-3.5 font-medium text-cacao transition hover:bg-ivoire"
           >
             J&apos;ai déjà un compte
           </Link>

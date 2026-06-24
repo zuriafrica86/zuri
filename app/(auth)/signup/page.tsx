@@ -25,7 +25,7 @@ export default function SignupPage() {
             type="button"
             onClick={() => setRole(r)}
             className={`rounded-xl2 px-3 py-2 text-sm font-medium transition ${
-              role === r ? "bg-white text-cacao shadow-soft" : "text-cacao/60"
+              role === r ? "bg-ivoire text-cacao shadow-soft" : "text-cacao/60"
             }`}
           >
             {r === "cliente" ? "Je suis cliente" : "Je suis Zuriste"}
@@ -81,7 +81,7 @@ function Field({
       <span className="mb-1.5 block text-sm font-medium text-cacao/80">{label}</span>
       <input
         {...props}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+        className="w-full rounded-xl2 border border-sable bg-ivoire px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
       />
     </label>
   );

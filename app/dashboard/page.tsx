@@ -103,7 +103,7 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="mt-8 rounded-xl2 border border-sable bg-white p-5 shadow-soft">
+        <div className="mt-8 rounded-xl2 border border-sable bg-ivoire p-5 shadow-soft">
           <p className="text-sm text-cacao/60">
             ✅ Authentification opérationnelle. Connectée en tant que{" "}
             <span className="font-medium text-cacao">{user.email}</span>.

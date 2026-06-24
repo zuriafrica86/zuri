@@ -19,12 +19,12 @@ export function SearchFilters({
   const cats = univers ? categoriesOf(univers).map((c) => c.nom) : [];
 
   const input =
-    "rounded-xl2 border border-sable bg-white px-3 py-2.5 text-sm text-cacao placeholder:text-cacao/30 focus:border-or disabled:opacity-50";
+    "rounded-xl2 border border-sable bg-ivoire px-3 py-2.5 text-sm text-cacao placeholder:text-cacao/30 focus:border-or disabled:opacity-50";
 
   return (
     <form
       method="get"
-      className="mt-6 grid grid-cols-2 gap-3 rounded-xl2 border border-sable bg-white p-4 md:grid-cols-6"
+      className="mt-6 grid grid-cols-2 gap-3 rounded-xl2 border border-sable bg-ivoire p-4 md:grid-cols-6"
     >
       <select name="ville" defaultValue={current.ville} className={input}>
         <option value="">Toutes les villes</option>

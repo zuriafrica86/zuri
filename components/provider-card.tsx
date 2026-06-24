@@ -23,7 +23,7 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
   return (
     <Link
       href={`/coiffeuse/${p.id}`}
-      className="group block overflow-hidden rounded-xl2 border border-sable bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-md"
+      className="group block overflow-hidden rounded-xl2 border border-sable bg-ivoire shadow-soft transition hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className="relative aspect-[4/3] bg-rose/30">
         {p.profile_photo ? (
