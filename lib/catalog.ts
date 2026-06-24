@@ -149,7 +149,7 @@ export function categoriesOf(univers: string): Categorie[] {
   return CATALOG.find((u) => u.nom === univers)?.categories ?? [];
 }
 export function prestationsOf(univers: string, categorie: string): string[] {
-  return (
-    categoriesOf(univers).find((c) => c.nom === categorie)?.prestations ?? []
-  );
+  const base =
+    categoriesOf(univers).find((c) => c.nom === categorie)?.prestations ?? [];
+  return base.length ? [...base, AUTRE] : [];
 }
