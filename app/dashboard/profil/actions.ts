@@ -16,36 +16,45 @@ export async function saveProfile(
   if (!user) return { error: "Session expirée, reconnecte-toi." };
 
   const business_name = String(formData.get("business_name") || "").trim();
+  const nom = String(formData.get("nom") || "").trim();
+  const prenom = String(formData.get("prenom") || "").trim();
   const bio = String(formData.get("bio") || "").trim();
   const ville = String(formData.get("ville") || "").trim();
   const quartier = String(formData.get("quartier") || "").trim();
   const whatsapp_raw = String(formData.get("whatsapp_number") || "");
   const phone_raw = String(formData.get("phone_number") || "");
-  const dispo = String(formData.get("dispo") || "sur_rdv");
+  const lieu = String(formData.get("lieu") || "chez_zuriste");
+  const dispo = String(formData.get("dispo") || "disponible");
   const profile_photo =
     String(formData.get("profile_photo") || "").trim() || null;
 
-  if (!business_name || !ville || !quartier || !whatsapp_raw) {
+  if (!business_name || !nom || !prenom || !ville || !whatsapp_raw) {
     return {
-      error: "Nom, ville, quartier et numéro WhatsApp sont obligatoires.",
+      error: "Nom public, nom, prénom, ville et WhatsApp sont obligatoires.",
     };
   }
+  if (!bio) return { error: "La présentation est obligatoire." };
+  if (!profile_photo) return { error: "Ajoute une photo de profil." };
 
-  const dispoVal = ["disponible", "occupee", "sur_rdv"].includes(dispo)
+  const lieuVal = ["chez_zuriste", "chez_cliente", "les_deux"].includes(lieu)
+    ? lieu
+    : "chez_zuriste";
+  const dispoVal = ["disponible", "indisponible", "masque"].includes(dispo)
     ? dispo
-    : "sur_rdv";
+    : "disponible";
 
-  // Infos publiques du profil (sans les contacts).
   const corePayload = {
     business_name,
-    bio: bio || null,
+    nom,
+    prenom,
+    bio,
     ville,
-    quartier,
+    quartier: quartier || null,
+    lieu: lieuVal,
     dispo: dispoVal,
     profile_photo,
   };
 
-  // Le profil existe-t-il déjà ?
   const { data: existing } = await supabase
     .from("providers")
     .select("id")
@@ -72,7 +81,6 @@ export async function saveProfile(
     providerId = inserted.id as string;
   }
 
-  // Contacts dans la table isolée et protégée.
   const { error: contactError } = await supabase
     .from("provider_contacts")
     .upsert({
@@ -89,7 +97,6 @@ export async function saveProfile(
   return { ok: true };
 }
 
-// Gabon : garde seulement les chiffres ; préfixe 241 si numéro local.
 function normalizePhone(raw: string): string {
   let d = raw.replace(/[^\d]/g, "");
   if (d.length <= 9 && !d.startsWith("241")) d = "241" + d;

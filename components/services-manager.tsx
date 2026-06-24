@@ -4,11 +4,14 @@ import { useActionState, useEffect, useState } from "react";
 import { addService, deleteService } from "@/app/dashboard/services/actions";
 import type { ServiceResult } from "@/app/dashboard/services/types";
 import { SubmitButton } from "@/components/submit-button";
+import { universList, categoriesOf, prestationsOf, AUTRE } from "@/lib/catalog";
 
 export interface ServiceItem {
   id: string;
   name: string;
-  category: string;
+  univers: string | null;
+  categorie: string | null;
+  category: string | null;
   price_min: number;
   price_max: number | null;
   duree_estim: string | null;
@@ -20,15 +23,27 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
     addService,
     null
   );
+  const [univers, setUnivers] = useState("");
+  const [categorie, setCategorie] = useState("");
+  const [prestation, setPrestation] = useState("");
   const [formKey, setFormKey] = useState(0);
 
   useEffect(() => {
-    if (state?.ok) setFormKey((k) => k + 1);
+    if (state?.ok) {
+      setUnivers("");
+      setCategorie("");
+      setPrestation("");
+      setFormKey((k) => k + 1);
+    }
   }, [state]);
+
+  const categories = univers ? categoriesOf(univers).map((c) => c.nom) : [];
+  const prestations =
+    univers && categorie ? prestationsOf(univers, categorie) : [];
 
   return (
     <div className="space-y-8">
-      {/* Liste des services existants */}
+      {/* Liste des services */}
       <div className="space-y-3">
         {services.length === 0 && (
           <p className="text-sm text-cacao/50">
@@ -42,13 +57,12 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
             className="flex items-start justify-between rounded-xl2 border border-sable bg-white p-4"
           >
             <div>
-              <p className="font-medium">
-                {s.name}{" "}
-                <span className="text-xs uppercase tracking-wide text-or">
-                  {s.category}
-                </span>
+              <p className="font-medium">{s.name}</p>
+              <p className="text-xs uppercase tracking-wide text-or">
+                {s.univers}
+                {s.categorie ? ` · ${s.categorie}` : ""}
               </p>
-              <p className="text-sm text-cacao/70">
+              <p className="mt-0.5 text-sm text-cacao/70">
                 {formatPrice(s.price_min, s.price_max)} FCFA
                 {s.duree_estim ? ` · ${s.duree_estim}` : ""}
               </p>
@@ -70,7 +84,7 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
         ))}
       </div>
 
-      {/* Formulaire d'ajout */}
+      {/* Ajout d'un service */}
       <form
         key={formKey}
         action={action}
@@ -78,28 +92,50 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
       >
         <h2 className="font-display text-xl">Ajouter un service</h2>
 
-        <Field label="Nom du service" name="name" placeholder="Box braids longues" required />
+        <Select
+          label="Univers"
+          name="univers"
+          value={univers}
+          onChange={(v) => {
+            setUnivers(v);
+            setCategorie("");
+            setPrestation("");
+          }}
+          options={universList()}
+          placeholder="Choisir un univers"
+        />
 
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-cacao/80">
-              Catégorie
-            </span>
-            <select
-              name="category"
-              defaultValue="tresses"
-              className="w-full rounded-xl2 border border-sable bg-white px-4 py-3"
-            >
-              <option value="tresses">Tresses</option>
-              <option value="coiffure">Coiffure</option>
-            </select>
-          </label>
+        <Select
+          label="Catégorie"
+          name="categorie"
+          value={categorie}
+          onChange={(v) => {
+            setCategorie(v);
+            setPrestation("");
+          }}
+          options={categories}
+          placeholder="Choisir une catégorie"
+          disabled={!univers}
+        />
+
+        <Select
+          label="Prestation"
+          name="prestation"
+          value={prestation}
+          onChange={setPrestation}
+          options={prestations}
+          placeholder="Choisir une prestation"
+          disabled={!categorie}
+        />
+
+        {prestation === AUTRE && (
           <Field
-            label="Durée estimée"
-            name="duree_estim"
-            placeholder="4-6h"
+            label="Précise ta prestation"
+            name="name_custom"
+            placeholder="Nom de la prestation"
+            required
           />
-        </div>
+        )}
 
         <div className="grid grid-cols-2 gap-3">
           <Field
@@ -118,6 +154,8 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
             placeholder="25000"
           />
         </div>
+
+        <Field label="Durée estimée (optionnel)" name="duree_estim" placeholder="4-6h" />
 
         <Textarea
           label="Description (optionnel)"
@@ -140,6 +178,46 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
 function formatPrice(min: number, max: number | null): string {
   const f = (n: number) => n.toLocaleString("fr-FR");
   return max && max > min ? `${f(min)} – ${f(max)}` : `dès ${f(min)}`;
+}
+
+function Select({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  placeholder,
+  disabled,
+}: {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+  placeholder: string;
+  disabled?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-sm font-medium text-cacao/80">
+        {label}
+      </span>
+      <select
+        name={name}
+        value={value}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao disabled:opacity-50"
+      >
+        <option value="">{placeholder}</option>
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
 }
 
 function Field({

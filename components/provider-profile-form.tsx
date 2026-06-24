@@ -9,11 +9,14 @@ import { SubmitButton } from "@/components/submit-button";
 
 export interface ProviderInitial {
   business_name?: string | null;
+  nom?: string | null;
+  prenom?: string | null;
   bio?: string | null;
   ville?: string | null;
   quartier?: string | null;
   whatsapp_number?: string | null;
   phone_number?: string | null;
+  lieu?: string | null;
   dispo?: string | null;
   profile_photo?: string | null;
   status?: string | null;
@@ -62,11 +65,8 @@ export function ProviderProfileForm({
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-display text-3xl">Mon profil coiffeuse</h1>
-        <Link
-          href="/dashboard"
-          className="text-sm text-cacao/60 hover:text-cacao"
-        >
+        <h1 className="font-display text-3xl">Mon profil Zuriste</h1>
+        <Link href="/dashboard" className="text-sm text-cacao/60 hover:text-cacao">
           ← Retour
         </Link>
       </div>
@@ -104,18 +104,38 @@ export function ProviderProfileForm({
         <input type="hidden" name="profile_photo" value={photoUrl} />
 
         <Field
-          label="Nom de l'activité"
+          label="Nom public (affiché aux clientes)"
           name="business_name"
           defaultValue={initial?.business_name ?? ""}
           placeholder="Ex : Awa Beauty"
           required
         />
+
+        <div className="grid grid-cols-2 gap-3">
+          <Field
+            label="Nom"
+            name="nom"
+            defaultValue={initial?.nom ?? ""}
+            placeholder="Privé"
+            required
+          />
+          <Field
+            label="Prénom"
+            name="prenom"
+            defaultValue={initial?.prenom ?? ""}
+            placeholder="Privé"
+            required
+          />
+        </div>
+
         <Textarea
           label="Présentation"
           name="bio"
           defaultValue={initial?.bio ?? ""}
-          placeholder="Spécialiste tresses africaines, 8 ans d'expérience…"
+          placeholder="Spécialiste tresses, 8 ans d'expérience…"
+          required
         />
+
         <div className="grid grid-cols-2 gap-3">
           <Field
             label="Ville"
@@ -125,13 +145,13 @@ export function ProviderProfileForm({
             required
           />
           <Field
-            label="Quartier"
+            label="Quartier (optionnel)"
             name="quartier"
             defaultValue={initial?.quartier ?? ""}
             placeholder="Akanda"
-            required
           />
         </div>
+
         <Field
           label="Numéro WhatsApp"
           name="whatsapp_number"
@@ -146,20 +166,27 @@ export function ProviderProfileForm({
           placeholder="074 00 00 00"
         />
 
-        <label className="block">
-          <span className="mb-1.5 block text-sm font-medium text-cacao/80">
-            Disponibilité
-          </span>
-          <select
-            name="dispo"
-            defaultValue={initial?.dispo ?? "sur_rdv"}
-            className="w-full rounded-xl2 border border-sable bg-white px-4 py-3"
-          >
-            <option value="disponible">Disponible</option>
-            <option value="occupee">Occupée</option>
-            <option value="sur_rdv">Sur rendez-vous</option>
-          </select>
-        </label>
+        <Select
+          label="Lieu de prestation"
+          name="lieu"
+          defaultValue={initial?.lieu ?? "chez_zuriste"}
+          options={[
+            ["chez_zuriste", "Chez la Zuriste"],
+            ["chez_cliente", "Chez la cliente"],
+            ["les_deux", "Les deux"],
+          ]}
+        />
+
+        <Select
+          label="Disponibilité"
+          name="dispo"
+          defaultValue={initial?.dispo ?? "disponible"}
+          options={[
+            ["disponible", "Disponible"],
+            ["indisponible", "Indisponible"],
+            ["masque", "Profil masqué (invisible dans la recherche)"],
+          ]}
+        />
 
         {state?.error && (
           <p className="rounded-xl2 bg-rose/60 px-4 py-2 text-sm text-cacao">
@@ -232,8 +259,37 @@ function Textarea({
   );
 }
 
-// Compresse/redimensionne la photo dans le navigateur avant l'upload
-// (essentiel pour rester dans le quota gratuit Supabase).
+function Select({
+  label,
+  name,
+  defaultValue,
+  options,
+}: {
+  label: string;
+  name: string;
+  defaultValue: string;
+  options: [string, string][];
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-sm font-medium text-cacao/80">
+        {label}
+      </span>
+      <select
+        name={name}
+        defaultValue={defaultValue}
+        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3"
+      >
+        {options.map(([value, text]) => (
+          <option key={value} value={value}>
+            {text}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 async function compressImage(
   file: File,
   maxSize = 1200,

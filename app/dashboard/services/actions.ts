@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { AUTRE } from "@/lib/catalog";
 import type { ServiceResult } from "./types";
 
 export async function addService(
@@ -22,22 +23,31 @@ export async function addService(
     .maybeSingle();
   if (!provider) return { error: "Crée d'abord ton profil." };
 
-  const name = String(formData.get("name") || "").trim();
-  const category = String(formData.get("category") || "tresses");
+  const univers = String(formData.get("univers") || "").trim();
+  const categorie = String(formData.get("categorie") || "").trim();
+  const prestation = String(formData.get("prestation") || "").trim();
+  const name_custom = String(formData.get("name_custom") || "").trim();
   const price_min = parseInt(String(formData.get("price_min") || ""), 10);
   const price_max_raw = String(formData.get("price_max") || "").trim();
   const price_max = price_max_raw ? parseInt(price_max_raw, 10) : null;
   const duree_estim = String(formData.get("duree_estim") || "").trim() || null;
   const description = String(formData.get("description") || "").trim() || null;
 
-  if (!name || Number.isNaN(price_min)) {
-    return { error: "Le nom et le prix de départ sont obligatoires." };
+  const name = prestation === AUTRE ? name_custom : prestation;
+
+  if (!univers || !categorie || !name) {
+    return { error: "Choisis un univers, une catégorie et une prestation." };
+  }
+  if (Number.isNaN(price_min)) {
+    return { error: "Le prix de départ est obligatoire." };
   }
 
   const { error } = await supabase.from("services").insert({
     provider_id: provider.id,
     name,
-    category,
+    univers,
+    categorie,
+    category: categorie, // compat avec l'ancienne colonne
     price_min,
     price_max,
     duree_estim,
