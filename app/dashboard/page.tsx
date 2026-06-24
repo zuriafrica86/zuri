@@ -36,10 +36,25 @@ export default async function DashboardPage() {
         <h1 className="mt-2 font-display text-4xl">Bonjour {prenom} 🌸</h1>
 
         {role === "cliente" && (
-          <p className="mt-4 text-cacao/70">
-            Bientôt ici : tes favoris, tes demandes de RDV et tes avis.
-            La recherche de coiffeuses arrive au prochain bloc.
-          </p>
+          <div className="mt-4 space-y-4">
+            <p className="text-cacao/70">
+              Trouve une coiffeuse de confiance et suis tes demandes de RDV.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/recherche"
+                className="inline-block rounded-xl2 bg-or px-5 py-3 font-medium text-cacao shadow-soft transition hover:bg-or-clair"
+              >
+                Trouver une coiffeuse →
+              </Link>
+              <Link
+                href="/dashboard/mes-rdv"
+                className="inline-block rounded-xl2 border border-sable px-5 py-3 font-medium text-cacao transition hover:bg-rose/30"
+              >
+                Mes demandes de RDV →
+              </Link>
+            </div>
+          </div>
         )}
         {role === "prestataire" && (
           <div className="mt-4 space-y-4">
@@ -64,6 +79,12 @@ export default async function DashboardPage() {
                 className="inline-block rounded-xl2 border border-sable px-5 py-3 font-medium text-cacao transition hover:bg-rose/30"
               >
                 Mon portfolio →
+              </Link>
+              <Link
+                href="/dashboard/rdv"
+                className="inline-block rounded-xl2 border border-sable px-5 py-3 font-medium text-cacao transition hover:bg-rose/30"
+              >
+                Demandes reçues →
               </Link>
             </div>
           </div>
