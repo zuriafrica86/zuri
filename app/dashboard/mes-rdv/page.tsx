@@ -41,7 +41,7 @@ export default async function MesRdvPage() {
         <div className="mb-6 flex items-center justify-between">
           <h1 className="font-display text-3xl">Mes demandes de RDV</h1>
           <Link href="/recherche" className="text-sm text-cacao/60 hover:text-cacao">
-            Trouver une coiffeuse →
+            Trouver une Zuriste →
           </Link>
         </div>
 
@@ -49,7 +49,7 @@ export default async function MesRdvPage() {
           <div className="rounded-xl2 border border-dashed border-sable bg-white p-10 text-center text-cacao/50">
             Tu n&apos;as pas encore de demande.{" "}
             <Link href="/recherche" className="text-or underline">
-              Trouve une coiffeuse
+              Trouve une Zuriste
             </Link>
             .
           </div>
@@ -63,7 +63,7 @@ export default async function MesRdvPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-medium">
-                      {b.providers?.business_name ?? "Coiffeuse"}
+                      {b.providers?.business_name ?? "Zuriste"}
                     </p>
                     <p className="text-sm text-cacao/70">
                       {formatDate(b.date_souhaitee)}
@@ -90,7 +90,7 @@ export default async function MesRdvPage() {
                 )}
                 {b.status === "en_attente" && (
                   <p className="mt-2 text-sm text-cacao/50">
-                    🔒 Contact disponible une fois la coiffeuse l&apos;ayant
+                    🔒 Contact disponible une fois la Zuriste l&apos;ayant
                     confirmé.
                   </p>
                 )}

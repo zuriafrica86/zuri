@@ -47,7 +47,7 @@ function layout(title: string, body: string, cta?: { label: string; href: string
   </div>`;
 }
 
-// → à la coiffeuse : nouvelle demande de RDV
+// → à la Zuriste : nouvelle demande de RDV
 export async function notifyNewBooking(
   to: string,
   data: { serviceName: string; dateLabel: string }
@@ -77,7 +77,7 @@ export async function notifyBookingConfirmed(
       "Bonne nouvelle, ton RDV est confirmé !",
       `<p><strong>${data.coiffeuseName}</strong> a confirmé ton rendez-vous.</p>
        <p>Tu peux maintenant récupérer son contact WhatsApp depuis ton espace.</p>`,
-      { label: "Contacter ma coiffeuse", href: appUrl("/dashboard/mes-rdv") }
+      { label: "Contacter ma Zuriste", href: appUrl("/dashboard/mes-rdv") }
     ),
   });
 }
@@ -93,8 +93,8 @@ export async function notifyBookingRefused(
     html: layout(
       "Ta demande n'a pas pu être acceptée",
       `<p><strong>${data.coiffeuseName}</strong> n'est pas disponible pour cette demande.</p>
-       <p>Pas d'inquiétude — d'autres coiffeuses t'attendent sur ZURI.</p>`,
-      { label: "Découvrir d'autres coiffeuses", href: appUrl("/recherche") }
+       <p>Pas d'inquiétude — d'autres Zuristes t'attendent sur ZURI.</p>`,
+      { label: "Découvrir d'autres Zuristes", href: appUrl("/recherche") }
     ),
   });
 }

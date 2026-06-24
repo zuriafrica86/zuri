@@ -27,8 +27,13 @@ interface ReviewRow {
 
 const dispoLabel: Record<string, string> = {
   disponible: "🟢 Disponible cette semaine",
-  occupee: "🟠 Actuellement occupée",
-  sur_rdv: "Sur rendez-vous",
+  indisponible: "⚪ Actuellement indisponible",
+};
+
+const lieuLabel: Record<string, string> = {
+  chez_zuriste: "Chez la Zuriste",
+  chez_cliente: "Chez la cliente",
+  les_deux: "Chez la Zuriste ou chez la cliente",
 };
 
 export default async function CoiffeusePage({
@@ -42,7 +47,7 @@ export default async function CoiffeusePage({
   const { data: provider } = await supabase
     .from("providers")
     .select(
-      "id, business_name, bio, profile_photo, ville, quartier, dispo, verified, rating_avg, rating_count"
+      "id, business_name, bio, profile_photo, ville, quartier, dispo, lieu, verified, ambassadrice, rating_avg, rating_count"
     )
     .eq("id", id)
     .eq("status", "approved")
@@ -84,7 +89,7 @@ export default async function CoiffeusePage({
           href="/recherche"
           className="text-sm text-cacao/60 hover:text-cacao"
         >
-          ← Toutes les coiffeuses
+          ← Toutes les Zuristes
         </Link>
       </header>
 
@@ -109,9 +114,15 @@ export default async function CoiffeusePage({
               {provider.verified && (
                 <span className="text-sm text-or">✔ Vérifiée</span>
               )}
+              {provider.ambassadrice && (
+                <span className="rounded-full bg-or px-2 py-0.5 text-xs font-medium text-cacao">
+                  ✨ Ambassadrice
+                </span>
+              )}
             </div>
             <p className="text-cacao/70">
-              {provider.quartier}, {provider.ville}
+              {provider.quartier ? `${provider.quartier}, ` : ""}
+              {provider.ville}
             </p>
             <p className="mt-1 text-sm text-cacao/60">
               {provider.rating_count > 0
@@ -119,6 +130,11 @@ export default async function CoiffeusePage({
                 : "Nouvelle sur ZURI"}{" "}
               · {dispoLabel[provider.dispo] ?? ""}
             </p>
+            {provider.lieu && (
+              <p className="mt-1 text-sm text-cacao/60">
+                📍 {lieuLabel[provider.lieu] ?? ""}
+              </p>
+            )}
           </div>
         </div>
 
@@ -131,7 +147,7 @@ export default async function CoiffeusePage({
             📅 Demander un RDV
           </Link>
           <p className="mt-2 text-center text-sm text-cacao/60">
-            🔒 Le contact de la coiffeuse se débloque après confirmation du RDV.
+            🔒 Le contact de la Zuriste se débloque après confirmation du RDV.
           </p>
         </div>
 

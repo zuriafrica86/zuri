@@ -31,21 +31,21 @@ export default async function DashboardPage() {
 
       <div className="mx-auto max-w-2xl px-6 py-16">
         <p className="text-sm uppercase tracking-[0.15em] text-or">
-          Espace {role === "prestataire" ? "coiffeuse" : role === "admin" ? "admin" : "cliente"}
+          Espace {role === "prestataire" ? "Zuriste" : role === "admin" ? "admin" : "cliente"}
         </p>
         <h1 className="mt-2 font-display text-4xl">Bonjour {prenom} 🌸</h1>
 
         {role === "cliente" && (
           <div className="mt-4 space-y-4">
             <p className="text-cacao/70">
-              Trouve une coiffeuse de confiance et suis tes demandes de RDV.
+              Trouve une Zuriste de confiance et suis tes demandes de RDV.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/recherche"
                 className="inline-block rounded-xl2 bg-or px-5 py-3 font-medium text-cacao shadow-soft transition hover:bg-or-clair"
               >
-                Trouver une coiffeuse →
+                Trouver une Zuriste →
               </Link>
               <Link
                 href="/dashboard/mes-rdv"
@@ -92,7 +92,7 @@ export default async function DashboardPage() {
         {role === "admin" && (
           <div className="mt-4 space-y-4">
             <p className="text-cacao/70">
-              Valide les coiffeuses, suis tes statistiques et gère les comptes.
+              Valide les Zuristes, suis tes statistiques et gère les comptes.
             </p>
             <Link
               href="/admin"

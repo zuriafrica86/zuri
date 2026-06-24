@@ -8,6 +8,7 @@ export interface CardProvider {
   quartier: string;
   dispo: string;
   verified: boolean;
+  ambassadrice: boolean;
   rating_avg: number;
   rating_count: number;
   minPrice: number | null;
@@ -15,8 +16,7 @@ export interface CardProvider {
 
 const dispoLabel: Record<string, string> = {
   disponible: "🟢 Disponible",
-  occupee: "🟠 Occupée",
-  sur_rdv: "Sur RDV",
+  indisponible: "⚪ Indisponible",
 };
 
 export function ProviderCard({ provider: p }: { provider: CardProvider }) {
@@ -25,7 +25,7 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
       href={`/coiffeuse/${p.id}`}
       className="group block overflow-hidden rounded-xl2 border border-sable bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-md"
     >
-      <div className="aspect-[4/3] bg-rose/30">
+      <div className="relative aspect-[4/3] bg-rose/30">
         {p.profile_photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -38,6 +38,11 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
             ZURI
           </div>
         )}
+        {p.ambassadrice && (
+          <span className="absolute left-2 top-2 rounded-full bg-or px-2 py-0.5 text-xs font-medium text-cacao shadow-soft">
+            ✨ Ambassadrice
+          </span>
+        )}
       </div>
       <div className="p-4">
         <div className="flex items-center justify-between gap-2">
@@ -47,7 +52,8 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
           )}
         </div>
         <p className="text-sm text-cacao/60">
-          {p.quartier}, {p.ville}
+          {p.quartier ? `${p.quartier}, ` : ""}
+          {p.ville}
         </p>
         <div className="mt-2 flex items-center justify-between text-sm">
           <span className="text-cacao/70">
@@ -61,9 +67,7 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
             </span>
           )}
         </div>
-        <p className="mt-1 text-xs text-cacao/50">
-          {dispoLabel[p.dispo] ?? ""}
-        </p>
+        <p className="mt-1 text-xs text-cacao/50">{dispoLabel[p.dispo] ?? ""}</p>
       </div>
     </Link>
   );

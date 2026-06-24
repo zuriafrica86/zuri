@@ -58,3 +58,17 @@ export async function deleteUser(formData: FormData) {
   await admin.auth.admin.deleteUser(userId);
   revalidatePath("/admin");
 }
+
+export async function toggleAmbassadrice(formData: FormData) {
+  const ctx = await assertAdmin();
+  if (!ctx) return;
+  const id = String(formData.get("provider_id") || "");
+  const next = String(formData.get("next") || "true") === "true";
+  if (id) {
+    await ctx.supabase
+      .from("providers")
+      .update({ ambassadrice: next })
+      .eq("id", id);
+  }
+  revalidatePath("/admin");
+}

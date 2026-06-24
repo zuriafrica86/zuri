@@ -27,7 +27,7 @@ async function notifyCliente(bookingId: string, confirmed: boolean) {
       .maybeSingle();
 
     if (!cli?.email) return;
-    const coiffeuseName = prov?.business_name ?? "ta coiffeuse";
+    const coiffeuseName = prov?.business_name ?? "ta Zuriste";
     if (confirmed) {
       await notifyBookingConfirmed(cli.email, { coiffeuseName });
     } else {

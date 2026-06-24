@@ -31,14 +31,14 @@ export function RdvForm({
         <p className="text-3xl">✅</p>
         <h2 className="mt-2 font-display text-xl">Demande envoyée !</h2>
         <p className="mt-2 text-cacao/70">
-          La coiffeuse va confirmer ton rendez-vous. Tu recevras son contact
+          La Zuriste va confirmer ton rendez-vous. Tu recevras son contact
           WhatsApp dès qu&apos;elle aura accepté.
         </p>
         <Link
           href="/recherche"
           className="mt-4 inline-block rounded-xl2 bg-or px-4 py-2 font-medium text-cacao hover:bg-or-clair"
         >
-          Découvrir d&apos;autres coiffeuses →
+          Découvrir d&apos;autres Zuristes →
         </Link>
       </div>
     );
@@ -69,7 +69,7 @@ export function RdvForm({
       <Field label="Date souhaitée" name="date_souhaitee" type="date" required />
       <Field label="Heure (optionnel)" name="heure_souhaitee" type="time" />
       <Textarea
-        label="Un mot pour la coiffeuse (optionnel)"
+        label="Un mot pour la Zuriste (optionnel)"
         name="note"
         placeholder="Ex : box braids longueur taille, plutôt le week-end"
       />
@@ -82,7 +82,7 @@ export function RdvForm({
 
       <SubmitButton>Envoyer la demande</SubmitButton>
       <p className="text-center text-xs text-cacao/50">
-        🔒 Le numéro de la coiffeuse te sera communiqué une fois le RDV confirmé.
+        🔒 Le numéro de la Zuriste te sera communiqué une fois le RDV confirmé.
       </p>
     </form>
   );

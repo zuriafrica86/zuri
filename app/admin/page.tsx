@@ -7,6 +7,7 @@ import {
   approveProvider,
   rejectProvider,
   deleteUser,
+  toggleAmbassadrice,
 } from "@/app/admin/actions";
 
 interface PendingProvider {
@@ -21,6 +22,11 @@ interface UserRow {
   full_name: string;
   email: string | null;
   role: string;
+}
+interface ApprovedProvider {
+  id: string;
+  business_name: string;
+  ambassadrice: boolean;
 }
 
 export default async function AdminPage() {
@@ -63,6 +69,15 @@ export default async function AdminPage() {
     .order("created_at", { ascending: true });
   const pending = (pendingData as PendingProvider[] | null) ?? [];
 
+  // Zuristes approuvées (pour le Cercle des 30)
+  const { data: approvedList } = await supabase
+    .from("providers")
+    .select("id, business_name, ambassadrice")
+    .eq("status", "approved")
+    .order("business_name");
+  const approved = (approvedList as ApprovedProvider[] | null) ?? [];
+  const nbAmbassadrices = approved.filter((a) => a.ambassadrice).length;
+
   // Tous les comptes
   const { data: usersData } = await supabase
     .from("profiles")
@@ -82,7 +97,7 @@ export default async function AdminPage() {
 
         {/* Stats */}
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat label="Coiffeuses actives" value={approvedCount ?? 0} />
+          <Stat label="Zuristes actives" value={approvedCount ?? 0} />
           <Stat label="En attente" value={pendingCount ?? 0} />
           <Stat label="Clientes" value={clientesCount ?? 0} />
           <Stat label="Contacts" value={contactsCount ?? 0} />
@@ -95,7 +110,7 @@ export default async function AdminPage() {
           </h2>
           {pending.length === 0 ? (
             <p className="mt-2 text-sm text-cacao/50">
-              Aucune coiffeuse en attente.
+              Aucune Zuriste en attente.
             </p>
           ) : (
             <ul className="mt-3 space-y-3">
@@ -142,6 +157,50 @@ export default async function AdminPage() {
                       </button>
                     </form>
                   </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* Cercle des 30 — Ambassadrices */}
+        <section className="mt-10">
+          <h2 className="font-display text-xl">
+            Cercle des 30 — Ambassadrices ({nbAmbassadrices}/30)
+          </h2>
+          {approved.length === 0 ? (
+            <p className="mt-2 text-sm text-cacao/50">
+              Aucune Zuriste validée pour l&apos;instant.
+            </p>
+          ) : (
+            <ul className="mt-3 divide-y divide-sable rounded-xl2 border border-sable bg-white">
+              {approved.map((a) => (
+                <li
+                  key={a.id}
+                  className="flex items-center justify-between px-4 py-3"
+                >
+                  <span className="truncate font-medium">
+                    {a.ambassadrice ? "✨ " : ""}
+                    {a.business_name}
+                  </span>
+                  <form action={toggleAmbassadrice}>
+                    <input type="hidden" name="provider_id" value={a.id} />
+                    <input
+                      type="hidden"
+                      name="next"
+                      value={a.ambassadrice ? "false" : "true"}
+                    />
+                    <button
+                      type="submit"
+                      className={
+                        a.ambassadrice
+                          ? "shrink-0 rounded-lg border border-sable px-3 py-1.5 text-sm text-cacao/70 hover:bg-rose/30"
+                          : "shrink-0 rounded-lg bg-or px-3 py-1.5 text-sm font-medium text-cacao hover:bg-or-clair"
+                      }
+                    >
+                      {a.ambassadrice ? "Retirer" : "Nommer Ambassadrice"}
+                    </button>
+                  </form>
                 </li>
               ))}
             </ul>

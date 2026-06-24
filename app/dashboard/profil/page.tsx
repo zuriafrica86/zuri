@@ -21,7 +21,7 @@ export default async function ProfilPage() {
     .eq("id", user.id)
     .single();
 
-  // Réservé aux coiffeuses.
+  // Réservé aux Zuristes.
   if (profile?.role !== "prestataire") redirect("/dashboard");
 
   const { data: provider } = await supabase

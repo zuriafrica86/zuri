@@ -16,15 +16,15 @@ export default function AuthLayout({
             Beauté locale · Gabon
           </p>
           <h1 className="font-display text-4xl leading-tight md:text-5xl">
-            Trouve une coiffeuse de confiance, près de chez toi.
+            Trouve une Zuriste de confiance, près de chez toi.
           </h1>
           <p className="mt-5 text-base leading-relaxed text-ivoire/80">
             Découvre des portfolios, compare, et réserve un rendez-vous.
-            Le contact se débloque dès que ta coiffeuse confirme.
+            Le contact se débloque dès que ta Zuriste confirme.
           </p>
         </div>
         <p className="text-sm text-ivoire/60">
-          Coiffeuse ? Transforme ton talent en clientes régulières.
+          Pro de la beauté ? Transforme ton talent en clientes régulières.
         </p>
       </section>
 

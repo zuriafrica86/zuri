@@ -14,7 +14,7 @@ export default function HomePage() {
             href="/signup"
             className="rounded-xl2 bg-cacao px-4 py-2 font-medium text-ivoire hover:bg-cacao/90"
           >
-            Devenir coiffeuse
+            Devenir Zuriste
           </Link>
         </nav>
       </header>
@@ -24,7 +24,7 @@ export default function HomePage() {
           Beauté locale · Gabon
         </p>
         <h1 className="font-display text-5xl leading-[1.05] sm:text-6xl">
-          Trouve ta coiffeuse
+          Trouve ta Zuriste
           <br />
           <span className="italic text-or">de confiance.</span>
         </h1>
@@ -37,7 +37,7 @@ export default function HomePage() {
             href="/recherche"
             className="rounded-xl2 bg-or px-7 py-3.5 font-medium text-cacao shadow-soft transition hover:bg-or-clair"
           >
-            Trouver une coiffeuse
+            Trouver une Zuriste
           </Link>
           <Link
             href="/login"

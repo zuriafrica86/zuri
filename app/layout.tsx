@@ -15,9 +15,9 @@ const sans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "ZURI — Trouve ta coiffeuse de confiance",
+  title: "ZURI — Trouve ta Zuriste de confiance",
   description:
-    "ZURI met en relation les clientes et les meilleures coiffeuses spécialisées en tresses et coiffures au Gabon.",
+    "ZURI met en relation les clientes et les meilleures Zuristes beauté au Gabon : coiffure, ongles, regard et maquillage.",
 };
 
 export default function RootLayout({
