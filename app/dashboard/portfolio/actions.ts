@@ -2,25 +2,43 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { PortfolioResult } from "./types";
+
+async function adminContext(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const targetUserId = String(formData.get("target_user_id") || "").trim();
+  if (targetUserId) {
+    if (!user) return { ok: false as const };
+    const { data: me } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    if (me?.role !== "admin") return { ok: false as const };
+    return { ok: true as const, db: createAdminClient(), ownerId: targetUserId };
+  }
+  if (!user) return { ok: false as const };
+  return { ok: true as const, db: supabase, ownerId: user.id };
+}
 
 export async function addPortfolioItem(
   _prev: PortfolioResult,
   formData: FormData
 ): Promise<PortfolioResult> {
-  const supabase = await createClient();
+  const ctx = await adminContext(formData);
+  if (!ctx.ok) return { error: "Session expirée ou non autorisé." };
+  const { db, ownerId } = ctx;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "Session expirée, reconnecte-toi." };
-
-  const { data: provider } = await supabase
+  const { data: provider } = await db
     .from("providers")
     .select("id")
-    .eq("user_id", user.id)
+    .eq("user_id", ownerId)
     .maybeSingle();
-  if (!provider) return { error: "Crée d'abord ton profil." };
+  if (!provider) return { error: "Crée d'abord le profil." };
 
   const type = String(formData.get("type") || "general");
   const image_url = String(formData.get("image_url") || "").trim();
@@ -33,7 +51,7 @@ export async function addPortfolioItem(
     return { error: "Ajoute aussi la photo « après »." };
   }
 
-  const { error } = await supabase.from("portfolio_photos").insert({
+  const { error } = await db.from("portfolio_photos").insert({
     provider_id: provider.id,
     type,
     image_url,
@@ -43,12 +61,16 @@ export async function addPortfolioItem(
   if (error) return { error: "Échec de l'ajout. Réessaie." };
 
   revalidatePath("/dashboard/portfolio");
+  revalidatePath(`/admin/zuriste/${ownerId}`);
   return { ok: true };
 }
 
 export async function deletePortfolioItem(formData: FormData) {
-  const supabase = await createClient();
+  const ctx = await adminContext(formData);
+  if (!ctx.ok) return;
+  const { db, ownerId } = ctx;
   const id = String(formData.get("item_id") || "");
-  if (id) await supabase.from("portfolio_photos").delete().eq("id", id);
+  if (id) await db.from("portfolio_photos").delete().eq("id", id);
   revalidatePath("/dashboard/portfolio");
+  revalidatePath(`/admin/zuriste/${ownerId}`);
 }

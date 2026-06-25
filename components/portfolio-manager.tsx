@@ -20,9 +20,11 @@ export interface PortfolioItem {
 export function PortfolioManager({
   userId,
   items,
+  targetUserId,
 }: {
   userId: string;
   items: PortfolioItem[];
+  targetUserId?: string;
 }) {
   const [state, action] = useActionState<PortfolioResult, FormData>(
     addPortfolioItem,
@@ -100,6 +102,13 @@ export function PortfolioManager({
                 {it.caption ?? ""}
               </span>
               <form action={deletePortfolioItem}>
+                {targetUserId && (
+                  <input
+                    type="hidden"
+                    name="target_user_id"
+                    value={targetUserId}
+                  />
+                )}
                 <input type="hidden" name="item_id" value={it.id} />
                 <button
                   type="submit"
@@ -120,6 +129,9 @@ export function PortfolioManager({
         action={action}
         className="space-y-4 rounded-xl2 border border-sable bg-white p-5"
       >
+        {targetUserId && (
+          <input type="hidden" name="target_user_id" value={targetUserId} />
+        )}
         <h2 className="font-display text-xl">Ajouter une réalisation</h2>
 
         {/* Choix du mode */}

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { ProfileResult } from "./types";
 
 export async function saveProfile(
@@ -14,6 +15,19 @@ export async function saveProfile(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Session expirée, reconnecte-toi." };
+
+  // Mode admin : édition du profil d'une autre Zuriste.
+  const targetUserId = String(formData.get("target_user_id") || "").trim();
+  if (targetUserId) {
+    const { data: me } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    if (me?.role !== "admin") return { error: "Non autorisé." };
+  }
+  const db = targetUserId ? createAdminClient() : supabase;
+  const ownerId = targetUserId || user.id;
 
   const business_name = String(formData.get("business_name") || "").trim();
   const nom = String(formData.get("nom") || "").trim();
@@ -55,24 +69,24 @@ export async function saveProfile(
     profile_photo,
   };
 
-  const { data: existing } = await supabase
+  const { data: existing } = await db
     .from("providers")
     .select("id")
-    .eq("user_id", user.id)
+    .eq("user_id", ownerId)
     .maybeSingle();
 
   let providerId: string;
   if (existing) {
-    const { error } = await supabase
+    const { error } = await db
       .from("providers")
       .update(corePayload)
       .eq("id", existing.id);
     if (error) return { error: "Échec de l'enregistrement. Réessaie." };
     providerId = existing.id as string;
   } else {
-    const { data: inserted, error } = await supabase
+    const { data: inserted, error } = await db
       .from("providers")
-      .insert({ ...corePayload, user_id: user.id })
+      .insert({ ...corePayload, user_id: ownerId })
       .select("id")
       .single();
     if (error || !inserted) {
@@ -81,7 +95,7 @@ export async function saveProfile(
     providerId = inserted.id as string;
   }
 
-  const { error: contactError } = await supabase
+  const { error: contactError } = await db
     .from("provider_contacts")
     .upsert({
       provider_id: providerId,
@@ -94,6 +108,7 @@ export async function saveProfile(
 
   revalidatePath("/dashboard/profil");
   revalidatePath("/dashboard");
+  if (targetUserId) revalidatePath(`/admin/zuriste/${ownerId}`);
   return { ok: true };
 }
 

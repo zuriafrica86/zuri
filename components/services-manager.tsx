@@ -18,7 +18,13 @@ export interface ServiceItem {
   description: string | null;
 }
 
-export function ServicesManager({ services }: { services: ServiceItem[] }) {
+export function ServicesManager({
+  services,
+  targetUserId,
+}: {
+  services: ServiceItem[];
+  targetUserId?: string;
+}) {
   const [state, action] = useActionState<ServiceResult, FormData>(
     addService,
     null
@@ -71,6 +77,9 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
               )}
             </div>
             <form action={deleteService}>
+              {targetUserId && (
+                <input type="hidden" name="target_user_id" value={targetUserId} />
+              )}
               <input type="hidden" name="service_id" value={s.id} />
               <button
                 type="submit"
@@ -90,6 +99,9 @@ export function ServicesManager({ services }: { services: ServiceItem[] }) {
         action={action}
         className="space-y-4 rounded-xl2 border border-sable bg-white p-5"
       >
+        {targetUserId && (
+          <input type="hidden" name="target_user_id" value={targetUserId} />
+        )}
         <h2 className="font-display text-xl">Ajouter un service</h2>
 
         <Select

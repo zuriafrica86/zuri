@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Fraunces, DM_Sans } from "next/font/google";
+import { Noto_Serif, DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const display = Fraunces({
+const display = Noto_Serif({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-display",
 });

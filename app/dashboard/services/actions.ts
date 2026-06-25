@@ -2,26 +2,49 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AUTRE } from "@/lib/catalog";
 import type { ServiceResult } from "./types";
+
+async function adminContext(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const targetUserId = String(formData.get("target_user_id") || "").trim();
+  if (targetUserId) {
+    if (!user) return { ok: false as const };
+    const { data: me } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    if (me?.role !== "admin") return { ok: false as const };
+    return {
+      ok: true as const,
+      db: createAdminClient(),
+      ownerId: targetUserId,
+      isAdmin: true,
+    };
+  }
+  if (!user) return { ok: false as const };
+  return { ok: true as const, db: supabase, ownerId: user.id, isAdmin: false };
+}
 
 export async function addService(
   _prev: ServiceResult,
   formData: FormData
 ): Promise<ServiceResult> {
-  const supabase = await createClient();
+  const ctx = await adminContext(formData);
+  if (!ctx.ok) return { error: "Session expirée ou non autorisé." };
+  const { db, ownerId } = ctx;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "Session expirée, reconnecte-toi." };
-
-  const { data: provider } = await supabase
+  const { data: provider } = await db
     .from("providers")
     .select("id")
-    .eq("user_id", user.id)
+    .eq("user_id", ownerId)
     .maybeSingle();
-  if (!provider) return { error: "Crée d'abord ton profil." };
+  if (!provider) return { error: "Crée d'abord le profil." };
 
   const univers = String(formData.get("univers") || "").trim();
   const categorie = String(formData.get("categorie") || "").trim();
@@ -42,12 +65,12 @@ export async function addService(
     return { error: "Le prix de départ est obligatoire." };
   }
 
-  const { error } = await supabase.from("services").insert({
+  const { error } = await db.from("services").insert({
     provider_id: provider.id,
     name,
     univers,
     categorie,
-    category: categorie, // compat avec l'ancienne colonne
+    category: categorie,
     price_min,
     price_max,
     duree_estim,
@@ -56,12 +79,16 @@ export async function addService(
   if (error) return { error: "Échec de l'ajout. Réessaie." };
 
   revalidatePath("/dashboard/services");
+  revalidatePath(`/admin/zuriste/${ownerId}`);
   return { ok: true };
 }
 
 export async function deleteService(formData: FormData) {
-  const supabase = await createClient();
+  const ctx = await adminContext(formData);
+  if (!ctx.ok) return;
+  const { db, ownerId } = ctx;
   const id = String(formData.get("service_id") || "");
-  if (id) await supabase.from("services").delete().eq("id", id);
+  if (id) await db.from("services").delete().eq("id", id);
   revalidatePath("/dashboard/services");
+  revalidatePath(`/admin/zuriste/${ownerId}`);
 }

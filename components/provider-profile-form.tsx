@@ -26,9 +26,11 @@ export interface ProviderInitial {
 export function ProviderProfileForm({
   userId,
   initial,
+  targetUserId,
 }: {
   userId: string;
   initial: ProviderInitial | null;
+  targetUserId?: string;
 }) {
   const [state, action] = useActionState<ProfileResult, FormData>(
     saveProfile,
@@ -75,6 +77,9 @@ export function ProviderProfileForm({
       {initial?.status && <StatusBadge status={initial.status} />}
 
       <form action={action} className="mt-6 space-y-5">
+        {targetUserId && (
+          <input type="hidden" name="target_user_id" value={targetUserId} />
+        )}
         {/* Photo de profil */}
         <div className="flex items-center gap-4">
           <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full bg-rose/40">

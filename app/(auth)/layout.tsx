@@ -10,7 +10,7 @@ export default function AuthLayout({
       {/* Panneau de marque (gauche) */}
       <section className="relative hidden overflow-hidden bg-cacao px-12 py-14 text-ivoire md:flex md:flex-col md:justify-between">
         <div className="tresse absolute right-0 top-0 h-full w-3" aria-hidden />
-        <Logo />
+        <Logo variant="light" />
         <div className="max-w-md">
           <p className="mb-3 text-sm uppercase tracking-[0.2em] text-or-clair">
             Beauté locale · Gabon
