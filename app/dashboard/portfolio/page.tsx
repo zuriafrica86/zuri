@@ -30,13 +30,22 @@ export default async function PortfolioPage() {
     .maybeSingle();
 
   let items: PortfolioItem[] = [];
+  let services: { id: string; name: string; price_min: number }[] = [];
   if (provider) {
     const { data } = await supabase
       .from("portfolio_photos")
-      .select("id, type, image_url, image_url_after, caption")
+      .select("id, type, image_url, image_url_after, caption, service_id")
       .eq("provider_id", provider.id)
       .order("created_at", { ascending: false });
     items = (data as PortfolioItem[]) ?? [];
+
+    const { data: svc } = await supabase
+      .from("services")
+      .select("id, name, price_min")
+      .eq("provider_id", provider.id)
+      .order("price_min");
+    services =
+      (svc as { id: string; name: string; price_min: number }[] | null) ?? [];
   }
 
   return (
@@ -67,7 +76,7 @@ export default async function PortfolioPage() {
             </Link>
           </div>
         ) : (
-          <PortfolioManager userId={user.id} items={items} />
+          <PortfolioManager userId={user.id} items={items} services={services} />
         )}
       </div>
     </main>

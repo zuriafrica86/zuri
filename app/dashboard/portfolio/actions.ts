@@ -45,6 +45,7 @@ export async function addPortfolioItem(
   const image_url_after =
     String(formData.get("image_url_after") || "").trim() || null;
   const caption = String(formData.get("caption") || "").trim() || null;
+  const service_id = String(formData.get("service_id") || "").trim() || null;
 
   if (!image_url) return { error: "Ajoute au moins une photo." };
   if (type === "avant_apres" && !image_url_after) {
@@ -57,6 +58,7 @@ export async function addPortfolioItem(
     image_url,
     image_url_after,
     caption,
+    service_id,
   });
   if (error) return { error: "Échec de l'ajout. Réessaie." };
 

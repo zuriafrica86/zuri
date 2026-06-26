@@ -15,17 +15,28 @@ export interface PortfolioItem {
   image_url: string;
   image_url_after: string | null;
   caption: string | null;
+  service_id: string | null;
+}
+
+export interface PortfolioService {
+  id: string;
+  name: string;
+  price_min: number;
 }
 
 export function PortfolioManager({
   userId,
   items,
+  services = [],
   targetUserId,
 }: {
   userId: string;
   items: PortfolioItem[];
+  services?: PortfolioService[];
   targetUserId?: string;
 }) {
+  const serviceName = (id: string | null) =>
+    services.find((sv) => sv.id === id)?.name ?? null;
   const [state, action] = useActionState<PortfolioResult, FormData>(
     addPortfolioItem,
     null
@@ -98,8 +109,10 @@ export function PortfolioManager({
               <Thumb src={it.image_url} />
             )}
             <div className="flex items-center justify-between px-3 py-2">
-              <span className="truncate text-sm text-cacao/60">
-                {it.caption ?? ""}
+              <span className="min-w-0 truncate text-sm text-cacao/60">
+                {serviceName(it.service_id) ?? it.caption ?? (
+                  <span className="text-cacao/40">Sans prestation</span>
+                )}
               </span>
               <form action={deletePortfolioItem}>
                 {targetUserId && (
@@ -174,6 +187,25 @@ export function PortfolioManager({
             />
           </div>
         )}
+
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-cacao/80">
+            Prestation associée{" "}
+            <span className="text-cacao/40">(pour la bibliothèque de modèles)</span>
+          </span>
+          <select
+            name="service_id"
+            defaultValue=""
+            className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+          >
+            <option value="">— Aucune —</option>
+            {services.map((sv) => (
+              <option key={sv.id} value={sv.id}>
+                {sv.name} — dès {sv.price_min.toLocaleString("fr-FR")} FCFA
+              </option>
+            ))}
+          </select>
+        </label>
 
         <label className="block">
           <span className="mb-1.5 block text-sm font-medium text-cacao/80">

@@ -17,9 +17,11 @@ export interface RdvService {
 export function RdvForm({
   providerId,
   services,
+  preselectedServiceId,
 }: {
   providerId: string;
   services: RdvService[];
+  preselectedServiceId?: string;
 }) {
   const [state, action] = useActionState<BookingResult, FormData>(
     requestBooking,
@@ -55,7 +57,7 @@ export function RdvForm({
         </span>
         <select
           name="service_id"
-          defaultValue=""
+          defaultValue={preselectedServiceId ?? ""}
           className="w-full rounded-xl2 border border-sable bg-white px-4 py-3"
         >
           <option value="">— Choisir —</option>

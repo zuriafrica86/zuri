@@ -6,10 +6,13 @@ import { RdvForm, type RdvService } from "@/components/rdv-form";
 
 export default async function RdvPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ service?: string }>;
 }) {
   const { id } = await params;
+  const { service: preselectedServiceId } = await searchParams;
   const supabase = await createClient();
 
   const { data: provider } = await supabase
@@ -66,7 +69,11 @@ export default async function RdvPage({
             </p>
           </div>
         ) : (
-          <RdvForm providerId={provider.id} services={services} />
+          <RdvForm
+            providerId={provider.id}
+            services={services}
+            preselectedServiceId={preselectedServiceId}
+          />
         )}
       </div>
     </main>
