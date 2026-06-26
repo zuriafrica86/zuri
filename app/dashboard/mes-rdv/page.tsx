@@ -1,8 +1,9 @@
-import { Phone, Lock } from "lucide-react";
+import { Phone, Lock, Check } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { contactWhatsApp } from "@/app/dashboard/contact-actions";
+import { ConfirmPrestation } from "@/components/confirm-prestation";
 
 interface MyBooking {
   id: string;
@@ -10,6 +11,7 @@ interface MyBooking {
   date_souhaitee: string;
   heure_souhaitee: string | null;
   provider_id: string;
+  cliente_confirmed: boolean;
   providers: { business_name: string; profile_photo: string | null } | null;
 }
 
@@ -24,7 +26,7 @@ export default async function MesRdvPage() {
   const { data } = await supabase
     .from("bookings")
     .select(
-      "id, status, date_souhaitee, heure_souhaitee, provider_id, providers(business_name, profile_photo)"
+      "id, status, date_souhaitee, heure_souhaitee, provider_id, cliente_confirmed, providers(business_name, profile_photo)"
     )
     .eq("cliente_id", user.id)
     .order("created_at", { ascending: false });
@@ -86,6 +88,14 @@ export default async function MesRdvPage() {
                   <p className="mt-2 text-sm text-cacao/50">
                     <Lock className="mr-1 inline h-3.5 w-3.5 align-[-0.15em]" aria-hidden />Contact disponible une fois la Zuriste l&apos;ayant
                     confirmé.
+                  </p>
+                )}
+                {b.status === "termine" && !b.cliente_confirmed && (
+                  <ConfirmPrestation bookingId={b.id} />
+                )}
+                {b.status === "termine" && b.cliente_confirmed && (
+                  <p className="mt-2 flex items-center gap-1 text-sm text-green-700">
+                    <Check className="h-4 w-4" aria-hidden /> Prestation confirmée.
                   </p>
                 )}
               </li>

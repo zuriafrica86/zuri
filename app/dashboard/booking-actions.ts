@@ -180,3 +180,49 @@ export async function finishPrestation(formData: FormData) {
   revalidatePath("/dashboard/rdv");
   revalidatePath("/dashboard/portfolio");
 }
+
+// La cliente confirme que la prestation a eu lieu et laisse un avis
+// (note + commentaire facultatifs). La note moyenne se recalcule via trigger.
+export async function confirmPrestation(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const id = String(formData.get("booking_id") || "");
+  const ratingRaw = parseInt(String(formData.get("rating") || ""), 10);
+  const rating = Number.isNaN(ratingRaw)
+    ? 0
+    : Math.min(5, Math.max(0, ratingRaw));
+  const comment = String(formData.get("comment") || "").trim() || null;
+  if (!id) return;
+
+  // RLS : la cliente ne voit que ses propres réservations
+  const { data: bk } = await supabase
+    .from("bookings")
+    .select("provider_id, cliente_id, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (!bk || bk.cliente_id !== user.id || bk.status !== "termine") {
+    revalidatePath("/dashboard/mes-rdv");
+    return;
+  }
+
+  const admin = createAdminClient();
+  await admin.from("bookings").update({ cliente_confirmed: true }).eq("id", id);
+
+  if (rating >= 1 && rating <= 5) {
+    await admin.from("reviews").upsert(
+      {
+        provider_id: bk.provider_id,
+        cliente_id: user.id,
+        rating,
+        comment,
+        status: "visible",
+      },
+      { onConflict: "provider_id,cliente_id" }
+    );
+  }
+  revalidatePath("/dashboard/mes-rdv");
+}
