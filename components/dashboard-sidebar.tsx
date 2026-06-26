@@ -8,6 +8,7 @@ import {
   Scissors,
   Images,
   CalendarDays,
+  Calendar,
   Clock,
   Wallet,
   Lock,
@@ -25,6 +26,7 @@ const ZURISTE: Item[] = [
   { href: "/dashboard/portfolio", label: "Mon portfolio", Icon: Images },
   { href: "/dashboard/disponibilites", label: "Disponibilités", Icon: Clock },
   { href: "/dashboard/rdv", label: "Demandes reçues", Icon: CalendarDays },
+  { href: "/dashboard/agenda", label: "Agenda", Icon: Calendar },
   { href: "/dashboard/credit", label: "Crédit Zuri", Icon: Wallet },
   { href: "/dashboard/securite", label: "Sécurité", Icon: Lock },
 ];
