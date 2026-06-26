@@ -5,7 +5,6 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { CreateResult } from "./types";
 
-// Garantit que l'appelant est bien un admin. Renvoie null sinon.
 async function assertAdmin() {
   const supabase = await createClient();
   const {
@@ -21,43 +20,43 @@ async function assertAdmin() {
   return { supabase, userId: user.id };
 }
 
+function refresh() {
+  // Revalide toutes les pages de l'admin (stats + listes restent à jour).
+  revalidatePath("/admin", "layout");
+}
+
+async function setStatus(formData: FormData, status: string) {
+  const ctx = await assertAdmin();
+  if (!ctx) return;
+  const id = String(formData.get("provider_id") || "");
+  if (id) {
+    await ctx.supabase.from("providers").update({ status }).eq("id", id);
+  }
+  refresh();
+}
+
 export async function approveProvider(formData: FormData) {
-  const ctx = await assertAdmin();
-  if (!ctx) return;
-  const id = String(formData.get("provider_id") || "");
-  if (id) {
-    await ctx.supabase
-      .from("providers")
-      .update({ status: "approved" })
-      .eq("id", id);
-  }
-  revalidatePath("/admin");
+  await setStatus(formData, "approved");
 }
-
 export async function rejectProvider(formData: FormData) {
+  await setStatus(formData, "rejected");
+}
+export async function suspendProvider(formData: FormData) {
+  await setStatus(formData, "suspended");
+}
+export async function reactivateProvider(formData: FormData) {
+  await setStatus(formData, "approved");
+}
+
+export async function toggleVerified(formData: FormData) {
   const ctx = await assertAdmin();
   if (!ctx) return;
   const id = String(formData.get("provider_id") || "");
+  const next = String(formData.get("next") || "true") === "true";
   if (id) {
-    await ctx.supabase
-      .from("providers")
-      .update({ status: "rejected" })
-      .eq("id", id);
+    await ctx.supabase.from("providers").update({ verified: next }).eq("id", id);
   }
-  revalidatePath("/admin");
-}
-
-export async function deleteUser(formData: FormData) {
-  const ctx = await assertAdmin();
-  if (!ctx) return;
-  const userId = String(formData.get("user_id") || "");
-  if (!userId || userId === ctx.userId) return; // pas de suppression de soi-même
-
-  // La suppression du compte auth nécessite la clé privilégiée ;
-  // elle cascade sur le profil, le provider et toutes ses données.
-  const admin = createAdminClient();
-  await admin.auth.admin.deleteUser(userId);
-  revalidatePath("/admin");
+  refresh();
 }
 
 export async function toggleAmbassadrice(formData: FormData) {
@@ -71,7 +70,17 @@ export async function toggleAmbassadrice(formData: FormData) {
       .update({ ambassadrice: next })
       .eq("id", id);
   }
-  revalidatePath("/admin");
+  refresh();
+}
+
+export async function deleteUser(formData: FormData) {
+  const ctx = await assertAdmin();
+  if (!ctx) return;
+  const userId = String(formData.get("user_id") || "");
+  if (!userId || userId === ctx.userId) return; // pas de suppression de soi-même
+  const admin = createAdminClient();
+  await admin.auth.admin.deleteUser(userId);
+  refresh();
 }
 
 export async function createZuriste(
@@ -91,7 +100,6 @@ export async function createZuriste(
     };
   }
 
-  // Création directe du compte, email déjà confirmé (pas d'email d'activation).
   const admin = createAdminClient();
   const { error } = await admin.auth.admin.createUser({
     email,
@@ -112,7 +120,7 @@ export async function createZuriste(
     return { error: "Échec de la création du compte. Réessaie." };
   }
 
-  revalidatePath("/admin");
+  refresh();
   return {
     ok: `Compte créé pour ${email}. Elle peut se connecter dès maintenant avec ce mot de passe.`,
   };
