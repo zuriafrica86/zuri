@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { LogoutButton } from "@/components/logout-button";
 import { ModelCard } from "@/components/model-card";
-import { fetchModels } from "@/lib/models";
+import { fetchModels, type ModelItem } from "@/lib/models";
 import { universList } from "@/lib/catalog";
 
 export default async function ModelesPage({
@@ -68,13 +68,33 @@ export default async function ModelesPage({
             bientôt — les Zuristes ajoutent leurs réalisations !
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {models.map((m) => (
-              <ModelCard key={m.id} m={m} />
+          <div className="space-y-8">
+            {groupByCategorie(models).map(([categorie, items]) => (
+              <section key={categorie}>
+                <h2 className="mb-3 font-display text-xl">{categorie}</h2>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                  {items.map((m) => (
+                    <ModelCard key={m.id} m={m} />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         )}
       </div>
     </main>
   );
+}
+
+// Regroupe les modèles par catégorie (en conservant l'ordre d'apparition).
+function groupByCategorie(
+  models: ModelItem[]
+): [string, ModelItem[]][] {
+  const groups = new Map<string, ModelItem[]>();
+  for (const m of models) {
+    const key = m.categorie ?? "Autres";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(m);
+  }
+  return Array.from(groups.entries());
 }

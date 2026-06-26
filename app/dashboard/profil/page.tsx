@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Logo } from "@/components/logo";
-import { LogoutButton } from "@/components/logout-button";
 import {
   ProviderProfileForm,
   type ProviderInitial,
@@ -60,14 +58,8 @@ export default async function ProfilPage() {
   };
 
   return (
-    <main className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-sable px-6 py-4">
-        <Logo />
-        <LogoutButton />
-      </header>
-      <div className="mx-auto max-w-2xl px-6 py-6">
+    <>
         <ProviderProfileForm userId={user.id} initial={initial} />
-      </div>
-    </main>
+      </>
   );
 }

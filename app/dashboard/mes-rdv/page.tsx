@@ -2,8 +2,6 @@ import { Phone, Lock } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Logo } from "@/components/logo";
-import { LogoutButton } from "@/components/logout-button";
 import { contactWhatsApp } from "@/app/dashboard/contact-actions";
 
 interface MyBooking {
@@ -33,12 +31,7 @@ export default async function MesRdvPage() {
   const bookings = (data as MyBooking[] | null) ?? [];
 
   return (
-    <main className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-sable px-6 py-4">
-        <Logo />
-        <LogoutButton />
-      </header>
-      <div className="mx-auto max-w-2xl px-6 py-6">
+    <>
         <div className="mb-6 flex items-center justify-between">
           <h1 className="font-display text-2xl">Mes demandes de RDV</h1>
           <Link href="/recherche" className="text-sm text-cacao/60 hover:text-cacao">
@@ -99,8 +92,7 @@ export default async function MesRdvPage() {
             ))}
           </ul>
         )}
-      </div>
-    </main>
+      </>
   );
 }
 

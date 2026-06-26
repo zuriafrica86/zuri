@@ -2,8 +2,6 @@ import { Lock } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Logo } from "@/components/logo";
-import { LogoutButton } from "@/components/logout-button";
 import { formatZuri, creditLevel } from "@/lib/credit";
 import { fetchModels } from "@/lib/models";
 import { ModelCard } from "@/components/model-card";
@@ -39,13 +37,7 @@ export default async function DashboardPage() {
   const models = role === "cliente" ? await fetchModels({ limit: 6 }) : [];
 
   return (
-    <main className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-sable px-6 py-4">
-        <Logo />
-        <LogoutButton />
-      </header>
-
-      <div className="mx-auto max-w-2xl px-6 py-8">
+    <>
         <p className="text-sm uppercase tracking-[0.15em] text-or">
           Espace {role === "prestataire" ? "Zuriste" : role === "admin" ? "admin" : "cliente"}
         </p>
@@ -184,7 +176,6 @@ export default async function DashboardPage() {
             <Lock className="inline h-4 w-4 align-[-0.2em]" aria-hidden /> Mot de passe
           </Link>
         </div>
-      </div>
-    </main>
+      </>
   );
 }

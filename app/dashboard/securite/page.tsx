@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Logo } from "@/components/logo";
-import { LogoutButton } from "@/components/logout-button";
 import { ChangePasswordForm } from "@/components/change-password-form";
 
 export default async function SecuritePage() {
@@ -13,12 +11,7 @@ export default async function SecuritePage() {
   if (!user) redirect("/login");
 
   return (
-    <main className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-sable px-6 py-4">
-        <Logo />
-        <LogoutButton />
-      </header>
-      <div className="mx-auto max-w-md px-6 py-6">
+    <>
         <div className="mb-6 flex items-center justify-between">
           <h1 className="font-display text-2xl">Sécurité</h1>
           <Link
@@ -29,7 +22,6 @@ export default async function SecuritePage() {
           </Link>
         </div>
         <ChangePasswordForm />
-      </div>
-    </main>
+      </>
   );
 }
