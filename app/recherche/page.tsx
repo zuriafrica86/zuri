@@ -47,7 +47,8 @@ export default async function RecherchePage({
       "id, business_name, profile_photo, ville, quartier, dispo, lieu, verified, ambassadrice, rating_avg, rating_count, services(price_min, price_max, univers, categorie)"
     )
     .eq("status", "approved")
-    .neq("dispo", "masque"); // les profils masqués n'apparaissent jamais
+    .neq("dispo", "masque") // les profils masqués n'apparaissent jamais
+    .eq("credit_paused", false); // ni les profils en pause (crédit épuisé)
   if (ville) query = query.ilike("ville", `%${ville}%`);
 
   const { data } = await query.order("rating_avg", { ascending: false });

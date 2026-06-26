@@ -1,9 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyBookingConfirmed, notifyBookingRefused } from "@/lib/notify";
+import { applyWalletTx } from "@/lib/wallet";
+import { commissionFor } from "@/lib/credit";
 
 async function notifyCliente(bookingId: string, confirmed: boolean) {
   try {
@@ -40,13 +43,67 @@ async function notifyCliente(bookingId: string, confirmed: boolean) {
 
 export async function confirmBooking(formData: FormData) {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
   const id = String(formData.get("booking_id") || "");
-  if (id) {
-    const { error } = await supabase
-      .from("bookings")
-      .update({ status: "confirme" })
-      .eq("id", id);
-    if (!error) await notifyCliente(id, true);
+  if (!id) return;
+
+  // Réservation (RLS : la Zuriste ne voit que les siennes)
+  const { data: bk } = await supabase
+    .from("bookings")
+    .select("provider_id, service_id, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (!bk || bk.status === "confirme") {
+    revalidatePath("/dashboard/rdv");
+    return;
+  }
+
+  // Provider + solde de la Zuriste connectée
+  const { data: prov } = await supabase
+    .from("providers")
+    .select("id, credit_balance")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!prov || prov.id !== bk.provider_id) {
+    revalidatePath("/dashboard/rdv");
+    return;
+  }
+
+  // Commission = 10 % du prix de la prestation
+  let price: number | null = null;
+  if (bk.service_id) {
+    const { data: svc } = await supabase
+      .from("services")
+      .select("price_min")
+      .eq("id", bk.service_id)
+      .maybeSingle();
+    price = svc?.price_min ?? null;
+  }
+  const commission = commissionFor(price);
+
+  // Jamais sous zéro : crédit insuffisant -> blocage + redirection vers la recharge
+  if ((prov.credit_balance ?? 0) < commission) {
+    redirect("/dashboard/credit?insufficient=1");
+  }
+
+  // Confirmer (RLS owner) puis débiter via service-role
+  const { error } = await supabase
+    .from("bookings")
+    .update({ status: "confirme" })
+    .eq("id", id);
+  if (!error) {
+    await applyWalletTx(
+      prov.id,
+      -commission,
+      "commission",
+      "Confirmation RDV",
+      id
+    );
+    await notifyCliente(id, true);
   }
   revalidatePath("/dashboard/rdv");
 }

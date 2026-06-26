@@ -7,7 +7,9 @@ import {
   suspendProvider,
   toggleAmbassadrice,
   toggleVerified,
+  creditWallet,
 } from "@/app/admin/actions";
+import { formatZuri } from "@/lib/credit";
 
 interface Row {
   id: string;
@@ -17,6 +19,7 @@ interface Row {
   status: string;
   ambassadrice: boolean;
   verified: boolean;
+  credit_balance: number;
 }
 
 const STATUS: Record<string, { label: string; cls: string }> = {
@@ -44,7 +47,7 @@ export default async function ZuristesPage({
 
   let q = supabase
     .from("providers")
-    .select("id, business_name, ville, quartier, status, ambassadrice, verified")
+    .select("id, business_name, ville, quartier, status, ambassadrice, verified, credit_balance")
     .order("created_at", { ascending: false });
   if (statut) q = q.eq("status", statut);
   const { data } = await q;
@@ -154,6 +157,39 @@ export default async function ZuristesPage({
                       />
                     </>
                   )}
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-sable pt-3">
+                  <span className="text-sm text-cacao/70">
+                    Crédit Zuri :{" "}
+                    <span className="font-medium text-cacao">
+                      {formatZuri(r.credit_balance ?? 0)}
+                    </span>
+                  </span>
+                  <form
+                    action={creditWallet}
+                    className="flex flex-wrap items-center gap-2"
+                  >
+                    <input type="hidden" name="provider_id" value={r.id} />
+                    <input
+                      name="amount"
+                      type="number"
+                      inputMode="numeric"
+                      placeholder="+ montant"
+                      className="w-28 rounded-xl2 border border-sable bg-white px-3 py-1.5 text-sm"
+                    />
+                    <input
+                      name="reason"
+                      placeholder="Motif (ex. recharge)"
+                      className="w-40 rounded-xl2 border border-sable bg-white px-3 py-1.5 text-sm"
+                    />
+                    <button
+                      type="submit"
+                      className="rounded-xl2 bg-or px-3 py-1.5 text-sm font-medium text-cacao hover:bg-or-clair"
+                    >
+                      Créditer
+                    </button>
+                  </form>
                 </div>
               </li>
             );

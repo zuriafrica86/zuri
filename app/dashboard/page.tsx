@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/logo";
 import { LogoutButton } from "@/components/logout-button";
+import { formatZuri, creditLevel } from "@/lib/credit";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -21,6 +22,16 @@ export default async function DashboardPage() {
 
   const prenom = profile?.full_name?.split(" ")[0] ?? "";
   const role = profile?.role ?? "cliente";
+
+  let credit: number | null = null;
+  if (role === "prestataire") {
+    const { data: prov } = await supabase
+      .from("providers")
+      .select("credit_balance")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    credit = prov?.credit_balance ?? 0;
+  }
 
   return (
     <main className="min-h-screen">
@@ -87,6 +98,34 @@ export default async function DashboardPage() {
                 Demandes reçues →
               </Link>
             </div>
+
+            {credit !== null && (
+              <Link
+                href="/dashboard/credit"
+                className="flex items-center justify-between rounded-xl2 border border-sable bg-white p-5 shadow-soft transition hover:bg-rose/10"
+              >
+                <div>
+                  <p className="text-sm text-cacao/60">Mon Crédit Zuri</p>
+                  <p className="font-display text-2xl text-cacao">
+                    {formatZuri(credit)}
+                  </p>
+                  {creditLevel(credit) === "empty" && (
+                    <p className="mt-1 text-xs text-red-700">
+                      Profil en pause — recharge pour réapparaître
+                    </p>
+                  )}
+                  {(creditLevel(credit) === "low" ||
+                    creditLevel(credit) === "high") && (
+                    <p className="mt-1 text-xs text-cacao/50">
+                      Pense à recharger bientôt
+                    </p>
+                  )}
+                </div>
+                <span className="shrink-0 text-sm font-medium text-or">
+                  Gérer →
+                </span>
+              </Link>
+            )}
           </div>
         )}
         {role === "admin" && (

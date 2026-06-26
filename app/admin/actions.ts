@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { applyWalletTx, grantWelcomeBonusOnce } from "@/lib/wallet";
+import { WELCOME_BONUS } from "@/lib/credit";
 import type { CreateResult } from "./types";
 
 async function assertAdmin() {
@@ -31,6 +33,9 @@ async function setStatus(formData: FormData, status: string) {
   const id = String(formData.get("provider_id") || "");
   if (id) {
     await ctx.supabase.from("providers").update({ status }).eq("id", id);
+    if (status === "approved") {
+      await grantWelcomeBonusOnce(id, WELCOME_BONUS);
+    }
   }
   refresh();
 }
@@ -81,6 +86,18 @@ export async function deleteUser(formData: FormData) {
   const admin = createAdminClient();
   await admin.auth.admin.deleteUser(userId);
   refresh();
+}
+
+export async function creditWallet(formData: FormData) {
+  const ctx = await assertAdmin();
+  if (!ctx) return;
+  const id = String(formData.get("provider_id") || "");
+  const amount = parseInt(String(formData.get("amount") || ""), 10);
+  const reason = String(formData.get("reason") || "").trim() || "Recharge";
+  if (id && !Number.isNaN(amount) && amount !== 0) {
+    await applyWalletTx(id, amount, amount > 0 ? "recharge" : "adjust", reason);
+  }
+  revalidatePath("/admin/zuristes");
 }
 
 export async function createZuriste(
