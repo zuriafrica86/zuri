@@ -120,3 +120,63 @@ export async function refuseBooking(formData: FormData) {
   }
   revalidatePath("/dashboard/rdv");
 }
+
+// COMMENCER : la Zuriste démarre la prestation (RDV confirmé -> en cours).
+export async function startPrestation(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  const id = String(formData.get("booking_id") || "");
+  if (!id) return;
+
+  await supabase
+    .from("bookings")
+    .update({ status: "en_cours", started_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("status", "confirme"); // RLS : seulement ses propres RDV
+  revalidatePath("/dashboard/rdv");
+}
+
+// TERMINER : la Zuriste clôt la prestation (en cours -> terminé).
+// Si une photo est fournie, elle est ajoutée au portfolio (donc à la
+// bibliothèque) et reliée à la prestation du RDV.
+export async function finishPrestation(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  const id = String(formData.get("booking_id") || "");
+  const photoUrl = String(formData.get("photo_url") || "").trim();
+  if (!id) return;
+
+  const { data: bk } = await supabase
+    .from("bookings")
+    .select("provider_id, service_id, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (!bk || bk.status !== "en_cours") {
+    revalidatePath("/dashboard/rdv");
+    return;
+  }
+
+  await supabase
+    .from("bookings")
+    .update({ status: "termine", finished_at: new Date().toISOString() })
+    .eq("id", id);
+
+  if (photoUrl) {
+    await supabase.from("portfolio_photos").insert({
+      provider_id: bk.provider_id,
+      image_url: photoUrl,
+      type: "general",
+      service_id: bk.service_id ?? null,
+      caption: null,
+    });
+  }
+
+  revalidatePath("/dashboard/rdv");
+  revalidatePath("/dashboard/portfolio");
+}

@@ -100,6 +100,7 @@ function StatusTag({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
     en_attente: { label: "En attente", cls: "bg-rose/50 text-cacao" },
     confirme: { label: "Confirmé", cls: "bg-green-100 text-green-800" },
+    en_cours: { label: "En cours", cls: "bg-amber-100 text-amber-800" },
     refuse: { label: "Refusée", cls: "bg-red-100 text-red-800" },
     annule: { label: "Annulée", cls: "bg-ivoire text-cacao/60" },
     termine: { label: "Terminée", cls: "bg-ivoire text-cacao/60" },
