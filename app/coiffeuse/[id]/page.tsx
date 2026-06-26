@@ -1,4 +1,4 @@
-import { BadgeCheck, Sparkles, Star, MapPin, Calendar, Lock, Circle } from "lucide-react";
+import { BadgeCheck, Sparkles, Star, MapPin, Calendar, Clock, Lock, Circle } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -25,6 +25,22 @@ interface ReviewRow {
   comment: string | null;
   created_at: string;
 }
+interface AvailRow {
+  day_of_week: number;
+  start_time: string | null;
+  end_time: string | null;
+}
+
+const DAY_NAMES = [
+  "Dimanche",
+  "Lundi",
+  "Mardi",
+  "Mercredi",
+  "Jeudi",
+  "Vendredi",
+  "Samedi",
+];
+const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
 const dispoLabel: Record<string, string> = {
   disponible: "Disponible cette semaine",
@@ -76,6 +92,19 @@ export default async function CoiffeusePage({
   const services = (servicesData as ServiceRow[] | null) ?? [];
   const portfolio = (portfolioData as PortfolioRow[] | null) ?? [];
   const reviews = (reviewsData as ReviewRow[] | null) ?? [];
+
+  const { data: availData } = await supabase
+    .from("availability")
+    .select("day_of_week, start_time, end_time")
+    .eq("provider_id", id);
+  const availMap: Record<number, { start: string; end: string }> = {};
+  for (const a of (availData as AvailRow[] | null) ?? []) {
+    availMap[a.day_of_week] = {
+      start: (a.start_time ?? "").slice(0, 5),
+      end: (a.end_time ?? "").slice(0, 5),
+    };
+  }
+  const availDays = DAY_ORDER.filter((d) => availMap[d]);
 
   const price = (min: number, max: number | null) =>
     max && max > min
@@ -174,6 +203,29 @@ export default async function CoiffeusePage({
             <p className="mt-2 whitespace-pre-line text-cacao/80">
               {provider.bio}
             </p>
+          </section>
+        )}
+
+        {/* Disponibilités */}
+        {availDays.length > 0 && (
+          <section className="mt-6">
+            <h2 className="font-display text-xl">Disponibilités</h2>
+            <ul className="mt-3 space-y-1.5">
+              {availDays.map((d) => (
+                <li
+                  key={d}
+                  className="flex items-center gap-2 text-sm text-cacao/80"
+                >
+                  <Clock className="h-4 w-4 text-or" aria-hidden />
+                  <span className="w-24 font-medium text-cacao">
+                    {DAY_NAMES[d]}
+                  </span>
+                  <span>
+                    {availMap[d].start} – {availMap[d].end}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 

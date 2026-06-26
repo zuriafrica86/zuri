@@ -53,7 +53,14 @@ export async function addService(
   const price_min = parseInt(String(formData.get("price_min") || ""), 10);
   const price_max_raw = String(formData.get("price_max") || "").trim();
   const price_max = price_max_raw ? parseInt(price_max_raw, 10) : null;
-  const duree_estim = String(formData.get("duree_estim") || "").trim() || null;
+  const dh = parseInt(String(formData.get("duree_h") || ""), 10);
+  const dm = parseInt(String(formData.get("duree_min") || ""), 10);
+  const h = Number.isNaN(dh) ? 0 : dh;
+  const m = Number.isNaN(dm) ? 0 : dm;
+  let duree_estim: string | null = null;
+  if (h > 0 && m > 0) duree_estim = `${h}h${m.toString().padStart(2, "0")}`;
+  else if (h > 0) duree_estim = `${h}h`;
+  else if (m > 0) duree_estim = `${m} min`;
   const description = String(formData.get("description") || "").trim() || null;
 
   const name = prestation === AUTRE ? name_custom : prestation;

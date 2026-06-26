@@ -167,7 +167,37 @@ export function ServicesManager({
           />
         </div>
 
-        <Field label="Durée estimée (optionnel)" name="duree_estim" placeholder="4-6h" />
+        <div>
+          <span className="mb-1.5 block text-sm font-medium text-cacao/80">
+            Durée estimée (optionnel)
+          </span>
+          <div className="flex gap-2">
+            <select
+              name="duree_h"
+              defaultValue=""
+              className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+            >
+              <option value="">Heures</option>
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((h) => (
+                <option key={h} value={h}>
+                  {h} h
+                </option>
+              ))}
+            </select>
+            <select
+              name="duree_min"
+              defaultValue=""
+              className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+            >
+              <option value="">Minutes</option>
+              {[0, 15, 30, 45].map((m) => (
+                <option key={m} value={m}>
+                  {m} min
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         <Textarea
           label="Description (optionnel)"
