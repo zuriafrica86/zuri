@@ -100,7 +100,7 @@ export default async function AdminOverviewPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl">Vue d&apos;ensemble</h1>
+      <h1 className="font-display text-2xl">Vue d&apos;ensemble</h1>
       <p className="mt-1 text-sm text-cacao/60">
         Ce qui se passe sur ZURI en ce moment
       </p>
@@ -112,7 +112,7 @@ export default async function AdminOverviewPage() {
         <Stat label="Contacts · 7 j" value={contacts7j ?? 0} />
       </div>
 
-      <h2 className="mt-10 font-display text-xl">Activité récente</h2>
+      <h2 className="mt-6 font-display text-xl">Activité récente</h2>
       {recent.length === 0 ? (
         <p className="mt-3 text-sm text-cacao/50">
           Rien à afficher pour l&apos;instant.
@@ -137,7 +137,7 @@ export default async function AdminOverviewPage() {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-xl2 border border-sable bg-white p-4 text-center">
-      <p className="font-display text-3xl text-cacao">{value}</p>
+      <p className="font-display text-2xl text-cacao">{value}</p>
       <p className="mt-1 text-xs text-cacao/60">{label}</p>
     </div>
   );

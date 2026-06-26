@@ -19,7 +19,7 @@ export default async function AdminComptesPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl">Comptes</h1>
+      <h1 className="font-display text-2xl">Comptes</h1>
       <p className="mt-1 text-sm text-cacao/60">
         Tous les comptes de la plateforme ({users.length})
       </p>

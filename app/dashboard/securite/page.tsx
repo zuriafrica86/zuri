@@ -18,9 +18,9 @@ export default async function SecuritePage() {
         <Logo />
         <LogoutButton />
       </header>
-      <div className="mx-auto max-w-md px-6 py-10">
+      <div className="mx-auto max-w-md px-6 py-6">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="font-display text-3xl">Sécurité</h1>
+          <h1 className="font-display text-2xl">Sécurité</h1>
           <Link
             href="/dashboard"
             className="text-sm text-cacao/60 hover:text-cacao"

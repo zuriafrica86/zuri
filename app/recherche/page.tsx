@@ -106,7 +106,7 @@ export default async function RecherchePage({
       </header>
 
       <div className="mx-auto max-w-5xl px-6 py-8">
-        <h1 className="font-display text-3xl">Trouve ta Zuriste</h1>
+        <h1 className="font-display text-2xl">Trouve ta Zuriste</h1>
         <SearchFilters current={{ ville, univers, categorie, lieu, prix }} />
 
         <p className="mt-6 text-sm text-cacao/60">

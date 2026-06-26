@@ -65,7 +65,7 @@ export default async function ProfilPage() {
         <Logo />
         <LogoutButton />
       </header>
-      <div className="mx-auto max-w-2xl px-6 py-10">
+      <div className="mx-auto max-w-2xl px-6 py-6">
         <ProviderProfileForm userId={user.id} initial={initial} />
       </div>
     </main>

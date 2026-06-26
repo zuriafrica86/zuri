@@ -28,7 +28,7 @@ export function RdvForm({
 
   if (state?.ok) {
     return (
-      <div className="mt-6 rounded-xl2 border border-sable bg-white p-6 text-center">
+      <div className="mt-6 rounded-xl2 border border-sable bg-white p-5 text-center">
         <CheckCircle className="mx-auto h-12 w-12 text-green-600" aria-hidden />
         <h2 className="mt-2 font-display text-xl">Demande envoyée !</h2>
         <p className="mt-2 text-cacao/70">
@@ -46,7 +46,7 @@ export function RdvForm({
   }
 
   return (
-    <form action={action} className="mt-6 space-y-4">
+    <form action={action} className="mt-6 space-y-3">
       <input type="hidden" name="provider_id" value={providerId} />
 
       <label className="block">

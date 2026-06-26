@@ -63,9 +63,9 @@ export default async function CreditPage({
         <LogoutButton />
       </header>
 
-      <div className="mx-auto max-w-2xl px-6 py-10">
+      <div className="mx-auto max-w-2xl px-6 py-6">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="font-display text-3xl">Mon Crédit Zuri</h1>
+          <h1 className="font-display text-2xl">Mon Crédit Zuri</h1>
           <Link href="/dashboard" className="text-sm text-cacao/60 hover:text-cacao">
             ← Retour
           </Link>
@@ -79,9 +79,9 @@ export default async function CreditPage({
         )}
 
         {/* Solde */}
-        <div className="rounded-xl2 border border-sable bg-white p-6 text-center shadow-soft">
+        <div className="rounded-xl2 border border-sable bg-white p-5 text-center shadow-soft">
           <p className="text-sm text-cacao/60">Solde disponible</p>
-          <p className="mt-1 font-display text-4xl text-cacao">
+          <p className="mt-1 font-display text-3xl text-cacao">
             {formatZuri(balance)}
           </p>
           {level === "empty" && (
@@ -118,7 +118,7 @@ export default async function CreditPage({
         </div>
 
         {/* Historique */}
-        <h2 className="mt-8 font-display text-xl">Historique</h2>
+        <h2 className="mt-6 font-display text-xl">Historique</h2>
         {txs.length === 0 ? (
           <p className="mt-3 text-sm text-cacao/50">Aucun mouvement pour l&apos;instant.</p>
         ) : (

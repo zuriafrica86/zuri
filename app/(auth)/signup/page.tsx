@@ -12,7 +12,7 @@ export default function SignupPage() {
 
   return (
     <div>
-      <h2 className="font-display text-3xl">Créer un compte</h2>
+      <h2 className="font-display text-2xl">Créer un compte</h2>
       <p className="mt-2 text-sm text-cacao/60">
         Quelques infos et c&apos;est parti.
       </p>
@@ -33,7 +33,7 @@ export default function SignupPage() {
         ))}
       </div>
 
-      <form action={action} className="mt-6 space-y-4">
+      <form action={action} className="mt-6 space-y-3">
         <input type="hidden" name="role" value={role} />
 
         <div className="grid grid-cols-2 gap-3">

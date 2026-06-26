@@ -75,7 +75,7 @@ export function PortfolioManager({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Galerie existante */}
       <div className="grid grid-cols-2 gap-3">
         {items.length === 0 && (
@@ -127,7 +127,7 @@ export function PortfolioManager({
       <form
         key={formKey}
         action={action}
-        className="space-y-4 rounded-xl2 border border-sable bg-white p-5"
+        className="space-y-3 rounded-xl2 border border-sable bg-white p-5"
       >
         {targetUserId && (
           <input type="hidden" name="target_user_id" value={targetUserId} />

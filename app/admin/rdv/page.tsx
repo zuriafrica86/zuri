@@ -49,7 +49,7 @@ export default async function AdminRdvPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl">Rendez-vous</h1>
+      <h1 className="font-display text-2xl">Rendez-vous</h1>
       <p className="mt-1 text-sm text-cacao/60">
         Toutes les demandes de la plateforme ({bookings.length})
       </p>

@@ -22,7 +22,7 @@ function LoginForm() {
 
   return (
     <div>
-      <h2 className="font-display text-3xl">Bon retour</h2>
+      <h2 className="font-display text-2xl">Bon retour</h2>
       <p className="mt-2 text-sm text-cacao/60">Connecte-toi à ton espace ZURI.</p>
 
       {justVerified && (
@@ -31,7 +31,7 @@ function LoginForm() {
         </p>
       )}
 
-      <form action={action} className="mt-6 space-y-4">
+      <form action={action} className="mt-6 space-y-3">
         <Field label="Email" name="email" type="email" autoComplete="email" required />
         <Field
           label="Mot de passe"

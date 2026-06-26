@@ -68,7 +68,7 @@ export function ProviderProfileForm({
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-display text-3xl">Mon profil Zuriste</h1>
+        <h1 className="font-display text-2xl">Mon profil Zuriste</h1>
         <Link href="/dashboard" className="text-sm text-cacao/60 hover:text-cacao">
           ← Retour
         </Link>

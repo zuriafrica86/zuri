@@ -48,7 +48,7 @@ export function ServicesManager({
     univers && categorie ? prestationsOf(univers, categorie) : [];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Liste des services */}
       <div className="space-y-3">
         {services.length === 0 && (
@@ -97,7 +97,7 @@ export function ServicesManager({
       <form
         key={formKey}
         action={action}
-        className="space-y-4 rounded-xl2 border border-sable bg-white p-5"
+        className="space-y-3 rounded-xl2 border border-sable bg-white p-5"
       >
         {targetUserId && (
           <input type="hidden" name="target_user_id" value={targetUserId} />

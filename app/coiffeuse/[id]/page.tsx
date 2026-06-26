@@ -109,7 +109,7 @@ export default async function CoiffeusePage({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-display text-3xl">
+              <h1 className="font-display text-2xl">
                 {provider.business_name}
               </h1>
               {provider.verified && (
@@ -169,7 +169,7 @@ export default async function CoiffeusePage({
 
         {/* Bio */}
         {provider.bio && (
-          <section className="mt-8">
+          <section className="mt-6">
             <h2 className="font-display text-xl">À propos</h2>
             <p className="mt-2 whitespace-pre-line text-cacao/80">
               {provider.bio}
@@ -179,7 +179,7 @@ export default async function CoiffeusePage({
 
         {/* Services */}
         {services.length > 0 && (
-          <section className="mt-8">
+          <section className="mt-6">
             <h2 className="font-display text-xl">Services</h2>
             <ul className="mt-3 space-y-2">
               {services.map((s) => (
@@ -209,7 +209,7 @@ export default async function CoiffeusePage({
 
         {/* Portfolio */}
         {portfolio.length > 0 && (
-          <section className="mt-8">
+          <section className="mt-6">
             <h2 className="font-display text-xl">Réalisations</h2>
             <div className="mt-3 grid grid-cols-2 gap-3">
               {portfolio.map((it) => (
@@ -237,7 +237,7 @@ export default async function CoiffeusePage({
         )}
 
         {/* Avis */}
-        <section className="mt-8">
+        <section className="mt-6">
           <h2 className="font-display text-xl">Avis</h2>
           {reviews.length === 0 ? (
             <p className="mt-2 text-sm text-cacao/50">Pas encore d&apos;avis.</p>

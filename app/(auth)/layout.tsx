@@ -15,7 +15,7 @@ export default function AuthLayout({
           <p className="mb-3 text-sm uppercase tracking-[0.2em] text-or-clair">
             Beauté locale · Gabon
           </p>
-          <h1 className="font-display text-4xl leading-tight md:text-5xl">
+          <h1 className="font-display text-3xl leading-tight md:text-5xl">
             Trouve une Zuriste de confiance, près de chez toi.
           </h1>
           <p className="mt-5 text-base leading-relaxed text-ivoire/80">
@@ -29,9 +29,9 @@ export default function AuthLayout({
       </section>
 
       {/* Formulaire (droite) */}
-      <section className="flex min-h-screen flex-col justify-center px-6 py-12 sm:px-12">
+      <section className="flex min-h-screen flex-col justify-center px-6 py-8 sm:px-12">
         <div className="mx-auto w-full max-w-sm">
-          <div className="mb-8 md:hidden">
+          <div className="mb-6 md:hidden">
             <Logo />
           </div>
           {children}

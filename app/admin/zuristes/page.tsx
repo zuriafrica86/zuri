@@ -1,4 +1,4 @@
-import { Sparkles, BadgeCheck } from "lucide-react";
+import { Sparkles, BadgeCheck, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CreateZuristeForm } from "@/components/create-zuriste-form";
@@ -48,16 +48,18 @@ export default async function ZuristesPage({
 
   let q = supabase
     .from("providers")
-    .select("id, business_name, ville, quartier, status, ambassadrice, verified, credit_balance")
+    .select(
+      "id, business_name, ville, quartier, status, ambassadrice, verified, credit_balance"
+    )
     .order("created_at", { ascending: false });
   if (statut) q = q.eq("status", statut);
   const { data } = await q;
   const rows = (data as Row[] | null) ?? [];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <div>
-        <h1 className="font-display text-3xl">Zuristes</h1>
+        <h1 className="font-display text-2xl">Zuristes</h1>
         <p className="mt-1 text-sm text-cacao/60">
           Valide, suspends, et gère tes Zuristes.
         </p>
@@ -90,112 +92,131 @@ export default async function ZuristesPage({
       {rows.length === 0 ? (
         <p className="text-sm text-cacao/50">Aucune Zuriste dans ce filtre.</p>
       ) : (
-        <ul className="space-y-3">
+        <div className="space-y-2">
           {rows.map((r) => {
             const s = STATUS[r.status] ?? STATUS.pending;
             return (
-              <li
+              <details
                 key={r.id}
-                className="rounded-xl2 border border-sable bg-white p-4"
+                className="group rounded-xl2 border border-sable bg-white"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-medium">
-                      {r.business_name}
-                      {r.ambassadrice && <Sparkles className="ml-2 inline h-4 w-4 align-[-0.2em] text-or" aria-hidden />}
-                      {r.verified && <BadgeCheck className="ml-1 inline h-4 w-4 align-[-0.2em] text-or" aria-hidden />}
+                <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-2.5 [&::-webkit-details-marker]:hidden">
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-center gap-1 truncate font-medium">
+                      <span className="truncate">{r.business_name}</span>
+                      {r.ambassadrice && (
+                        <Sparkles
+                          className="h-3.5 w-3.5 shrink-0 text-or"
+                          aria-hidden
+                        />
+                      )}
+                      {r.verified && (
+                        <BadgeCheck
+                          className="h-3.5 w-3.5 shrink-0 text-or"
+                          aria-hidden
+                        />
+                      )}
                     </p>
-                    <p className="text-sm text-cacao/60">
-                      {r.quartier ? `${r.quartier}, ` : ""}
-                      {r.ville ?? "—"}
+                    <p className="truncate text-xs text-cacao/50">
+                      {r.ville ?? "—"} · {formatZuri(r.credit_balance ?? 0)}
                     </p>
                   </div>
                   <span
-                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs ${s.cls}`}
+                    className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs ${s.cls}`}
                   >
                     {s.label}
                   </span>
-                </div>
+                  <ChevronDown
+                    className="h-4 w-4 shrink-0 text-cacao/40 transition group-open:rotate-180"
+                    aria-hidden
+                  />
+                </summary>
 
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {(r.status === "pending" ||
-                    r.status === "rejected" ||
-                    r.status === "suspended") && (
-                    <Action
-                      action={approveProvider}
-                      id={r.id}
-                      label={r.status === "pending" ? "Valider" : "Réactiver"}
-                      primary
-                    />
+                <div className="space-y-3 border-t border-sable px-4 py-3">
+                  {r.quartier && (
+                    <p className="text-sm text-cacao/60">{r.quartier}</p>
                   )}
-                  {r.status === "pending" && (
-                    <Action action={rejectProvider} id={r.id} label="Refuser" />
-                  )}
-                  {r.status === "approved" && (
-                    <>
+
+                  <div className="flex flex-wrap gap-2">
+                    {(r.status === "pending" ||
+                      r.status === "rejected" ||
+                      r.status === "suspended") && (
                       <Action
-                        action={suspendProvider}
+                        action={approveProvider}
                         id={r.id}
-                        label="Suspendre"
+                        label={r.status === "pending" ? "Valider" : "Réactiver"}
+                        primary
                       />
-                      <Toggle
-                        action={toggleAmbassadrice}
-                        id={r.id}
-                        next={!r.ambassadrice}
-                        label={
-                          r.ambassadrice
-                            ? "Retirer Ambassadrice"
-                            : "Nommer Ambassadrice"
-                        }
-                      />
-                      <Toggle
-                        action={toggleVerified}
-                        id={r.id}
-                        next={!r.verified}
-                        label={
-                          r.verified ? "Retirer Vérifiée" : "Marquer Vérifiée"
-                        }
-                      />
-                    </>
-                  )}
-                </div>
+                    )}
+                    {r.status === "pending" && (
+                      <Action action={rejectProvider} id={r.id} label="Refuser" />
+                    )}
+                    {r.status === "approved" && (
+                      <>
+                        <Action
+                          action={suspendProvider}
+                          id={r.id}
+                          label="Suspendre"
+                        />
+                        <Toggle
+                          action={toggleAmbassadrice}
+                          id={r.id}
+                          next={!r.ambassadrice}
+                          label={
+                            r.ambassadrice
+                              ? "Retirer Ambassadrice"
+                              : "Nommer Ambassadrice"
+                          }
+                        />
+                        <Toggle
+                          action={toggleVerified}
+                          id={r.id}
+                          next={!r.verified}
+                          label={
+                            r.verified ? "Retirer Vérifiée" : "Marquer Vérifiée"
+                          }
+                        />
+                      </>
+                    )}
+                  </div>
 
-                <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-sable pt-3">
-                  <span className="text-sm text-cacao/70">
-                    Crédit Zuri :{" "}
-                    <span className="font-medium text-cacao">
-                      {formatZuri(r.credit_balance ?? 0)}
+                  <div className="flex flex-wrap items-center gap-2 border-t border-sable pt-3">
+                    <span className="text-sm text-cacao/70">
+                      Crédit Zuri :{" "}
+                      <span className="font-medium text-cacao">
+                        {formatZuri(r.credit_balance ?? 0)}
+                      </span>
                     </span>
-                  </span>
-                  <form
-                    action={creditWallet}
-                    className="flex flex-wrap items-center gap-2"
-                  >
-                    <input type="hidden" name="provider_id" value={r.id} />
-                    <input
-                      name="amount"
-                      type="number"
-                      inputMode="numeric"
-                      placeholder="+ montant"
-                      className="w-28 rounded-xl2 border border-sable bg-white px-3 py-1.5 text-sm"
-                    />
-                    <input
-                      name="reason"
-                      placeholder="Motif (ex. recharge)"
-                      className="w-40 rounded-xl2 border border-sable bg-white px-3 py-1.5 text-sm"
-                    />
-                    <button
-                      type="submit"
-                      className="rounded-xl2 bg-or px-3 py-1.5 text-sm font-medium text-cacao hover:bg-or-clair"
+                    <form
+                      action={creditWallet}
+                      className="flex flex-wrap items-center gap-2"
                     >
-                      Créditer
-                    </button>
-                  </form>
+                      <input type="hidden" name="provider_id" value={r.id} />
+                      <input
+                        name="amount"
+                        type="number"
+                        inputMode="numeric"
+                        placeholder="+ montant"
+                        className="w-28 rounded-xl2 border border-sable bg-white px-3 py-1.5 text-sm"
+                      />
+                      <input
+                        name="reason"
+                        placeholder="Motif (ex. recharge)"
+                        className="w-40 rounded-xl2 border border-sable bg-white px-3 py-1.5 text-sm"
+                      />
+                      <button
+                        type="submit"
+                        className="rounded-xl2 bg-or px-3 py-1.5 text-sm font-medium text-cacao hover:bg-or-clair"
+                      >
+                        Créditer
+                      </button>
+                    </form>
+                  </div>
                 </div>
-              </li>
+              </details>
             );
           })}
-        </ul>
+        </div>
       )}
     </div>
   );
@@ -219,8 +240,8 @@ function Action({
         type="submit"
         className={
           primary
-            ? "rounded-xl2 bg-or px-3 py-2 text-sm font-medium text-cacao hover:bg-or-clair"
-            : "rounded-xl2 border border-sable px-3 py-2 text-sm text-cacao/70 hover:bg-rose/30"
+            ? "rounded-xl2 bg-or px-3 py-1.5 text-sm font-medium text-cacao hover:bg-or-clair"
+            : "rounded-xl2 border border-sable px-3 py-1.5 text-sm text-cacao/70 hover:bg-rose/30"
         }
       >
         {label}
@@ -246,7 +267,7 @@ function Toggle({
       <input type="hidden" name="next" value={next ? "true" : "false"} />
       <button
         type="submit"
-        className="rounded-xl2 border border-sable px-3 py-2 text-sm text-cacao/70 hover:bg-rose/30"
+        className="rounded-xl2 border border-sable px-3 py-1.5 text-sm text-cacao/70 hover:bg-rose/30"
       >
         {label}
       </button>

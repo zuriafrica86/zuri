@@ -31,7 +31,7 @@ export default async function HomePage() {
         <p className="mb-4 text-sm uppercase tracking-[0.2em] text-or">
           Beauté locale · Gabon
         </p>
-        <h1 className="font-display text-5xl leading-[1.05] sm:text-6xl">
+        <h1 className="font-display text-4xl leading-[1.05] sm:text-6xl">
           Trouve ta Zuriste
           <br />
           <span className="italic text-or">de confiance.</span>
@@ -54,7 +54,7 @@ export default async function HomePage() {
             J&apos;ai déjà un compte
           </Link>
         </div>
-        <p className="mt-10 text-sm text-cacao/50">
+        <p className="mt-6 text-sm text-cacao/50">
           Découvre les profils et les réalisations. La prise de RDV arrive très bientôt.
         </p>
       </section>

@@ -38,7 +38,7 @@ export default async function AdminContactsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl">Contacts</h1>
+      <h1 className="font-display text-2xl">Contacts</h1>
       <p className="mt-1 text-sm text-cacao/60">
         Les mises en relation WhatsApp — ton signal de conversion ({events.length})
       </p>

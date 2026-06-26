@@ -44,7 +44,7 @@ export default async function RdvPage({
       </header>
 
       <div className="mx-auto max-w-md px-6 py-8">
-        <h1 className="font-display text-3xl">Demander un RDV</h1>
+        <h1 className="font-display text-2xl">Demander un RDV</h1>
         <p className="mt-1 text-cacao/60">avec {provider.business_name}</p>
 
         {!user ? (

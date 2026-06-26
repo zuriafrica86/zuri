@@ -45,9 +45,9 @@ export default async function PortfolioPage() {
         <Logo />
         <LogoutButton />
       </header>
-      <div className="mx-auto max-w-2xl px-6 py-10">
+      <div className="mx-auto max-w-2xl px-6 py-6">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="font-display text-3xl">Mon portfolio</h1>
+          <h1 className="font-display text-2xl">Mon portfolio</h1>
           <Link href="/dashboard" className="text-sm text-cacao/60 hover:text-cacao">
             ← Retour
           </Link>

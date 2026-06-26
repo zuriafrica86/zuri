@@ -41,14 +41,14 @@ export default async function DashboardPage() {
         <LogoutButton />
       </header>
 
-      <div className="mx-auto max-w-2xl px-6 py-16">
+      <div className="mx-auto max-w-2xl px-6 py-8">
         <p className="text-sm uppercase tracking-[0.15em] text-or">
           Espace {role === "prestataire" ? "Zuriste" : role === "admin" ? "admin" : "cliente"}
         </p>
-        <h1 className="mt-2 font-display text-4xl">Bonjour {prenom}</h1>
+        <h1 className="mt-2 font-display text-3xl">Bonjour {prenom}</h1>
 
         {role === "cliente" && (
-          <div className="mt-4 space-y-4">
+          <div className="mt-4 space-y-3">
             <p className="text-cacao/70">
               Trouve une Zuriste de confiance et suis tes demandes de RDV.
             </p>
@@ -69,7 +69,7 @@ export default async function DashboardPage() {
           </div>
         )}
         {role === "prestataire" && (
-          <div className="mt-4 space-y-4">
+          <div className="mt-4 space-y-3">
             <p className="text-cacao/70">
               Gère ton profil public, tes prestations et tes réalisations.
             </p>
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
           </div>
         )}
         {role === "admin" && (
-          <div className="mt-4 space-y-4">
+          <div className="mt-4 space-y-3">
             <p className="text-cacao/70">
               Valide les Zuristes, suis tes statistiques et gère les comptes.
             </p>
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="mt-8 flex items-center justify-between rounded-xl2 border border-sable bg-white p-5 shadow-soft">
+        <div className="mt-6 flex items-center justify-between rounded-xl2 border border-sable bg-white p-5 shadow-soft">
           <p className="text-sm text-cacao/60">
             Connectée en tant que{" "}
             <span className="font-medium text-cacao">{user.email}</span>.
