@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Sparkles, BadgeCheck, Star, Circle } from "lucide-react";
 
 export interface CardProvider {
   id: string;
@@ -13,11 +14,6 @@ export interface CardProvider {
   rating_count: number;
   minPrice: number | null;
 }
-
-const dispoLabel: Record<string, string> = {
-  disponible: "🟢 Disponible",
-  indisponible: "⚪ Indisponible",
-};
 
 export function ProviderCard({ provider: p }: { provider: CardProvider }) {
   return (
@@ -39,8 +35,9 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
           </div>
         )}
         {p.ambassadrice && (
-          <span className="absolute left-2 top-2 rounded-full bg-or px-2 py-0.5 text-xs font-medium text-cacao shadow-soft">
-            ✨ Ambassadrice
+          <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-or px-2 py-0.5 text-xs font-medium text-cacao shadow-soft">
+            <Sparkles className="h-3.5 w-3.5" aria-hidden />
+            Ambassadrice
           </span>
         )}
       </div>
@@ -48,7 +45,10 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
         <div className="flex items-center justify-between gap-2">
           <h3 className="truncate font-medium">{p.business_name}</h3>
           {p.verified && (
-            <span className="shrink-0 text-xs text-or">✔ Vérifiée</span>
+            <span className="flex shrink-0 items-center gap-1 text-xs text-or">
+              <BadgeCheck className="h-4 w-4" aria-hidden />
+              Vérifiée
+            </span>
           )}
         </div>
         <p className="text-sm text-cacao/60">
@@ -56,10 +56,15 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
           {p.ville}
         </p>
         <div className="mt-2 flex items-center justify-between text-sm">
-          <span className="text-cacao/70">
-            {p.rating_count > 0
-              ? `⭐ ${p.rating_avg.toFixed(1)} (${p.rating_count})`
-              : "Nouvelle"}
+          <span className="flex items-center gap-1 text-cacao/70">
+            {p.rating_count > 0 ? (
+              <>
+                <Star className="h-4 w-4 text-or" aria-hidden />
+                {p.rating_avg.toFixed(1)} ({p.rating_count})
+              </>
+            ) : (
+              "Nouvelle"
+            )}
           </span>
           {p.minPrice != null && (
             <span className="font-medium text-cacao">
@@ -67,7 +72,17 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
             </span>
           )}
         </div>
-        <p className="mt-1 text-xs text-cacao/50">{dispoLabel[p.dispo] ?? ""}</p>
+        <p className="mt-1 flex items-center gap-1 text-xs text-cacao/50">
+          <Circle
+            className={
+              p.dispo === "disponible"
+                ? "h-2.5 w-2.5 fill-green-500 text-green-500"
+                : "h-2.5 w-2.5 fill-cacao/30 text-cacao/30"
+            }
+            aria-hidden
+          />
+          {p.dispo === "disponible" ? "Disponible" : "Indisponible"}
+        </p>
       </div>
     </Link>
   );

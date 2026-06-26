@@ -1,8 +1,9 @@
+import { UserPlus, CalendarDays, MessageCircle, type LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
 interface Activity {
   ts: string;
-  icon: string;
+  icon: LucideIcon;
   text: string;
 }
 
@@ -72,7 +73,7 @@ export default async function AdminOverviewPage() {
   for (const p of (provs as ProvRow[] | null) ?? [])
     activity.push({
       ts: p.created_at,
-      icon: "👤",
+      icon: UserPlus,
       text: `Nouvelle Zuriste — ${p.business_name}`,
     });
   for (const b of (books as BookRow[] | null) ?? []) {
@@ -85,12 +86,12 @@ export default async function AdminOverviewPage() {
           : b.status === "refuse"
             ? "RDV refusé"
             : "RDV mis à jour";
-    activity.push({ ts: b.created_at, icon: "📅", text: `${label} — ${name}` });
+    activity.push({ ts: b.created_at, icon: CalendarDays, text: `${label} — ${name}` });
   }
   for (const c of (contacts as ContactRow[] | null) ?? [])
     activity.push({
       ts: c.created_at,
-      icon: "💬",
+      icon: MessageCircle,
       text: `Contact WhatsApp — ${c.providers?.business_name ?? "Zuriste"}`,
     });
 
@@ -120,7 +121,7 @@ export default async function AdminOverviewPage() {
         <ul className="mt-3 divide-y divide-sable rounded-xl2 border border-sable bg-white">
           {recent.map((a, i) => (
             <li key={i} className="flex items-center gap-3 px-4 py-3">
-              <span aria-hidden>{a.icon}</span>
+              <a.icon className="h-4 w-4 text-cacao/50" aria-hidden />
               <span className="flex-1 text-sm">{a.text}</span>
               <span className="shrink-0 text-xs text-cacao/40">
                 {timeAgo(a.ts)}

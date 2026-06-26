@@ -1,3 +1,4 @@
+import { Phone, Lock } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -84,13 +85,13 @@ export default async function MesRdvPage() {
                       type="submit"
                       className="w-full rounded-xl2 bg-[#25D366] px-4 py-2.5 text-sm font-medium text-white hover:opacity-90"
                     >
-                      📲 Contacter sur WhatsApp
+                      <Phone className="inline h-4 w-4 align-[-0.2em]" aria-hidden /> Contacter sur WhatsApp
                     </button>
                   </form>
                 )}
                 {b.status === "en_attente" && (
                   <p className="mt-2 text-sm text-cacao/50">
-                    🔒 Contact disponible une fois la Zuriste l&apos;ayant
+                    <Lock className="mr-1 inline h-3.5 w-3.5 align-[-0.15em]" aria-hidden />Contact disponible une fois la Zuriste l&apos;ayant
                     confirmé.
                   </p>
                 )}
@@ -106,7 +107,7 @@ export default async function MesRdvPage() {
 function StatusTag({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
     en_attente: { label: "En attente", cls: "bg-rose/50 text-cacao" },
-    confirme: { label: "Confirmé ✅", cls: "bg-green-100 text-green-800" },
+    confirme: { label: "Confirmé", cls: "bg-green-100 text-green-800" },
     refuse: { label: "Refusée", cls: "bg-red-100 text-red-800" },
     annule: { label: "Annulée", cls: "bg-ivoire text-cacao/60" },
     termine: { label: "Terminée", cls: "bg-ivoire text-cacao/60" },

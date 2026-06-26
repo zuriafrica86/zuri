@@ -2,15 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  Users,
+  CalendarDays,
+  MessageCircle,
+  User,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
 import { Logo } from "@/components/logo";
 
-const items = [
-  { href: "/admin", label: "Vue d'ensemble", icon: "📊" },
-  { href: "/admin/zuristes", label: "Zuristes", icon: "👤" },
-  { href: "/admin/rdv", label: "Rendez-vous", icon: "📅" },
-  { href: "/admin/contacts", label: "Contacts", icon: "💬" },
-  { href: "/admin/clientes", label: "Clientes", icon: "🧑" },
-  { href: "/admin/comptes", label: "Comptes", icon: "⚙️" },
+const items: { href: string; label: string; Icon: LucideIcon }[] = [
+  { href: "/admin", label: "Vue d'ensemble", Icon: LayoutDashboard },
+  { href: "/admin/zuristes", label: "Zuristes", Icon: Users },
+  { href: "/admin/rdv", label: "Rendez-vous", Icon: CalendarDays },
+  { href: "/admin/contacts", label: "Contacts", Icon: MessageCircle },
+  { href: "/admin/clientes", label: "Clientes", Icon: User },
+  { href: "/admin/comptes", label: "Comptes", Icon: Settings },
 ];
 
 export function AdminSidebar() {
@@ -21,22 +30,21 @@ export function AdminSidebar() {
         <Logo />
       </div>
       <nav className="space-y-1">
-        {items.map((it) => {
+        {items.map(({ href, label, Icon }) => {
           const active =
-            it.href === "/admin"
-              ? path === "/admin"
-              : path.startsWith(it.href);
+            href === "/admin" ? path === "/admin" : path.startsWith(href);
           return (
             <Link
-              key={it.href}
-              href={it.href}
+              key={href}
+              href={href}
               className={
                 active
                   ? "flex items-center gap-3 rounded-xl2 bg-cacao px-3 py-2.5 text-sm font-medium text-ivoire"
                   : "flex items-center gap-3 rounded-xl2 px-3 py-2.5 text-sm text-cacao/70 transition hover:bg-rose/30"
               }
             >
-              <span aria-hidden>{it.icon}</span> {it.label}
+              <Icon className="h-[18px] w-[18px]" aria-hidden />
+              {label}
             </Link>
           );
         })}

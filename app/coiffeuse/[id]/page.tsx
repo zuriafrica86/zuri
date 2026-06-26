@@ -1,3 +1,4 @@
+import { BadgeCheck, Sparkles, Star, MapPin, Calendar, Lock, Circle } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -26,8 +27,8 @@ interface ReviewRow {
 }
 
 const dispoLabel: Record<string, string> = {
-  disponible: "🟢 Disponible cette semaine",
-  indisponible: "⚪ Actuellement indisponible",
+  disponible: "Disponible cette semaine",
+  indisponible: "Actuellement indisponible",
 };
 
 const lieuLabel: Record<string, string> = {
@@ -112,11 +113,11 @@ export default async function CoiffeusePage({
                 {provider.business_name}
               </h1>
               {provider.verified && (
-                <span className="text-sm text-or">✔ Vérifiée</span>
+                <span className="flex items-center gap-1 text-sm text-or"><BadgeCheck className="h-4 w-4" aria-hidden />Vérifiée</span>
               )}
               {provider.ambassadrice && (
                 <span className="rounded-full bg-or px-2 py-0.5 text-xs font-medium text-cacao">
-                  ✨ Ambassadrice
+                  <Sparkles className="inline h-3.5 w-3.5 align-[-0.15em]" aria-hidden /> Ambassadrice
                 </span>
               )}
             </div>
@@ -124,15 +125,30 @@ export default async function CoiffeusePage({
               {provider.quartier ? `${provider.quartier}, ` : ""}
               {provider.ville}
             </p>
-            <p className="mt-1 text-sm text-cacao/60">
-              {provider.rating_count > 0
-                ? `⭐ ${provider.rating_avg.toFixed(1)} (${provider.rating_count} avis)`
-                : "Nouvelle sur ZURI"}{" "}
-              · {dispoLabel[provider.dispo] ?? ""}
+            <p className="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-cacao/60">
+              {provider.rating_count > 0 ? (
+                <span className="flex items-center gap-1">
+                  <Star className="h-4 w-4 text-or" aria-hidden />
+                  {provider.rating_avg.toFixed(1)} ({provider.rating_count} avis)
+                </span>
+              ) : (
+                <span>Nouvelle sur ZURI</span>
+              )}
+              <span className="text-cacao/30">·</span>
+              <Circle
+                className={
+                  provider.dispo === "disponible"
+                    ? "h-2.5 w-2.5 fill-green-500 text-green-500"
+                    : "h-2.5 w-2.5 fill-cacao/30 text-cacao/30"
+                }
+                aria-hidden
+              />
+              {dispoLabel[provider.dispo] ?? ""}
             </p>
             {provider.lieu && (
-              <p className="mt-1 text-sm text-cacao/60">
-                📍 {lieuLabel[provider.lieu] ?? ""}
+              <p className="mt-1 flex items-center gap-1 text-sm text-cacao/60">
+                <MapPin className="h-4 w-4" aria-hidden />
+                {lieuLabel[provider.lieu] ?? ""}
               </p>
             )}
           </div>
@@ -144,10 +160,10 @@ export default async function CoiffeusePage({
             href={`/coiffeuse/${provider.id}/rdv`}
             className="block w-full rounded-xl2 bg-or px-5 py-3 text-center font-medium text-cacao shadow-soft transition hover:bg-or-clair"
           >
-            📅 Demander un RDV
+            <Calendar className="inline h-4 w-4 align-[-0.2em]" aria-hidden /> Demander un RDV
           </Link>
           <p className="mt-2 text-center text-sm text-cacao/60">
-            🔒 Le contact de la Zuriste se débloque après confirmation du RDV.
+            <Lock className="mr-1 inline h-3.5 w-3.5 align-[-0.15em]" aria-hidden />Le contact de la Zuriste se débloque après confirmation du RDV.
           </p>
         </div>
 
@@ -232,7 +248,7 @@ export default async function CoiffeusePage({
                   key={i}
                   className="rounded-xl2 border border-sable bg-white p-3"
                 >
-                  <p className="text-or">{"⭐".repeat(r.rating)}</p>
+                  <p className="flex gap-0.5 text-or">{Array.from({ length: r.rating }).map((_, j) => (<Star key={j} className="h-4 w-4" aria-hidden />))}</p>
                   {r.comment && (
                     <p className="mt-1 text-sm text-cacao/80">{r.comment}</p>
                   )}

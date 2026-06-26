@@ -1,3 +1,4 @@
+import { MessageCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
 interface ContactEvent {
@@ -48,7 +49,7 @@ export default async function AdminContactsPage() {
         <ul className="mt-6 divide-y divide-sable rounded-xl2 border border-sable bg-white">
           {events.map((e) => (
             <li key={e.id} className="flex items-center gap-3 px-4 py-3">
-              <span aria-hidden>💬</span>
+              <MessageCircle className="h-4 w-4 text-cacao/50" aria-hidden />
               <span className="flex-1 text-sm">
                 {e.cliente_id ? names[e.cliente_id] ?? "Cliente" : "Cliente"}{" "}
                 <span className="text-cacao/40">→</span>{" "}

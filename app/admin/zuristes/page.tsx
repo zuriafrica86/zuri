@@ -1,3 +1,4 @@
+import { Sparkles, BadgeCheck } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CreateZuristeForm } from "@/components/create-zuriste-form";
@@ -101,8 +102,8 @@ export default async function ZuristesPage({
                   <div>
                     <p className="font-medium">
                       {r.business_name}
-                      {r.ambassadrice && <span className="ml-2 text-or">✨</span>}
-                      {r.verified && <span className="ml-1 text-or">✔</span>}
+                      {r.ambassadrice && <Sparkles className="ml-2 inline h-4 w-4 align-[-0.2em] text-or" aria-hidden />}
+                      {r.verified && <BadgeCheck className="ml-1 inline h-4 w-4 align-[-0.2em] text-or" aria-hidden />}
                     </p>
                     <p className="text-sm text-cacao/60">
                       {r.quartier ? `${r.quartier}, ` : ""}

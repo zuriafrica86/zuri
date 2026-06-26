@@ -22,7 +22,7 @@ function LoginForm() {
 
   return (
     <div>
-      <h2 className="font-display text-3xl">Bon retour 🌸</h2>
+      <h2 className="font-display text-3xl">Bon retour</h2>
       <p className="mt-2 text-sm text-cacao/60">Connecte-toi à ton espace ZURI.</p>
 
       {justVerified && (

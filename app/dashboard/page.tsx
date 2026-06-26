@@ -1,3 +1,4 @@
+import { Lock } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -44,7 +45,7 @@ export default async function DashboardPage() {
         <p className="text-sm uppercase tracking-[0.15em] text-or">
           Espace {role === "prestataire" ? "Zuriste" : role === "admin" ? "admin" : "cliente"}
         </p>
-        <h1 className="mt-2 font-display text-4xl">Bonjour {prenom} 🌸</h1>
+        <h1 className="mt-2 font-display text-4xl">Bonjour {prenom}</h1>
 
         {role === "cliente" && (
           <div className="mt-4 space-y-4">
@@ -151,7 +152,7 @@ export default async function DashboardPage() {
             href="/dashboard/securite"
             className="shrink-0 text-sm font-medium text-or hover:underline"
           >
-            🔒 Mot de passe
+            <Lock className="inline h-4 w-4 align-[-0.2em]" aria-hidden /> Mot de passe
           </Link>
         </div>
       </div>

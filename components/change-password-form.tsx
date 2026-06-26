@@ -25,7 +25,7 @@ export function ChangePasswordForm() {
         text: "Échec. Déconnecte-toi, reconnecte-toi puis réessaie.",
       });
     } else {
-      setMsg({ ok: true, text: "Mot de passe mis à jour ✅" });
+      setMsg({ ok: true, text: "Mot de passe mis à jour" });
       setPw("");
     }
   }

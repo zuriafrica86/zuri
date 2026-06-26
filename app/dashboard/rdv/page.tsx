@@ -19,7 +19,7 @@ interface BookingRow {
 
 const STATUS: Record<string, { label: string; cls: string }> = {
   en_attente: { label: "En attente", cls: "bg-rose/50 text-cacao" },
-  confirme: { label: "Confirmé ✅", cls: "bg-green-100 text-green-800" },
+  confirme: { label: "Confirmé", cls: "bg-green-100 text-green-800" },
   refuse: { label: "Refusé", cls: "bg-red-100 text-red-800" },
   annule: { label: "Annulé", cls: "bg-ivoire text-cacao/60" },
   termine: { label: "Terminé", cls: "bg-ivoire text-cacao/60" },

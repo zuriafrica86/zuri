@@ -203,7 +203,7 @@ export function ProviderProfileForm({
         )}
         {state?.ok && (
           <p className="rounded-xl2 bg-green-100 px-4 py-2 text-sm text-green-800">
-            Profil enregistré ✅
+            Profil enregistré
           </p>
         )}
 
@@ -221,7 +221,7 @@ export function ProviderProfileForm({
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
     pending: { label: "En attente de validation", cls: "bg-rose/50 text-cacao" },
-    approved: { label: "Profil approuvé ✅", cls: "bg-green-100 text-green-800" },
+    approved: { label: "Profil approuvé", cls: "bg-green-100 text-green-800" },
     rejected: { label: "Profil refusé", cls: "bg-red-100 text-red-800" },
   };
   const s = map[status] ?? map.pending;

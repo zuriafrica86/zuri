@@ -1,4 +1,5 @@
 "use client";
+import { CheckCircle, Lock } from "lucide-react";
 
 import Link from "next/link";
 import { useActionState } from "react";
@@ -28,7 +29,7 @@ export function RdvForm({
   if (state?.ok) {
     return (
       <div className="mt-6 rounded-xl2 border border-sable bg-white p-6 text-center">
-        <p className="text-3xl">✅</p>
+        <CheckCircle className="mx-auto h-12 w-12 text-green-600" aria-hidden />
         <h2 className="mt-2 font-display text-xl">Demande envoyée !</h2>
         <p className="mt-2 text-cacao/70">
           La Zuriste va confirmer ton rendez-vous. Tu recevras son contact
@@ -82,7 +83,7 @@ export function RdvForm({
 
       <SubmitButton>Envoyer la demande</SubmitButton>
       <p className="text-center text-xs text-cacao/50">
-        🔒 Le numéro de la Zuriste te sera communiqué une fois le RDV confirmé.
+        <Lock className="mr-1 inline h-3.5 w-3.5 align-[-0.15em]" aria-hidden />Le numéro de la Zuriste te sera communiqué une fois le RDV confirmé.
       </p>
     </form>
   );
