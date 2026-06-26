@@ -1,7 +1,15 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/logo";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) redirect("/dashboard");
+
   return (
     <main className="min-h-screen">
       <header className="flex items-center justify-between px-6 py-5 sm:px-10">

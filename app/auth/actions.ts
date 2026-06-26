@@ -16,12 +16,14 @@ export async function signup(
 
   const email = String(formData.get("email") || "").trim();
   const password = String(formData.get("password") || "");
-  const full_name = String(formData.get("full_name") || "").trim();
+  const prenom = String(formData.get("prenom") || "").trim();
+  const nom = String(formData.get("nom") || "").trim();
+  const full_name = `${prenom} ${nom}`.trim();
   const phone = String(formData.get("phone") || "").trim();
   const role = String(formData.get("role") || "cliente");
 
-  if (!email || !password || !full_name) {
-    return { error: "Nom, email et mot de passe sont obligatoires." };
+  if (!email || !password || !prenom || !nom) {
+    return { error: "Prénom, nom, email et mot de passe sont obligatoires." };
   }
   if (password.length < 6) {
     return { error: "Le mot de passe doit faire au moins 6 caractères." };
@@ -30,13 +32,13 @@ export async function signup(
     return { error: "Rôle invalide." };
   }
 
-  // full_name / phone / role partent dans les métadonnées →
+  // full_name / prenom / nom / phone / role partent dans les métadonnées →
   // le trigger SQL handle_new_user() crée la ligne profiles.
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: { full_name, phone, role },
+      data: { full_name, prenom, nom, phone, role },
       emailRedirectTo: `${origin}/auth/callback`,
     },
   });

@@ -30,20 +30,34 @@ export default async function ProfilPage() {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  // Les numéros vivent dans la table isolée : on les charge pour pré-remplir.
-  let initial: ProviderInitial | null = null;
+  // Valeurs saisies à l'inscription (métadonnées) — servent à pré-remplir.
+  const meta = (user.user_metadata ?? {}) as Record<string, string>;
+  const fullName = (meta.full_name ?? "").trim();
+  const parts = fullName.split(/\s+/).filter(Boolean);
+  const metaPrenom = meta.prenom || parts[0] || "";
+  const metaNom = meta.nom || parts.slice(1).join(" ") || "";
+  const metaPhone = meta.phone || "";
+
+  let contactWhatsapp = "";
+  let contactPhone = "";
   if (provider) {
     const { data: contact } = await supabase
       .from("provider_contacts")
       .select("whatsapp_number, phone_number")
       .eq("provider_id", provider.id)
       .maybeSingle();
-    initial = {
-      ...(provider as ProviderInitial),
-      whatsapp_number: contact?.whatsapp_number ?? "",
-      phone_number: contact?.phone_number ?? "",
-    };
+    contactWhatsapp = contact?.whatsapp_number ?? "";
+    contactPhone = contact?.phone_number ?? "";
   }
+
+  const p = (provider ?? {}) as ProviderInitial;
+  const initial: ProviderInitial = {
+    ...p,
+    prenom: (p.prenom ?? "") || metaPrenom,
+    nom: (p.nom ?? "") || metaNom,
+    whatsapp_number: contactWhatsapp || metaPhone,
+    phone_number: contactPhone,
+  };
 
   return (
     <main className="min-h-screen">

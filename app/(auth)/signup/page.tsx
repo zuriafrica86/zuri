@@ -36,7 +36,10 @@ export default function SignupPage() {
       <form action={action} className="mt-6 space-y-4">
         <input type="hidden" name="role" value={role} />
 
-        <Field label="Nom complet" name="full_name" type="text" autoComplete="name" required />
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Prénom" name="prenom" type="text" autoComplete="given-name" required />
+          <Field label="Nom" name="nom" type="text" autoComplete="family-name" required />
+        </div>
         <Field label="Email" name="email" type="email" autoComplete="email" required />
         <Field
           label="Téléphone (WhatsApp)"
