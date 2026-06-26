@@ -4,9 +4,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { notifyBookingConfirmed, notifyBookingRefused } from "@/lib/notify";
+import {
+  notifyBookingConfirmed,
+  notifyBookingRefused,
+  notifyPrestationFinished,
+  notifyNewReview,
+  notifyCreditAlert,
+} from "@/lib/notify";
 import { applyWalletTx } from "@/lib/wallet";
-import { commissionFor } from "@/lib/credit";
+import { commissionFor, ALERT_HIGH, ALERT_LOW } from "@/lib/credit";
 
 async function notifyCliente(bookingId: string, confirmed: boolean) {
   try {
@@ -96,13 +102,22 @@ export async function confirmBooking(formData: FormData) {
     .update({ status: "confirme" })
     .eq("id", id);
   if (!error) {
-    await applyWalletTx(
+    const after = await applyWalletTx(
       prov.id,
       -commission,
       "commission",
       "Confirmation RDV",
       id
     );
+    // Alerte si ce débit fait franchir un seuil (un seul email, le plus grave).
+    const before = after + commission;
+    let level: "high" | "low" | "empty" | null = null;
+    if (after <= 0 && before > 0) level = "empty";
+    else if (after < ALERT_LOW && before >= ALERT_LOW) level = "low";
+    else if (after < ALERT_HIGH && before >= ALERT_HIGH) level = "high";
+    if (level && user.email) {
+      await notifyCreditAlert(user.email, { balance: after, level });
+    }
     await notifyCliente(id, true);
   }
   revalidatePath("/dashboard/rdv");
@@ -154,7 +169,7 @@ export async function finishPrestation(formData: FormData) {
 
   const { data: bk } = await supabase
     .from("bookings")
-    .select("provider_id, service_id, status")
+    .select("provider_id, service_id, status, cliente_id")
     .eq("id", id)
     .maybeSingle();
   if (!bk || bk.status !== "en_cours") {
@@ -175,6 +190,30 @@ export async function finishPrestation(formData: FormData) {
       service_id: bk.service_id ?? null,
       caption: null,
     });
+  }
+
+  // Prévenir la cliente : prestation terminée -> à confirmer + noter.
+  try {
+    const admin = createAdminClient();
+    if (bk.cliente_id) {
+      const { data: cli } = await admin
+        .from("profiles")
+        .select("email")
+        .eq("id", bk.cliente_id)
+        .maybeSingle();
+      const { data: prov } = await admin
+        .from("providers")
+        .select("business_name")
+        .eq("id", bk.provider_id)
+        .maybeSingle();
+      if (cli?.email) {
+        await notifyPrestationFinished(cli.email, {
+          coiffeuseName: prov?.business_name ?? "Ta Zuriste",
+        });
+      }
+    }
+  } catch {
+    // notif non bloquante
   }
 
   revalidatePath("/dashboard/rdv");
@@ -223,6 +262,31 @@ export async function confirmPrestation(formData: FormData) {
       },
       { onConflict: "provider_id,cliente_id" }
     );
+
+    // Prévenir la Zuriste qu'elle a reçu un avis.
+    try {
+      const { data: prov } = await admin
+        .from("providers")
+        .select("user_id")
+        .eq("id", bk.provider_id)
+        .maybeSingle();
+      if (prov?.user_id) {
+        const { data: prof } = await admin
+          .from("profiles")
+          .select("email")
+          .eq("id", prov.user_id)
+          .maybeSingle();
+        if (prof?.email) {
+          await notifyNewReview(prof.email, {
+            rating,
+            comment,
+            profileUrl: `${process.env.APP_URL || "https://zuriafrica.app"}/coiffeuse/${bk.provider_id}`,
+          });
+        }
+      }
+    } catch {
+      // notif non bloquante
+    }
   }
   revalidatePath("/dashboard/mes-rdv");
 }

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { applyWalletTx, grantWelcomeBonusOnce } from "@/lib/wallet";
 import { WELCOME_BONUS } from "@/lib/credit";
+import { notifyProviderApproved, notifyCreditAdded } from "@/lib/notify";
 import type { CreateResult } from "./types";
 
 async function assertAdmin() {
@@ -27,7 +28,11 @@ function refresh() {
   revalidatePath("/admin", "layout");
 }
 
-async function setStatus(formData: FormData, status: string) {
+async function setStatus(
+  formData: FormData,
+  status: string,
+  notifyApproved = false
+) {
   const ctx = await assertAdmin();
   if (!ctx) return;
   const id = String(formData.get("provider_id") || "");
@@ -35,13 +40,33 @@ async function setStatus(formData: FormData, status: string) {
     await ctx.supabase.from("providers").update({ status }).eq("id", id);
     if (status === "approved") {
       await grantWelcomeBonusOnce(id, WELCOME_BONUS);
+      if (notifyApproved) {
+        // email de bienvenue : providers.user_id -> profiles.email
+        const { data: prov } = await ctx.supabase
+          .from("providers")
+          .select("user_id, business_name")
+          .eq("id", id)
+          .maybeSingle();
+        if (prov?.user_id) {
+          const { data: prof } = await ctx.supabase
+            .from("profiles")
+            .select("email")
+            .eq("id", prov.user_id)
+            .maybeSingle();
+          if (prof?.email) {
+            await notifyProviderApproved(prof.email, {
+              coiffeuseName: prov.business_name || "",
+            });
+          }
+        }
+      }
     }
   }
   refresh();
 }
 
 export async function approveProvider(formData: FormData) {
-  await setStatus(formData, "approved");
+  await setStatus(formData, "approved", true);
 }
 export async function rejectProvider(formData: FormData) {
   await setStatus(formData, "rejected");
@@ -95,7 +120,29 @@ export async function creditWallet(formData: FormData) {
   const amount = parseInt(String(formData.get("amount") || ""), 10);
   const reason = String(formData.get("reason") || "").trim() || "Recharge";
   if (id && !Number.isNaN(amount) && amount !== 0) {
-    await applyWalletTx(id, amount, amount > 0 ? "recharge" : "adjust", reason);
+    const balance = await applyWalletTx(
+      id,
+      amount,
+      amount > 0 ? "recharge" : "adjust",
+      reason
+    );
+    if (amount > 0) {
+      const { data: prov } = await ctx.supabase
+        .from("providers")
+        .select("user_id")
+        .eq("id", id)
+        .maybeSingle();
+      if (prov?.user_id) {
+        const { data: prof } = await ctx.supabase
+          .from("profiles")
+          .select("email")
+          .eq("id", prov.user_id)
+          .maybeSingle();
+        if (prof?.email) {
+          await notifyCreditAdded(prof.email, { amount, balance });
+        }
+      }
+    }
   }
   revalidatePath("/admin/zuristes");
 }

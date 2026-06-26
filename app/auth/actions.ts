@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { notifyAdminNewProvider } from "@/lib/notify";
 import type { ActionResult } from "./types";
 
 // ---------- INSCRIPTION ----------
@@ -44,6 +45,11 @@ export async function signup(
   });
 
   if (error) return { error: traduireErreur(error.message) };
+
+  // Prévenir l'admin qu'une nouvelle Zuriste attend une validation.
+  if (role === "prestataire") {
+    await notifyAdminNewProvider({ prenom, nom, email });
+  }
 
   redirect("/login?verifie=1");
 }

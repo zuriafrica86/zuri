@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { notifyPasswordChange } from "@/app/dashboard/securite/actions";
 
 export function ChangePasswordForm() {
   const [pw, setPw] = useState("");
@@ -27,6 +28,7 @@ export function ChangePasswordForm() {
     } else {
       setMsg({ ok: true, text: "Mot de passe mis à jour" });
       setPw("");
+      notifyPasswordChange().catch(() => {});
     }
   }
 
