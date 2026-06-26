@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { Logo } from "@/components/logo";
+import { AppShell } from "@/components/app-shell";
 import { ProviderCard } from "@/components/provider-card";
 import { SearchFilters } from "@/components/search-filters";
 
@@ -89,23 +88,7 @@ export default async function RecherchePage({
     );
 
   return (
-    <main className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-sable px-6 py-4">
-        <Logo />
-        <nav className="flex items-center gap-3 text-sm">
-          <Link href="/login" className="text-cacao/70 hover:text-cacao">
-            Connexion
-          </Link>
-          <Link
-            href="/signup"
-            className="rounded-xl2 bg-cacao px-4 py-2 font-medium text-ivoire hover:bg-cacao/90"
-          >
-            Devenir Zuriste
-          </Link>
-        </nav>
-      </header>
-
-      <div className="mx-auto max-w-5xl px-6 py-8">
+    <AppShell maxWidth="5xl">
         <h1 className="font-display text-2xl">Trouve ta Zuriste</h1>
         <SearchFilters current={{ ville, univers, categorie, lieu, prix }} />
 
@@ -139,7 +122,6 @@ export default async function RecherchePage({
             ))}
           </div>
         )}
-      </div>
-    </main>
+      </AppShell>
   );
 }

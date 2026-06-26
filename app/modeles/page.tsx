@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Logo } from "@/components/logo";
-import { LogoutButton } from "@/components/logout-button";
+import { AppShell } from "@/components/app-shell";
 import { ModelCard } from "@/components/model-card";
 import { fetchModels, type ModelItem } from "@/lib/models";
 import { universList } from "@/lib/catalog";
@@ -19,13 +18,7 @@ export default async function ModelesPage({
   );
 
   return (
-    <main className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-sable px-6 py-4">
-        <Logo />
-        <LogoutButton />
-      </header>
-
-      <div className="mx-auto max-w-5xl px-6 py-6">
+    <AppShell maxWidth="5xl">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h1 className="font-display text-2xl">Bibliothèque de modèles</h1>
@@ -33,12 +26,6 @@ export default async function ModelesPage({
               Trouve un modèle qui te plaît et réserve en un clic.
             </p>
           </div>
-          <Link
-            href="/dashboard"
-            className="shrink-0 text-sm text-cacao/60 hover:text-cacao"
-          >
-            ← Retour
-          </Link>
         </div>
 
         {/* Filtres par univers */}
@@ -81,8 +68,7 @@ export default async function ModelesPage({
             ))}
           </div>
         )}
-      </div>
-    </main>
+      </AppShell>
   );
 }
 
