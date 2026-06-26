@@ -96,15 +96,16 @@ export default async function CoiffeusePage({
   const { data: availData } = await supabase
     .from("availability")
     .select("day_of_week, start_time, end_time")
-    .eq("provider_id", id);
-  const availMap: Record<number, { start: string; end: string }> = {};
+    .eq("provider_id", id)
+    .order("start_time");
+  const availMap: Record<number, { start: string; end: string }[]> = {};
   for (const a of (availData as AvailRow[] | null) ?? []) {
-    availMap[a.day_of_week] = {
+    (availMap[a.day_of_week] ??= []).push({
       start: (a.start_time ?? "").slice(0, 5),
       end: (a.end_time ?? "").slice(0, 5),
-    };
+    });
   }
-  const availDays = DAY_ORDER.filter((d) => availMap[d]);
+  const availDays = DAY_ORDER.filter((d) => availMap[d]?.length);
 
   const price = (min: number, max: number | null) =>
     max && max > min
@@ -221,7 +222,9 @@ export default async function CoiffeusePage({
                     {DAY_NAMES[d]}
                   </span>
                   <span>
-                    {availMap[d].start} – {availMap[d].end}
+                    {availMap[d]
+                      .map((r) => `${r.start} – ${r.end}`)
+                      .join(", ")}
                   </span>
                 </li>
               ))}

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const DAYS = [0, 1, 2, 3, 4, 5, 6];
+type Range = { start: string; end: string };
 
 export async function saveAvailability(formData: FormData) {
   const supabase = await createClient();
@@ -20,23 +20,34 @@ export async function saveAvailability(formData: FormData) {
     .maybeSingle();
   if (!provider) return;
 
+  // Le formulaire envoie un JSON { "1": [{start,end}, ...], "2": [...], ... }
+  let parsed: Record<string, Range[]> = {};
+  try {
+    parsed = JSON.parse(String(formData.get("payload") || "{}"));
+  } catch {
+    parsed = {};
+  }
+
   const rows: {
     provider_id: string;
     day_of_week: number;
     start_time: string;
     end_time: string;
   }[] = [];
-  for (const d of DAYS) {
-    if (!formData.get(`day_${d}`)) continue;
-    const start = String(formData.get(`start_${d}`) || "").trim();
-    const end = String(formData.get(`end_${d}`) || "").trim();
-    if (!start || !end) continue;
-    rows.push({
-      provider_id: provider.id,
-      day_of_week: d,
-      start_time: start,
-      end_time: end,
-    });
+  for (const [dStr, ranges] of Object.entries(parsed)) {
+    const d = parseInt(dStr, 10);
+    if (Number.isNaN(d) || d < 0 || d > 6) continue;
+    for (const r of ranges ?? []) {
+      const start = String(r?.start || "").trim();
+      const end = String(r?.end || "").trim();
+      if (!start || !end || end <= start) continue;
+      rows.push({
+        provider_id: provider.id,
+        day_of_week: d,
+        start_time: start,
+        end_time: end,
+      });
+    }
   }
 
   // On remplace l'ensemble des créneaux à chaque enregistrement.
