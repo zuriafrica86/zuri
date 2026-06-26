@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/logo";
 import { LogoutButton } from "@/components/logout-button";
 import { formatZuri, creditLevel } from "@/lib/credit";
+import { fetchModels } from "@/lib/models";
+import { ModelCard } from "@/components/model-card";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -34,6 +36,8 @@ export default async function DashboardPage() {
     credit = prov?.credit_balance ?? 0;
   }
 
+  const models = role === "cliente" ? await fetchModels({ limit: 6 }) : [];
+
   return (
     <main className="min-h-screen">
       <header className="flex items-center justify-between border-b border-sable px-6 py-4">
@@ -48,7 +52,7 @@ export default async function DashboardPage() {
         <h1 className="mt-2 font-display text-3xl">Bonjour {prenom}</h1>
 
         {role === "cliente" && (
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-5">
             <p className="text-cacao/70">
               Trouve une Zuriste de confiance et suis tes demandes de RDV.
             </p>
@@ -60,12 +64,37 @@ export default async function DashboardPage() {
                 Trouver une Zuriste →
               </Link>
               <Link
+                href="/modeles"
+                className="inline-block rounded-xl2 border border-sable px-5 py-3 font-medium text-cacao transition hover:bg-rose/30"
+              >
+                Bibliothèque de modèles →
+              </Link>
+              <Link
                 href="/dashboard/mes-rdv"
                 className="inline-block rounded-xl2 border border-sable px-5 py-3 font-medium text-cacao transition hover:bg-rose/30"
               >
                 Mes demandes de RDV →
               </Link>
             </div>
+
+            {models.length > 0 && (
+              <div>
+                <div className="mb-3 flex items-center justify-between">
+                  <h2 className="font-display text-xl">Modèles à la une</h2>
+                  <Link
+                    href="/modeles"
+                    className="text-sm font-medium text-or hover:underline"
+                  >
+                    Voir tout →
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {models.map((m) => (
+                    <ModelCard key={m.id} m={m} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
         {role === "prestataire" && (
