@@ -82,7 +82,7 @@ export function PublicHeader({ overlay = false }: { overlay?: boolean }) {
             : "pointer-events-none -translate-y-2 opacity-0"
         }`}
       >
-        <nav className="mx-4 mt-1 rounded-xl2 border border-sable bg-ivoire p-2 shadow-soft">
+        <nav className="mx-4 mt-1 rounded-xl2 border border-sable bg-white p-2 shadow-soft">
           {LINKS.map((l) => (
             <Link
               key={l.href}

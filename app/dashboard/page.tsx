@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatZuri, creditLevel } from "@/lib/credit";
 import { fetchModels } from "@/lib/models";
 import { ModelCard } from "@/components/model-card";
+import { PublicProfileLink } from "@/components/public-profile-link";
 import { WeekAgenda } from "@/components/week-agenda";
 import { ZuristeKpis } from "@/components/zuriste-kpis";
 
@@ -28,14 +29,16 @@ export default async function DashboardPage() {
 
   let credit: number | null = null;
   let providerId: string | null = null;
+  let providerStatus: string | null = null;
   if (role === "prestataire") {
     const { data: prov } = await supabase
       .from("providers")
-      .select("id, credit_balance")
+      .select("id, credit_balance, status")
       .eq("user_id", user.id)
       .maybeSingle();
     credit = prov?.credit_balance ?? 0;
     providerId = prov?.id ?? null;
+    providerStatus = prov?.status ?? null;
   }
 
   const models = role === "cliente" ? await fetchModels({ limit: 6 }) : [];
@@ -124,6 +127,13 @@ export default async function DashboardPage() {
                 Demandes reçues →
               </Link>
             </div>
+
+            {providerId && (
+              <PublicProfileLink
+                path={`/coiffeuse/${providerId}`}
+                approved={providerStatus === "approved"}
+              />
+            )}
 
             {providerId && <ZuristeKpis providerId={providerId} />}
 

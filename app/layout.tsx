@@ -15,9 +15,15 @@ const sans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://zuriafrica.app"),
   title: "ZURI — Trouve ta Zuriste de confiance",
   description:
     "ZURI met en relation les clientes et les meilleures Zuristes beauté au Gabon : coiffure, ongles, regard et maquillage.",
+  openGraph: {
+    siteName: "Zuri",
+    locale: "fr_FR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

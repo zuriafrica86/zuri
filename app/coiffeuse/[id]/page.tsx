@@ -1,4 +1,5 @@
 import { BadgeCheck, Sparkles, Star, MapPin, Calendar, Clock, Lock, Circle } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -52,6 +53,48 @@ const lieuLabel: Record<string, string> = {
   chez_cliente: "Chez la cliente",
   les_deux: "Chez la Zuriste ou chez la cliente",
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: p } = await supabase
+    .from("providers")
+    .select("business_name, bio, profile_photo, ville")
+    .eq("id", id)
+    .eq("status", "approved")
+    .maybeSingle();
+
+  if (!p) return { title: "Profil introuvable — Zuri" };
+
+  const title = `${p.business_name} — Zuri`;
+  const description =
+    (p.bio && p.bio.trim()) ||
+    `Découvre les prestations de ${p.business_name}${
+      p.ville ? `, Zuriste à ${p.ville}` : ""
+    } et réserve un rendez-vous sur Zuri.`;
+  const image = p.profile_photo || "/logo-zuri.png";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "profile",
+      images: [{ url: image }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+  };
+}
 
 export default async function CoiffeusePage({
   params,
