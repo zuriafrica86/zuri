@@ -99,6 +99,10 @@ export async function saveProfile(
     providerId = inserted.id as string;
   }
 
+  // (Re)génère le slug SEO depuis le nom commercial, tant que le profil
+  // n'est pas encore validé (figé une fois public pour ne pas casser les liens).
+  await db.rpc("zuri_refresh_slug", { p_id: providerId });
+
   const { error: contactError } = await db
     .from("provider_contacts")
     .upsert({

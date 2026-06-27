@@ -9,6 +9,7 @@ export interface ModelItem {
   univers: string | null;
   categorie: string | null;
   providerId: string;
+  providerSlug: string;
   providerName: string;
 }
 
@@ -26,7 +27,7 @@ interface RawRow {
     univers: string | null;
     categorie: string | null;
   }>;
-  providers: Rel<{ id: string; business_name: string }>;
+  providers: Rel<{ id: string; slug: string; business_name: string }>;
 }
 
 function one<T>(rel: Rel<T>): T | null {
@@ -46,7 +47,7 @@ export async function fetchModels(opts?: {
     .select(
       `id, image_url, image_url_after, type, service_id,
        services!inner ( id, name, price_min, univers, categorie ),
-       providers!inner ( id, business_name, status, dispo, credit_paused )`
+       providers!inner ( id, slug, business_name, status, dispo, credit_paused )`
     )
     .not("service_id", "is", null)
     .eq("providers.status", "approved")
@@ -78,6 +79,7 @@ export async function fetchModels(opts?: {
         univers: svc.univers,
         categorie: svc.categorie,
         providerId: prov.id,
+        providerSlug: prov.slug,
         providerName: prov.business_name,
       };
     })

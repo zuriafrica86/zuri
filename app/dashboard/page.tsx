@@ -30,15 +30,17 @@ export default async function DashboardPage() {
   let credit: number | null = null;
   let providerId: string | null = null;
   let providerStatus: string | null = null;
+  let providerSlug: string | null = null;
   if (role === "prestataire") {
     const { data: prov } = await supabase
       .from("providers")
-      .select("id, credit_balance, status")
+      .select("id, credit_balance, status, slug")
       .eq("user_id", user.id)
       .maybeSingle();
     credit = prov?.credit_balance ?? 0;
     providerId = prov?.id ?? null;
     providerStatus = prov?.status ?? null;
+    providerSlug = prov?.slug ?? null;
   }
 
   const models = role === "cliente" ? await fetchModels({ limit: 6 }) : [];
@@ -130,7 +132,7 @@ export default async function DashboardPage() {
 
             {providerId && (
               <PublicProfileLink
-                path={`/coiffeuse/${providerId}`}
+                path={`/zuriste/${providerSlug ?? providerId}`}
                 approved={providerStatus === "approved"}
               />
             )}

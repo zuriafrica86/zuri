@@ -267,7 +267,7 @@ export async function confirmPrestation(formData: FormData) {
     try {
       const { data: prov } = await admin
         .from("providers")
-        .select("user_id")
+        .select("user_id, slug")
         .eq("id", bk.provider_id)
         .maybeSingle();
       if (prov?.user_id) {
@@ -280,7 +280,7 @@ export async function confirmPrestation(formData: FormData) {
           await notifyNewReview(prof.email, {
             rating,
             comment,
-            profileUrl: `${process.env.APP_URL || "https://zuriafrica.app"}/coiffeuse/${bk.provider_id}`,
+            profileUrl: `${process.env.APP_URL || "https://zuriafrica.app"}/zuriste/${prov.slug ?? bk.provider_id}`,
           });
         }
       }

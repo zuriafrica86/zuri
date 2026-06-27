@@ -3,6 +3,7 @@ import { Sparkles, BadgeCheck, Star, Circle } from "lucide-react";
 
 export interface CardProvider {
   id: string;
+  slug: string;
   business_name: string;
   profile_photo: string | null;
   ville: string;
@@ -18,7 +19,7 @@ export interface CardProvider {
 export function ProviderCard({ provider: p }: { provider: CardProvider }) {
   return (
     <Link
-      href={`/coiffeuse/${p.id}`}
+      href={`/zuriste/${p.slug}`}
       className="group block overflow-hidden rounded-xl2 border border-sable bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className="relative aspect-[4/3] bg-rose/30">

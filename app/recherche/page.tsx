@@ -11,6 +11,7 @@ interface ServiceRow {
 }
 interface ProviderRow {
   id: string;
+  slug: string;
   business_name: string;
   profile_photo: string | null;
   ville: string;
@@ -43,7 +44,7 @@ export default async function RecherchePage({
   let query = supabase
     .from("providers")
     .select(
-      "id, business_name, profile_photo, ville, quartier, dispo, lieu, verified, ambassadrice, rating_avg, rating_count, services(price_min, price_max, univers, categorie)"
+      "id, slug, business_name, profile_photo, ville, quartier, dispo, lieu, verified, ambassadrice, rating_avg, rating_count, services(price_min, price_max, univers, categorie)"
     )
     .eq("status", "approved")
     .neq("dispo", "masque") // les profils masqués n'apparaissent jamais
@@ -107,6 +108,7 @@ export default async function RecherchePage({
                 key={p.id}
                 provider={{
                   id: p.id,
+                  slug: p.slug,
                   business_name: p.business_name,
                   profile_photo: p.profile_photo,
                   ville: p.ville,

@@ -5,7 +5,7 @@ export function ModelCard({ m }: { m: ModelItem }) {
   return (
     <div className="overflow-hidden rounded-xl2 border border-sable bg-white shadow-soft">
       <Link
-        href={`/coiffeuse/${m.providerId}`}
+        href={`/zuriste/${m.providerSlug}`}
         className="block aspect-square bg-rose/30"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -21,7 +21,7 @@ export function ModelCard({ m }: { m: ModelItem }) {
           dès {m.price.toLocaleString("fr-FR")} FCFA · {m.providerName}
         </p>
         <Link
-          href={`/coiffeuse/${m.providerId}/rdv?service=${m.serviceId}`}
+          href={`/zuriste/${m.providerSlug}/rdv?service=${m.serviceId}`}
           className="mt-2 block rounded-xl2 bg-or px-3 py-2 text-center text-sm font-medium text-cacao transition hover:bg-or-clair"
         >
           Choisir ce modèle
