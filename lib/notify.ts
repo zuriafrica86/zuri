@@ -402,7 +402,9 @@ export async function notifyHelpRequest(data: {
 }): Promise<{ ok: boolean; error?: string }> {
   const who = `${data.prenom} ${data.nom}`.trim() || "Visiteur";
   return await sendEmail({
-    to: "aide@zuriafrica.app",
+    // ⚠️ TEST TEMPORAIRE — destinataire externe pour diagnostic.
+    // À remettre sur "aide@zuriafrica.app" une fois le test fait.
+    to: "gwenthomaspro@gmail.com",
     replyTo: data.email || undefined,
     subject: `Aide — ${data.sujet}`,
     text: `${who} (${data.email || "—"} · ${data.phone || "—"})\nSujet : ${data.sujet}\n\n${data.message}`,
