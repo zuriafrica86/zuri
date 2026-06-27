@@ -7,6 +7,7 @@ import { Logo } from "@/components/logo";
 
 const LINKS = [
   { href: "/recherche", label: "Trouver une Zuriste" },
+  { href: "/devenir-zuriste", label: "Devenir Zuriste" },
   { href: "/aide", label: "Besoin d'aide ?" },
 ];
 
