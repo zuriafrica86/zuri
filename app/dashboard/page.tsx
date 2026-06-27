@@ -6,6 +6,7 @@ import { formatZuri, creditLevel } from "@/lib/credit";
 import { fetchModels } from "@/lib/models";
 import { ModelCard } from "@/components/model-card";
 import { WeekAgenda } from "@/components/week-agenda";
+import { ZuristeKpis } from "@/components/zuriste-kpis";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -123,6 +124,8 @@ export default async function DashboardPage() {
                 Demandes reçues →
               </Link>
             </div>
+
+            {providerId && <ZuristeKpis providerId={providerId} />}
 
             {credit !== null && (
               <Link
