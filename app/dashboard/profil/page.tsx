@@ -48,6 +48,12 @@ export default async function ProfilPage() {
     contactPhone = contact?.phone_number ?? "";
   }
 
+  const { data: prof } = await supabase
+    .from("profiles")
+    .select("birth_day, birth_month")
+    .eq("id", user.id)
+    .maybeSingle();
+
   const p = (provider ?? {}) as ProviderInitial;
   const initial: ProviderInitial = {
     ...p,
@@ -55,6 +61,8 @@ export default async function ProfilPage() {
     nom: (p.nom ?? "") || metaNom,
     whatsapp_number: contactWhatsapp || metaPhone,
     phone_number: contactPhone,
+    birth_day: prof?.birth_day ?? null,
+    birth_month: prof?.birth_month ?? null,
   };
 
   return (

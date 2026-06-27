@@ -8,6 +8,11 @@ import type { ProfileResult } from "@/app/dashboard/profil/types";
 import { SubmitButton } from "@/components/submit-button";
 import { VILLES } from "@/lib/catalog";
 
+const MONTHS = [
+  "janvier","février","mars","avril","mai","juin",
+  "juillet","août","septembre","octobre","novembre","décembre",
+];
+
 export interface ProviderInitial {
   business_name?: string | null;
   nom?: string | null;
@@ -19,6 +24,8 @@ export interface ProviderInitial {
   phone_number?: string | null;
   lieu?: string | null;
   dispo?: string | null;
+  birth_day?: number | null;
+  birth_month?: number | null;
   profile_photo?: string | null;
   status?: string | null;
 }
@@ -141,6 +148,27 @@ export function ProviderProfileForm({
           placeholder="Spécialiste tresses, 8 ans d'expérience…"
           required
         />
+
+        <div className="grid grid-cols-2 gap-3">
+          <Select
+            label="Jour d'anniversaire"
+            name="birth_day"
+            defaultValue={initial?.birth_day ? String(initial.birth_day) : ""}
+            options={[
+              ["", "Jour"] as [string, string],
+              ...Array.from({ length: 31 }, (_, i) => [String(i + 1), String(i + 1)] as [string, string]),
+            ]}
+          />
+          <Select
+            label="Mois d'anniversaire"
+            name="birth_month"
+            defaultValue={initial?.birth_month ? String(initial.birth_month) : ""}
+            options={[
+              ["", "Mois"] as [string, string],
+              ...MONTHS.map((m, i) => [String(i + 1), m] as [string, string]),
+            ]}
+          />
+        </div>
 
         <div className="grid grid-cols-2 gap-3">
           <Select

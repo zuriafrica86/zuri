@@ -13,7 +13,7 @@ export function Logo({
         ? "/logo-zuri-light.png"
         : "/logo-zuri.png";
   const w = variant === "icon" ? 44 : 128;
-  const h = variant === "icon" ? 44 : 50;
+  const h = variant === "icon" ? 44 : 51;
   return (
     <Link href="/" aria-label="ZURI — accueil" className="inline-flex">
       <Image src={src} alt="ZURI" width={w} height={h} priority />

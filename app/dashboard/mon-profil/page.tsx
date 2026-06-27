@@ -11,7 +11,7 @@ export default async function MonProfilPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role, full_name, phone")
+    .select("role, full_name, phone, birth_day, birth_month")
     .eq("id", user.id)
     .single();
   if (profile?.role === "prestataire") redirect("/dashboard/profil");
@@ -36,7 +36,13 @@ export default async function MonProfilPage() {
         </p>
       </div>
       <ClienteProfileForm
-        initial={{ prenom, nom, phone }}
+        initial={{
+          prenom,
+          nom,
+          phone,
+          birth_day: profile?.birth_day ?? null,
+          birth_month: profile?.birth_month ?? null,
+        }}
         email={user.email ?? ""}
       />
     </>

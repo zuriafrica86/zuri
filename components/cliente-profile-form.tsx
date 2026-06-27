@@ -6,11 +6,22 @@ import { saveClienteProfile } from "@/app/dashboard/mon-profil/actions";
 import type { ProfileResult } from "@/app/dashboard/mon-profil/types";
 import { SubmitButton } from "@/components/submit-button";
 
+const MONTHS = [
+  "janvier","février","mars","avril","mai","juin",
+  "juillet","août","septembre","octobre","novembre","décembre",
+];
+
 export function ClienteProfileForm({
   initial,
   email,
 }: {
-  initial: { prenom: string; nom: string; phone: string };
+  initial: {
+    prenom: string;
+    nom: string;
+    phone: string;
+    birth_day: number | null;
+    birth_month: number | null;
+  };
   email: string;
 }) {
   const [state, action] = useActionState<ProfileResult, FormData>(
@@ -32,6 +43,43 @@ export function ClienteProfileForm({
         defaultValue={initial.phone}
         placeholder="+241 ..."
       />
+
+      <div className="grid grid-cols-2 gap-3">
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-cacao/80">
+            Jour d&apos;anniversaire
+          </span>
+          <select
+            name="birth_day"
+            defaultValue={initial.birth_day ? String(initial.birth_day) : ""}
+            className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+          >
+            <option value="">Jour</option>
+            {Array.from({ length: 31 }, (_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-cacao/80">
+            Mois d&apos;anniversaire
+          </span>
+          <select
+            name="birth_month"
+            defaultValue={initial.birth_month ? String(initial.birth_month) : ""}
+            className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+          >
+            <option value="">Mois</option>
+            {MONTHS.map((m, i) => (
+              <option key={i + 1} value={i + 1}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
 
       <label className="block">
         <span className="mb-1.5 block text-sm font-medium text-cacao/80">

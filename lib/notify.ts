@@ -17,7 +17,7 @@ const RESEND_URL = "https://api.resend.com/emails";
 // ----- Couleurs de marque (réutilisées dans le gabarit) -----
 const IVOIRE = "#F7F0E6";
 const CACAO = "#2A1A12";
-const OR = "#C9892F";
+const OR = "#E2B0A0";
 const SABLE = "#ece0d0";
 
 async function sendEmail(opts: {

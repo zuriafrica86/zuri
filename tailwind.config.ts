@@ -7,8 +7,8 @@ const config: Config = {
       colors: {
         ivoire: "#F7F0E6",
         cacao: "#2A1A12",
-        or: "#C9892F",
-        "or-clair": "#E0B375",
+        or: "#E2B0A0",
+        "or-clair": "#EDCBC0",
         rose: "#F3DAD0", // rose pastel discret
         sable: "#E8DCC8", // bordures douces
       },

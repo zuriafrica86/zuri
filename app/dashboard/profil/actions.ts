@@ -41,6 +41,10 @@ export async function saveProfile(
   const dispo = String(formData.get("dispo") || "disponible");
   const profile_photo =
     String(formData.get("profile_photo") || "").trim() || null;
+  const bd = parseInt(String(formData.get("birth_day") || ""), 10);
+  const bm = parseInt(String(formData.get("birth_month") || ""), 10);
+  const birth_day = bd >= 1 && bd <= 31 ? bd : null;
+  const birth_month = bm >= 1 && bm <= 12 ? bm : null;
 
   if (!business_name || !nom || !prenom || !ville || !whatsapp_raw) {
     return {
@@ -105,6 +109,12 @@ export async function saveProfile(
   if (contactError) {
     return { error: "Échec de l'enregistrement du contact. Réessaie." };
   }
+
+  // Anniversaire (jour + mois) sur le profil
+  await createAdminClient()
+    .from("profiles")
+    .update({ birth_day, birth_month })
+    .eq("id", ownerId);
 
   revalidatePath("/dashboard/profil");
   revalidatePath("/dashboard");
