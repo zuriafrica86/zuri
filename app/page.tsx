@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/logo";
+import { PublicHeader } from "@/components/public-header";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -12,20 +13,7 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen">
-      <header className="flex items-center justify-between px-6 py-5 sm:px-10">
-        <Logo />
-        <nav className="flex items-center gap-3 text-sm">
-          <Link href="/login" className="font-medium text-cacao/70 hover:text-cacao">
-            Me connecter
-          </Link>
-          <Link
-            href="/signup"
-            className="rounded-xl2 bg-cacao px-4 py-2 font-medium text-ivoire hover:bg-cacao/90"
-          >
-            M&apos;inscrire
-          </Link>
-        </nav>
-      </header>
+      <PublicHeader />
 
       <section className="relative mx-auto max-w-3xl px-6 pb-20 pt-16 text-center sm:pt-24">
         <p className="mb-4 text-sm uppercase tracking-[0.2em] text-or">

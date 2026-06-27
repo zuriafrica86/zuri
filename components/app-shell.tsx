@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import { LogoutButton } from "@/components/logout-button";
-import { Logo } from "@/components/logo";
+import { PublicHeader } from "@/components/public-header";
 
 // Coquille d'application : barre latérale quand l'utilisateur est connecté,
 // en-tête public simple sinon. Utilisée par le dashboard et les pages
@@ -28,20 +27,7 @@ export async function AppShell({
   if (!user) {
     return (
       <div className="min-h-screen">
-        <header className="flex items-center justify-between border-b border-sable px-6 py-4">
-          <Logo />
-          <nav className="flex items-center gap-3 text-sm">
-            <Link href="/login" className="text-cacao/70 hover:text-cacao">
-              Connexion
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-xl2 bg-cacao px-4 py-2 font-medium text-ivoire hover:bg-cacao/90"
-            >
-              Devenir Zuriste
-            </Link>
-          </nav>
-        </header>
+        <PublicHeader />
         <main className={`mx-auto ${mw} px-6 py-6`}>{children}</main>
       </div>
     );

@@ -25,6 +25,7 @@ async function sendEmail(opts: {
   subject: string;
   html: string;
   text?: string;
+  replyTo?: string;
 }) {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM || "Zuri <onboarding@resend.dev>";
@@ -42,6 +43,7 @@ async function sendEmail(opts: {
         subject: opts.subject,
         html: opts.html,
         ...(opts.text ? { text: opts.text } : {}),
+        ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
       }),
     });
   } catch {
@@ -361,6 +363,47 @@ export async function notifyZuristeAccountCreated(
         <p style="margin:0 0 8px">Connecte-toi avec ton adresse email et le mot de passe qui t'a été communiqué, puis complète ton profil (prestations, photos, disponibilités) pour commencer à recevoir des clientes.</p>
         <p style="margin:0">Pense à changer ton mot de passe une fois connectée.</p>`,
       cta: { label: "Me connecter", href: appUrl("/login") },
+    }),
+  });
+}
+
+/* ====================================================================== */
+/*  12. Formulaire d'aide — vers l'équipe (aide@zuriafrica.app)            */
+/* ====================================================================== */
+function esc(v: string): string {
+  return v
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+export async function notifyHelpRequest(data: {
+  prenom: string;
+  nom: string;
+  email: string;
+  phone: string;
+  sujet: string;
+  message: string;
+}) {
+  const who = `${data.prenom} ${data.nom}`.trim() || "Visiteur";
+  await sendEmail({
+    to: "aide@zuriafrica.app",
+    replyTo: data.email || undefined,
+    subject: `Aide — ${data.sujet}`,
+    text: `${who} (${data.email || "—"} · ${data.phone || "—"})\nSujet : ${data.sujet}\n\n${data.message}`,
+    html: layout({
+      title: "Nouveau message d'aide",
+      bodyHtml: `${infoBox(
+        `<strong>${esc(who)}</strong><br/><span style="color:#7a6a5c">${esc(
+          data.email || "—"
+        )} · ${esc(data.phone || "—")}</span>`
+      )}
+        <p style="margin:12px 0 4px"><strong>Sujet&nbsp;:</strong> ${esc(
+          data.sujet
+        )}</p>
+        <p style="margin:0;white-space:pre-wrap;color:#5a4a3e">${esc(
+          data.message
+        )}</p>`,
     }),
   });
 }

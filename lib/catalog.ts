@@ -156,3 +156,7 @@ export function prestationsOf(univers: string, categorie: string): string[] {
 
 // Villes proposées (étendre cette liste pour ouvrir de nouvelles villes).
 export const VILLES = ["Libreville", "Port-Gentil"];
+
+// Numéro WhatsApp de l'équipe Zuri (format international, sans "+").
+// À remplacer par le vrai numéro.
+export const ZURI_WHATSAPP = "24174461700";
