@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  BarChart3,
   Users,
   CalendarDays,
   MessageCircle,
@@ -15,6 +16,7 @@ import { Logo } from "@/components/logo";
 
 const items: { href: string; label: string; Icon: LucideIcon }[] = [
   { href: "/admin", label: "Vue d'ensemble", Icon: LayoutDashboard },
+  { href: "/admin/stats", label: "Statistiques", Icon: BarChart3 },
   { href: "/admin/zuristes", label: "Zuristes", Icon: Users },
   { href: "/admin/rdv", label: "Rendez-vous", Icon: CalendarDays },
   { href: "/admin/contacts", label: "Contacts", Icon: MessageCircle },
