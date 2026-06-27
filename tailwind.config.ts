@@ -10,7 +10,7 @@ const config: Config = {
         or: "#E2B0A0",
         "or-clair": "#EDCBC0",
         rose: "#F3DAD0", // rose pastel discret
-        sable: "#E8DCC8", // bordures douces
+        sable: "#EBD9CF", // bordures douces
       },
       fontFamily: {
         display: ["var(--font-display)", "Georgia", "serif"],

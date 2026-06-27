@@ -18,7 +18,7 @@ const RESEND_URL = "https://api.resend.com/emails";
 const IVOIRE = "#F7F0E6";
 const CACAO = "#2A1A12";
 const OR = "#E2B0A0";
-const SABLE = "#ece0d0";
+const SABLE = "#EBD9CF";
 
 async function sendEmail(opts: {
   to: string;
