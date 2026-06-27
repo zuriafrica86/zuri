@@ -28,7 +28,7 @@ export default function SignupPage() {
               role === r ? "bg-ivoire text-cacao shadow-soft" : "text-cacao/60"
             }`}
           >
-            {r === "cliente" ? "Je suis cliente" : "Je suis Zuriste"}
+            {r === "cliente" ? "En tant que cliente" : "En tant que Zuriste"}
           </button>
         ))}
       </div>

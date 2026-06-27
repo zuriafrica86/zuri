@@ -33,6 +33,7 @@ const ZURISTE: Item[] = [
 
 const CLIENTE: Item[] = [
   { href: "/dashboard", label: "Tableau de bord", Icon: LayoutDashboard },
+  { href: "/dashboard/mon-profil", label: "Mon profil", Icon: User },
   { href: "/recherche", label: "Trouver une Zuriste", Icon: Search },
   { href: "/modeles", label: "Bibliothèque", Icon: Images },
   { href: "/dashboard/mes-rdv", label: "Mes rendez-vous", Icon: CalendarDays },

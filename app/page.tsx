@@ -16,13 +16,13 @@ export default async function HomePage() {
         <Logo />
         <nav className="flex items-center gap-3 text-sm">
           <Link href="/login" className="font-medium text-cacao/70 hover:text-cacao">
-            Connexion
+            Me connecter
           </Link>
           <Link
             href="/signup"
             className="rounded-xl2 bg-cacao px-4 py-2 font-medium text-ivoire hover:bg-cacao/90"
           >
-            Devenir Zuriste
+            M&apos;inscrire
           </Link>
         </nav>
       </header>

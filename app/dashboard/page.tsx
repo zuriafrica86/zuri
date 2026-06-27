@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { formatZuri, creditLevel } from "@/lib/credit";
 import { fetchModels } from "@/lib/models";
 import { ModelCard } from "@/components/model-card";
+import { WeekAgenda } from "@/components/week-agenda";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -25,13 +26,15 @@ export default async function DashboardPage() {
   const role = profile?.role ?? "cliente";
 
   let credit: number | null = null;
+  let providerId: string | null = null;
   if (role === "prestataire") {
     const { data: prov } = await supabase
       .from("providers")
-      .select("credit_balance")
+      .select("id, credit_balance")
       .eq("user_id", user.id)
       .maybeSingle();
     credit = prov?.credit_balance ?? 0;
+    providerId = prov?.id ?? null;
   }
 
   const models = role === "cliente" ? await fetchModels({ limit: 6 }) : [];
@@ -148,6 +151,8 @@ export default async function DashboardPage() {
                 </span>
               </Link>
             )}
+
+            {providerId && <WeekAgenda providerId={providerId} />}
           </div>
         )}
         {role === "admin" && (
