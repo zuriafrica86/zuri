@@ -30,7 +30,10 @@ export function CreateZuristeForm({ embedded = false }: { embedded?: boolean } =
         fois connectée.
       </p>
 
-      <input name="full_name" placeholder="Nom (interne)" className={input} />
+      <div className="flex gap-3">
+        <input name="prenom" placeholder="Prénom" required className={input} />
+        <input name="nom" placeholder="Nom" className={input} />
+      </div>
       <input
         name="email"
         type="email"
@@ -38,6 +41,7 @@ export function CreateZuristeForm({ embedded = false }: { embedded?: boolean } =
         required
         className={input}
       />
+      <input name="phone" type="tel" placeholder="Téléphone" className={input} />
       <input
         name="password"
         type="text"

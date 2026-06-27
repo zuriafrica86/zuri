@@ -156,7 +156,10 @@ export async function createZuriste(
 
   const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
-  const full_name = String(formData.get("full_name") || "").trim() || "Zuriste";
+  const prenom = String(formData.get("prenom") || "").trim();
+  const nom = String(formData.get("nom") || "").trim();
+  const phone = String(formData.get("phone") || "").trim();
+  const full_name = `${prenom} ${nom}`.trim() || "Zuriste";
 
   if (!email.includes("@") || password.length < 6) {
     return {
@@ -169,7 +172,7 @@ export async function createZuriste(
     email,
     password,
     email_confirm: true,
-    user_metadata: { role: "prestataire", full_name },
+    user_metadata: { role: "prestataire", full_name, prenom, nom, phone },
   });
 
   if (error) {
