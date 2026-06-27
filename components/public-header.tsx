@@ -10,14 +10,31 @@ const LINKS = [
   { href: "/aide", label: "Besoin d'aide ?" },
 ];
 
-export function PublicHeader() {
+export function PublicHeader({ overlay = false }: { overlay?: boolean }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="relative z-50">
+    <header
+      className={
+        overlay ? "absolute inset-x-0 top-0 z-50" : "relative z-50"
+      }
+    >
       <div className="flex items-center justify-between px-6 py-4 sm:px-10">
         <Link href="/" aria-label="Accueil Zuri">
-          <Logo />
+          {overlay ? (
+            <>
+              {/* Sur desktop le logo est au-dessus du panneau cacao -> version claire.
+                  Sur mobile (fond clair) -> version foncée. */}
+              <span className="hidden md:inline-flex">
+                <Logo variant="light" />
+              </span>
+              <span className="inline-flex md:hidden">
+                <Logo />
+              </span>
+            </>
+          ) : (
+            <Logo />
+          )}
         </Link>
 
         {/* Desktop */}
