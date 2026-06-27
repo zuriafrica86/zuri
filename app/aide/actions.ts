@@ -31,7 +31,8 @@ export async function sendHelpMessage(
   const result = await notifyHelpRequest({ prenom, nom, email, phone, sujet: sujetVal, message });
   if (!result.ok) {
     return {
-      error: `L'envoi a échoué. Détail technique : ${result.error ?? "inconnu"}`,
+      error:
+        "Oups, ton message n'a pas pu être envoyé. Réessaie dans un instant, ou écris-nous directement à aide@zuriafrica.app.",
     };
   }
   return {
