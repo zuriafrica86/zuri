@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAdminNewProvider } from "@/lib/notify";
 import type { ActionResult } from "./types";
 
@@ -35,7 +36,7 @@ export async function signup(
 
   // full_name / prenom / nom / phone / role partent dans les métadonnées →
   // le trigger SQL handle_new_user() crée la ligne profiles.
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -46,9 +47,27 @@ export async function signup(
 
   if (error) return { error: traduireErreur(error.message) };
 
-  // Prévenir l'admin qu'une nouvelle Zuriste attend une validation.
+  // Prévenir l'admin + créer la fiche Zuriste (en attente, masquée) pour
+  // qu'elle apparaisse immédiatement dans l'admin et soit validable.
   if (role === "prestataire") {
     await notifyAdminNewProvider({ prenom, nom, email });
+    const uid = data.user?.id;
+    if (uid) {
+      try {
+        const admin = createAdminClient();
+        await admin.from("providers").insert({
+          user_id: uid,
+          business_name: full_name || "Nouvelle Zuriste",
+          prenom: prenom || null,
+          nom: nom || null,
+          ville: "À compléter",
+          dispo: "masque",
+          status: "pending",
+        });
+      } catch {
+        // best-effort
+      }
+    }
   }
 
   redirect("/login?verifie=1");

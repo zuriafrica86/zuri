@@ -5,7 +5,11 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { applyWalletTx, grantWelcomeBonusOnce } from "@/lib/wallet";
 import { WELCOME_BONUS } from "@/lib/credit";
-import { notifyProviderApproved, notifyCreditAdded } from "@/lib/notify";
+import {
+  notifyProviderApproved,
+  notifyCreditAdded,
+  notifyZuristeAccountCreated,
+} from "@/lib/notify";
 import type { CreateResult } from "./types";
 
 async function assertAdmin() {
@@ -168,7 +172,7 @@ export async function createZuriste(
   }
 
   const admin = createAdminClient();
-  const { error } = await admin.auth.admin.createUser({
+  const { data: created, error } = await admin.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
@@ -187,8 +191,30 @@ export async function createZuriste(
     return { error: "Échec de la création du compte. Réessaie." };
   }
 
+  // Créer la fiche Zuriste (en attente, masquée) pour qu'elle apparaisse
+  // immédiatement dans l'admin et puisse être validée. Sera complétée par
+  // la Zuriste depuis son espace (mise à jour, pas de doublon).
+  const uid = created.user?.id;
+  if (uid) {
+    try {
+      await admin.from("providers").insert({
+        user_id: uid,
+        business_name: full_name || "Nouvelle Zuriste",
+        prenom: prenom || null,
+        nom: nom || null,
+        ville: "À compléter",
+        dispo: "masque",
+        status: "pending",
+      });
+    } catch {
+      // best-effort
+    }
+  }
+
+  await notifyZuristeAccountCreated(email, { prenom });
+
   refresh();
   return {
-    ok: `Compte créé pour ${email}. Elle peut se connecter dès maintenant avec ce mot de passe.`,
+    ok: `Compte créé pour ${email}. Elle apparaît dans « En attente » et peut se connecter avec ce mot de passe.`,
   };
 }

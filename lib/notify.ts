@@ -342,3 +342,25 @@ export async function notifyPasswordChanged(to: string) {
     }),
   });
 }
+
+/* ====================================================================== */
+/*  11. À la ZURISTE — compte créé par l'admin (accès prêt)               */
+/* ====================================================================== */
+export async function notifyZuristeAccountCreated(
+  to: string,
+  data: { prenom?: string }
+) {
+  const hello = data.prenom ? `${data.prenom}, ` : "";
+  await sendEmail({
+    to,
+    subject: "Ton accès Zuriste est prêt",
+    text: `${hello}ton compte Zuriste a été créé. Connecte-toi sur ${appUrl("/login")} avec ton email et le mot de passe communiqué par l'équipe Zuri, puis complète ton profil.`,
+    html: layout({
+      title: "Bienvenue sur Zuri",
+      bodyHtml: `<p style="margin:0 0 8px">${hello}ton compte Zuriste vient d'être créé par l'équipe Zuri.</p>
+        <p style="margin:0 0 8px">Connecte-toi avec ton adresse email et le mot de passe qui t'a été communiqué, puis complète ton profil (prestations, photos, disponibilités) pour commencer à recevoir des clientes.</p>
+        <p style="margin:0">Pense à changer ton mot de passe une fois connectée.</p>`,
+      cta: { label: "Me connecter", href: appUrl("/login") },
+    }),
+  });
+}
