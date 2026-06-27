@@ -28,7 +28,12 @@ export async function sendHelpMessage(
   }
   const sujetVal = SUJETS.includes(sujet) ? sujet : SUJETS[2];
 
-  await notifyHelpRequest({ prenom, nom, email, phone, sujet: sujetVal, message });
+  const result = await notifyHelpRequest({ prenom, nom, email, phone, sujet: sujetVal, message });
+  if (!result.ok) {
+    return {
+      error: `L'envoi a échoué. Détail technique : ${result.error ?? "inconnu"}`,
+    };
+  }
   return {
     ok: "Merci ! Ton message est bien parti, on revient vers toi très vite.",
   };

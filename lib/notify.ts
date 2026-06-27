@@ -26,12 +26,14 @@ async function sendEmail(opts: {
   html: string;
   text?: string;
   replyTo?: string;
-}) {
+}): Promise<{ ok: boolean; error?: string }> {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM || "Zuri <onboarding@resend.dev>";
-  if (!key || !opts.to) return; // pas configuré ou pas de destinataire → rien
+  if (!opts.to) return { ok: false, error: "Destinataire manquant." };
+  if (!key)
+    return { ok: false, error: "RESEND_API_KEY absente côté serveur." };
   try {
-    await fetch(RESEND_URL, {
+    const res = await fetch(RESEND_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${key}`,
@@ -46,8 +48,21 @@ async function sendEmail(opts: {
         ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
       }),
     });
-  } catch {
-    // ignoré volontairement
+    if (!res.ok) {
+      let detail = "";
+      try {
+        detail = JSON.stringify(await res.json());
+      } catch {
+        // réponse non-JSON
+      }
+      return { ok: false, error: `Resend ${res.status} ${detail}`.trim() };
+    }
+    return { ok: true };
+  } catch (e) {
+    return {
+      ok: false,
+      error: `Échec réseau: ${e instanceof Error ? e.message : String(e)}`,
+    };
   }
 }
 
@@ -384,9 +399,9 @@ export async function notifyHelpRequest(data: {
   phone: string;
   sujet: string;
   message: string;
-}) {
+}): Promise<{ ok: boolean; error?: string }> {
   const who = `${data.prenom} ${data.nom}`.trim() || "Visiteur";
-  await sendEmail({
+  return await sendEmail({
     to: "aide@zuriafrica.app",
     replyTo: data.email || undefined,
     subject: `Aide — ${data.sujet}`,
