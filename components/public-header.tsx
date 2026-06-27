@@ -14,7 +14,7 @@ export function PublicHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="relative border-b border-sable bg-ivoire/80 backdrop-blur">
+    <header className="relative z-50">
       <div className="flex items-center justify-between px-6 py-4 sm:px-10">
         <Link href="/" aria-label="Accueil Zuri">
           <Logo />
