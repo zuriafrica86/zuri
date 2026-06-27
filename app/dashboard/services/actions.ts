@@ -61,6 +61,7 @@ export async function addService(
   if (h > 0 && m > 0) duree_estim = `${h}h${m.toString().padStart(2, "0")}`;
   else if (h > 0) duree_estim = `${h}h`;
   else if (m > 0) duree_estim = `${m} min`;
+  const duree_minutes = h * 60 + m > 0 ? h * 60 + m : null;
   const description = String(formData.get("description") || "").trim() || null;
 
   const name = prestation === AUTRE ? name_custom : prestation;
@@ -81,6 +82,7 @@ export async function addService(
     price_min,
     price_max,
     duree_estim,
+    duree_minutes,
     description,
   });
   if (error) return { error: "Échec de l'ajout. Réessaie." };

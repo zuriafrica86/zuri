@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/logo";
-import { RdvForm, type RdvService } from "@/components/rdv-form";
+import { RdvCalendar, type RdvService } from "@/components/rdv-calendar";
 
 export default async function RdvPage({
   params,
@@ -33,6 +33,18 @@ export default async function RdvPage({
     .eq("provider_id", id)
     .order("price_min");
   const services = (servicesData as RdvService[] | null) ?? [];
+
+  const { data: availData } = await supabase
+    .from("availability")
+    .select("day_of_week")
+    .eq("provider_id", id);
+  const availableWeekdays = [
+    ...new Set(
+      ((availData as { day_of_week: number }[] | null) ?? []).map(
+        (a) => a.day_of_week
+      )
+    ),
+  ];
 
   return (
     <main className="min-h-screen">
@@ -69,10 +81,11 @@ export default async function RdvPage({
             </p>
           </div>
         ) : (
-          <RdvForm
+          <RdvCalendar
             providerId={provider.id}
             services={services}
             preselectedServiceId={preselectedServiceId}
+            availableWeekdays={availableWeekdays}
           />
         )}
       </div>
