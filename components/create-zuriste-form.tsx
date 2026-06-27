@@ -5,7 +5,7 @@ import { createZuriste } from "@/app/admin/actions";
 import type { CreateResult } from "@/app/admin/types";
 import { SubmitButton } from "@/components/submit-button";
 
-export function CreateZuristeForm() {
+export function CreateZuristeForm({ embedded = false }: { embedded?: boolean } = {}) {
   const [state, action] = useActionState<CreateResult, FormData>(
     createZuriste,
     null
@@ -17,9 +17,13 @@ export function CreateZuristeForm() {
   return (
     <form
       action={action}
-      className="space-y-3 rounded-xl2 border border-sable bg-white p-5"
+      className={
+        embedded
+          ? "space-y-3"
+          : "space-y-3 rounded-xl2 border border-sable bg-white p-5"
+      }
     >
-      <h2 className="font-display text-xl">Créer une Zuriste</h2>
+      {!embedded && <h2 className="font-display text-xl">Créer une Zuriste</h2>}
       <p className="text-sm text-cacao/60">
         Crée un accès directement, sans email de confirmation. La Zuriste se
         connecte avec ces identifiants et pourra changer son mot de passe une

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { CreateZuristeForm } from "@/components/create-zuriste-form";
+import { CreateZuristeButton } from "@/components/create-zuriste-button";
 import { ZuristesAdminTable, type ZRow } from "@/components/zuristes-admin-table";
 
 const FILTERS = [
@@ -91,7 +91,7 @@ export default async function ZuristesPage({
         </p>
       </div>
 
-      <CreateZuristeForm />
+      <CreateZuristeButton />
 
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((f) => {
