@@ -45,7 +45,7 @@ export function FinishPrestation({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="mt-3 rounded-xl2 bg-or px-4 py-2 text-sm font-medium text-cacao hover:bg-or-clair"
+        className="mt-3 rounded-xl2 bg-cacao px-4 py-2.5 text-sm font-medium text-ivoire transition duration-250 ease-soft hover:bg-cacao/90 active:scale-[0.98]"
       >
         Terminer la prestation
       </button>
@@ -53,7 +53,7 @@ export function FinishPrestation({
   }
 
   return (
-    <div className="mt-3 space-y-3 rounded-xl2 border border-sable bg-ivoire/40 p-3">
+    <div className="mt-3 space-y-3 rounded-xl2 border border-sable bg-rose/20 p-3">
       <p className="text-sm font-medium text-cacao">
         Ajouter une photo du résultat ?{" "}
         <span className="text-cacao/50">(facultatif — elle ira dans ton portfolio)</span>

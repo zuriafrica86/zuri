@@ -38,7 +38,7 @@ export function CancelBooking({
   return (
     <form
       action={action}
-      className="mt-3 space-y-3 rounded-xl2 border border-sable bg-ivoire/40 p-3"
+      className="mt-3 space-y-3 rounded-xl2 border border-sable bg-rose/20 p-3"
     >
       <input type="hidden" name="booking_id" value={bookingId} />
       <div className="flex items-center justify-between">
