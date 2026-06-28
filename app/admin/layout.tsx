@@ -28,7 +28,7 @@ export default async function AdminLayout({
         <header className="flex items-center justify-end border-b border-sable px-6 py-3">
           <LogoutButton />
         </header>
-        <main className="mx-auto max-w-4xl px-6 py-8">{children}</main>
+        <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
       </div>
     </div>
   );

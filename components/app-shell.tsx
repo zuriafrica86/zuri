@@ -22,7 +22,7 @@ export async function AppShell({
   } = await supabase.auth.getUser();
   if (!user && requireAuth) redirect("/login");
 
-  const mw = maxWidth === "5xl" ? "max-w-5xl" : "max-w-3xl";
+  const mw = maxWidth === "5xl" ? "max-w-7xl" : "max-w-5xl";
 
   if (!user) {
     return (

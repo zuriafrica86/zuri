@@ -487,3 +487,59 @@ export async function notifyCancellationReceipt(
     }),
   });
 }
+
+/* ====================================================================== */
+/*  Sécurité — nouvelle connexion au compte                                */
+/* ====================================================================== */
+export async function notifyNewLogin(
+  to: string,
+  data: {
+    prenom: string;
+    ip: string;
+    appareil: string;
+    navigateur: string;
+    dateHeure: string;
+  }
+) {
+  const bonjour = data.prenom ? `Bonjour ${esc(data.prenom)},` : "Bonjour,";
+  await sendEmail({
+    to,
+    subject: "Nouvelle connexion à votre compte Zuri",
+    text:
+      `${data.prenom ? `Bonjour ${data.prenom},` : "Bonjour,"}\n` +
+      `Nous avons détecté une connexion récente à votre compte.\n\n` +
+      `Adresse IP : ${data.ip}\n` +
+      `Appareil : ${data.appareil}\n` +
+      `Navigateur : ${data.navigateur}\n` +
+      `Date et heure : ${data.dateHeure}\n\n` +
+      `Si vous êtes à l'origine de cette connexion, veuillez ignorer cet e-mail. Aucune autre action n'est nécessaire.\n` +
+      `Si ce n'est pas vous, veuillez changer le mot de passe de votre compte ou contacter notre service client immédiatement.\n\n` +
+      `Cordialement,\nL'équipe Zuri`,
+    html: layout({
+      title: "Nouvelle connexion à votre compte Zuri",
+      bodyHtml: `<p style="margin:0 0 8px">${bonjour}</p>
+        <p style="margin:0 0 12px">Nous avons détecté une connexion récente à votre compte.</p>
+        ${infoBox(
+          `<p style="margin:0 0 6px"><strong>Adresse IP&nbsp;:</strong> ${esc(
+            data.ip
+          )}</p>
+           <p style="margin:0 0 6px"><strong>Appareil&nbsp;:</strong> ${esc(
+             data.appareil
+           )}</p>
+           <p style="margin:0 0 6px"><strong>Navigateur&nbsp;:</strong> ${esc(
+             data.navigateur
+           )}</p>
+           <p style="margin:0"><strong>Date et heure&nbsp;:</strong> ${esc(
+             data.dateHeure
+           )}</p>`
+        )}
+        <p style="margin:12px 0 8px">Si vous êtes à l'origine de cette connexion, veuillez ignorer cet e-mail. Aucune autre action n'est nécessaire.</p>
+        <p style="margin:0 0 12px">Si ce n'est pas vous, veuillez changer le mot de passe de votre compte ou contacter notre service client immédiatement.</p>
+        <p style="margin:0">Cordialement,<br/>L'équipe Zuri</p>`,
+      cta: {
+        label: "Sécuriser mon compte",
+        href: appUrl("/dashboard/securite"),
+      },
+    }),
+  });
+}

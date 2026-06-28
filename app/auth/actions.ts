@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { notifyAdminNewProvider } from "@/lib/notify";
+import { notifyAdminNewProvider, notifyNewLogin } from "@/lib/notify";
 import type { ActionResult } from "./types";
 
 // ---------- INSCRIPTION ----------
@@ -87,11 +87,87 @@ export async function login(
     return { error: "Email et mot de passe requis." };
   }
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data: signInData, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
   if (error) return { error: traduireErreur(error.message) };
+
+  // Notification de sécurité « nouvelle connexion » (non bloquante)
+  try {
+    const h = await headers();
+    const ip =
+      h.get("cf-connecting-ip") ||
+      h.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      h.get("x-real-ip") ||
+      "Inconnue";
+    const { appareil, navigateur } = parseUserAgent(h.get("user-agent") || "");
+    const dateHeure = formatGabon(new Date());
+
+    let prenom = "";
+    let toEmail = email;
+    const uid = signInData.user?.id;
+    if (uid) {
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("full_name, email")
+        .eq("id", uid)
+        .maybeSingle();
+      if (prof?.full_name) prenom = prof.full_name.split(" ")[0];
+      if (prof?.email) toEmail = prof.email;
+    }
+    await notifyNewLogin(toEmail, {
+      prenom,
+      ip,
+      appareil,
+      navigateur,
+      dateHeure,
+    });
+  } catch {
+    // notification non bloquante
+  }
 
   revalidatePath("/", "layout");
   redirect("/dashboard");
+}
+
+// Déduit un appareil + navigateur lisibles depuis le User-Agent.
+function parseUserAgent(ua: string): { appareil: string; navigateur: string } {
+  if (!ua) return { appareil: "Appareil inconnu", navigateur: "Navigateur inconnu" };
+
+  let navigateur = "Navigateur inconnu";
+  if (/Edg\//.test(ua)) navigateur = "Edge";
+  else if (/OPR\/|Opera/.test(ua)) navigateur = "Opera";
+  else if (/Firefox\//.test(ua)) navigateur = "Firefox";
+  else if (/Chromium\//.test(ua)) navigateur = "Chromium";
+  else if (/Chrome\//.test(ua)) navigateur = "Chrome";
+  else if (/Version\/.*Safari\//.test(ua)) navigateur = "Safari";
+
+  let appareil = "Appareil inconnu";
+  if (/iPhone/.test(ua)) appareil = "iPhone";
+  else if (/iPad/.test(ua)) appareil = "iPad";
+  else if (/Android/.test(ua))
+    appareil = /Mobile/.test(ua) ? "Téléphone Android" : "Tablette Android";
+  else if (/Windows/.test(ua)) appareil = "Ordinateur Windows";
+  else if (/Macintosh|Mac OS X/.test(ua)) appareil = "Mac";
+  else if (/Linux/.test(ua)) appareil = "Ordinateur Linux";
+
+  return { appareil, navigateur };
+}
+
+// Date et heure formatées à l'heure du Gabon (UTC+1).
+function formatGabon(d: Date): string {
+  try {
+    return (
+      d.toLocaleString("fr-FR", {
+        timeZone: "Africa/Libreville",
+        dateStyle: "long",
+        timeStyle: "short",
+      }) + " (heure du Gabon)"
+    );
+  } catch {
+    return d.toISOString();
+  }
 }
 
 // ---------- DÉCONNEXION ----------
