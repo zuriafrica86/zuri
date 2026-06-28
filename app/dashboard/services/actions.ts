@@ -51,8 +51,6 @@ export async function addService(
   const prestation = String(formData.get("prestation") || "").trim();
   const name_custom = String(formData.get("name_custom") || "").trim();
   const price_min = parseInt(String(formData.get("price_min") || ""), 10);
-  const price_max_raw = String(formData.get("price_max") || "").trim();
-  const price_max = price_max_raw ? parseInt(price_max_raw, 10) : null;
   const dh = parseInt(String(formData.get("duree_h") || ""), 10);
   const dm = parseInt(String(formData.get("duree_min") || ""), 10);
   const h = Number.isNaN(dh) ? 0 : dh;
@@ -70,7 +68,7 @@ export async function addService(
     return { error: "Choisis un univers, une catégorie et une prestation." };
   }
   if (Number.isNaN(price_min)) {
-    return { error: "Le prix de départ est obligatoire." };
+    return { error: "Le prix est obligatoire." };
   }
 
   const { error } = await db.from("services").insert({
@@ -80,7 +78,7 @@ export async function addService(
     categorie,
     category: categorie,
     price_min,
-    price_max,
+    price_max: null,
     duree_estim,
     duree_minutes,
     description,
@@ -100,4 +98,46 @@ export async function deleteService(formData: FormData) {
   if (id) await db.from("services").delete().eq("id", id);
   revalidatePath("/dashboard/services");
   revalidatePath(`/admin/zuriste/${ownerId}`);
+}
+
+export async function updateService(
+  _prev: ServiceResult,
+  formData: FormData
+): Promise<ServiceResult> {
+  const ctx = await adminContext(formData);
+  if (!ctx.ok) return { error: "Session expirée ou non autorisé." };
+  const { db, ownerId } = ctx;
+
+  const id = String(formData.get("service_id") || "").trim();
+  if (!id) return { error: "Service introuvable." };
+
+  const price_min = parseInt(String(formData.get("price_min") || ""), 10);
+  if (Number.isNaN(price_min)) return { error: "Le prix est obligatoire." };
+
+  const dh = parseInt(String(formData.get("duree_h") || ""), 10);
+  const dm = parseInt(String(formData.get("duree_min") || ""), 10);
+  const h = Number.isNaN(dh) ? 0 : dh;
+  const m = Number.isNaN(dm) ? 0 : dm;
+  let duree_estim: string | null = null;
+  if (h > 0 && m > 0) duree_estim = `${h}h${m.toString().padStart(2, "0")}`;
+  else if (h > 0) duree_estim = `${h}h`;
+  else if (m > 0) duree_estim = `${m} min`;
+  const duree_minutes = h * 60 + m > 0 ? h * 60 + m : null;
+  const description = String(formData.get("description") || "").trim() || null;
+
+  const { error } = await db
+    .from("services")
+    .update({
+      price_min,
+      price_max: null,
+      duree_estim,
+      duree_minutes,
+      description,
+    })
+    .eq("id", id);
+  if (error) return { error: "Échec de la modification. Réessaie." };
+
+  revalidatePath("/dashboard/services");
+  revalidatePath(`/admin/zuriste/${ownerId}`);
+  return { ok: true };
 }

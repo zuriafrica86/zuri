@@ -1,7 +1,11 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { addService, deleteService } from "@/app/dashboard/services/actions";
+import {
+  addService,
+  updateService,
+  deleteService,
+} from "@/app/dashboard/services/actions";
 import type { ServiceResult } from "@/app/dashboard/services/types";
 import { SubmitButton } from "@/components/submit-button";
 import { universList, categoriesOf, prestationsOf, AUTRE } from "@/lib/catalog";
@@ -15,6 +19,7 @@ export interface ServiceItem {
   price_min: number;
   price_max: number | null;
   duree_estim: string | null;
+  duree_minutes: number | null;
   description: string | null;
 }
 
@@ -58,38 +63,7 @@ export function ServicesManager({
           </p>
         )}
         {services.map((s) => (
-          <div
-            key={s.id}
-            className="flex items-start justify-between rounded-xl2 border border-sable bg-white p-4"
-          >
-            <div>
-              <p className="font-medium">{s.name}</p>
-              <p className="text-xs uppercase tracking-wide text-or">
-                {s.univers}
-                {s.categorie ? ` · ${s.categorie}` : ""}
-              </p>
-              <p className="mt-0.5 text-sm text-cacao/70">
-                {formatPrice(s.price_min, s.price_max)} FCFA
-                {s.duree_estim ? ` · ${s.duree_estim}` : ""}
-              </p>
-              {s.description && (
-                <p className="mt-1 text-sm text-cacao/60">{s.description}</p>
-              )}
-            </div>
-            <form action={deleteService}>
-              {targetUserId && (
-                <input type="hidden" name="target_user_id" value={targetUserId} />
-              )}
-              <input type="hidden" name="service_id" value={s.id} />
-              <button
-                type="submit"
-                className="rounded-lg px-2 py-1 text-sm text-cacao/50 hover:bg-rose/30 hover:text-cacao"
-                aria-label={`Supprimer ${s.name}`}
-              >
-                Supprimer
-              </button>
-            </form>
-          </div>
+          <ServiceCard key={s.id} service={s} targetUserId={targetUserId} />
         ))}
       </div>
 
@@ -149,55 +123,16 @@ export function ServicesManager({
           />
         )}
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field
-            label="Prix de départ (FCFA)"
-            name="price_min"
-            type="number"
-            inputMode="numeric"
-            placeholder="15000"
-            required
-          />
-          <Field
-            label="Prix max (optionnel)"
-            name="price_max"
-            type="number"
-            inputMode="numeric"
-            placeholder="25000"
-          />
-        </div>
+        <Field
+          label="Prix (FCFA)"
+          name="price_min"
+          type="number"
+          inputMode="numeric"
+          placeholder="15000"
+          required
+        />
 
-        <div>
-          <span className="mb-1.5 block text-sm font-medium text-cacao/80">
-            Durée estimée (optionnel)
-          </span>
-          <div className="flex gap-2">
-            <select
-              name="duree_h"
-              defaultValue=""
-              className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
-            >
-              <option value="">Heures</option>
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((h) => (
-                <option key={h} value={h}>
-                  {h} h
-                </option>
-              ))}
-            </select>
-            <select
-              name="duree_min"
-              defaultValue=""
-              className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
-            >
-              <option value="">Minutes</option>
-              {[0, 15, 30, 45].map((m) => (
-                <option key={m} value={m}>
-                  {m} min
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        <DureeFields />
 
         <Textarea
           label="Description (optionnel)"
@@ -217,9 +152,168 @@ export function ServicesManager({
   );
 }
 
+/* ---------- Une carte de service : affichage + édition en ligne ---------- */
+function ServiceCard({
+  service: s,
+  targetUserId,
+}: {
+  service: ServiceItem;
+  targetUserId?: string;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [state, action] = useActionState<ServiceResult, FormData>(
+    updateService,
+    null
+  );
+
+  useEffect(() => {
+    if (state?.ok) setEditing(false);
+  }, [state]);
+
+  if (editing) {
+    const h = s.duree_minutes ? Math.floor(s.duree_minutes / 60) : 0;
+    const m = s.duree_minutes ? s.duree_minutes % 60 : 0;
+    return (
+      <form
+        action={action}
+        className="space-y-3 rounded-xl2 border border-or bg-white p-4"
+      >
+        {targetUserId && (
+          <input type="hidden" name="target_user_id" value={targetUserId} />
+        )}
+        <input type="hidden" name="service_id" value={s.id} />
+        <p className="font-medium">{s.name}</p>
+        <p className="text-xs uppercase tracking-wide text-or">
+          {s.univers}
+          {s.categorie ? ` · ${s.categorie}` : ""}
+        </p>
+
+        <Field
+          label="Prix (FCFA)"
+          name="price_min"
+          type="number"
+          inputMode="numeric"
+          defaultValue={s.price_min}
+          required
+        />
+
+        <DureeFields defaultH={h} defaultM={m} />
+
+        <Textarea
+          label="Description (optionnel)"
+          name="description"
+          defaultValue={s.description ?? ""}
+          placeholder="Détails, ce qui est inclus…"
+        />
+
+        {state?.error && (
+          <p className="rounded-xl2 bg-rose/60 px-4 py-2 text-sm text-cacao">
+            {state.error}
+          </p>
+        )}
+
+        <div className="flex gap-2">
+          <SubmitButton>Enregistrer</SubmitButton>
+          <button
+            type="button"
+            onClick={() => setEditing(false)}
+            className="rounded-xl2 border border-sable px-4 py-2 text-sm text-cacao/70 hover:bg-rose/30"
+          >
+            Annuler
+          </button>
+        </div>
+      </form>
+    );
+  }
+
+  return (
+    <div className="flex items-start justify-between rounded-xl2 border border-sable bg-white p-4">
+      <div>
+        <p className="font-medium">{s.name}</p>
+        <p className="text-xs uppercase tracking-wide text-or">
+          {s.univers}
+          {s.categorie ? ` · ${s.categorie}` : ""}
+        </p>
+        <p className="mt-0.5 text-sm text-cacao/70">
+          {formatPrice(s.price_min, s.price_max)} FCFA
+          {s.duree_estim ? ` · ${s.duree_estim}` : ""}
+        </p>
+        {s.description && (
+          <p className="mt-1 text-sm text-cacao/60">{s.description}</p>
+        )}
+      </div>
+      <div className="flex shrink-0 flex-col items-end gap-1">
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="rounded-lg px-2 py-1 text-sm text-cacao/70 hover:bg-rose/30 hover:text-cacao"
+        >
+          Modifier
+        </button>
+        <form action={deleteService}>
+          {targetUserId && (
+            <input type="hidden" name="target_user_id" value={targetUserId} />
+          )}
+          <input type="hidden" name="service_id" value={s.id} />
+          <button
+            type="submit"
+            className="rounded-lg px-2 py-1 text-sm text-cacao/50 hover:bg-rose/30 hover:text-cacao"
+            aria-label={`Supprimer ${s.name}`}
+          >
+            Supprimer
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function formatPrice(min: number, max: number | null): string {
   const f = (n: number) => n.toLocaleString("fr-FR");
-  return max && max > min ? `${f(min)} – ${f(max)}` : `dès ${f(min)}`;
+  return max && max > min ? `${f(min)} – ${f(max)}` : f(min);
+}
+
+/* ---------- Durée (heures + minutes), réutilisable ---------- */
+function DureeFields({
+  defaultH = 0,
+  defaultM = 0,
+}: {
+  defaultH?: number;
+  defaultM?: number;
+}) {
+  return (
+    <div>
+      <span className="mb-1.5 block text-sm font-medium text-cacao/80">
+        Durée estimée (optionnel)
+      </span>
+      <div className="flex gap-2">
+        <select
+          name="duree_h"
+          defaultValue={defaultH ? String(defaultH) : ""}
+          className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+        >
+          <option value="">Heures</option>
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((h) => (
+            <option key={h} value={h}>
+              {h} h
+            </option>
+          ))}
+        </select>
+        <select
+          name="duree_min"
+          defaultValue={defaultM ? String(defaultM) : ""}
+          className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+        >
+          <option value="">Minutes</option>
+          {[0, 15, 30, 45].map((m) => (
+            <option key={m} value={m}>
+              {m} min
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
 }
 
 function Select({

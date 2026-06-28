@@ -6,6 +6,7 @@ import { formatZuri, creditLevel } from "@/lib/credit";
 import { fetchModels } from "@/lib/models";
 import { ModelCard } from "@/components/model-card";
 import { PublicProfileLink } from "@/components/public-profile-link";
+import { QrCodeCard } from "@/components/qr-code-card";
 import { WeekAgenda } from "@/components/week-agenda";
 import { ZuristeKpis } from "@/components/zuriste-kpis";
 
@@ -31,16 +32,18 @@ export default async function DashboardPage() {
   let providerId: string | null = null;
   let providerStatus: string | null = null;
   let providerSlug: string | null = null;
+  let providerName = "";
   if (role === "prestataire") {
     const { data: prov } = await supabase
       .from("providers")
-      .select("id, credit_balance, status, slug")
+      .select("id, credit_balance, status, slug, business_name")
       .eq("user_id", user.id)
       .maybeSingle();
     credit = prov?.credit_balance ?? 0;
     providerId = prov?.id ?? null;
     providerStatus = prov?.status ?? null;
     providerSlug = prov?.slug ?? null;
+    providerName = prov?.business_name ?? "";
   }
 
   const models = role === "cliente" ? await fetchModels({ limit: 6 }) : [];
@@ -135,6 +138,10 @@ export default async function DashboardPage() {
                 path={`/zuriste/${providerSlug ?? providerId}`}
                 approved={providerStatus === "approved"}
               />
+            )}
+
+            {providerStatus === "approved" && providerSlug && (
+              <QrCodeCard slug={providerSlug} name={providerName} />
             )}
 
             {providerId && <ZuristeKpis providerId={providerId} />}
