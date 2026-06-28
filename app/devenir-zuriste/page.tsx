@@ -7,10 +7,6 @@ import {
   ShieldCheck,
   Check,
   ArrowRight,
-  Sparkles,
-  Eye,
-  Scissors,
-  Palette,
 } from "lucide-react";
 import { PublicHeader } from "@/components/public-header";
 
@@ -22,7 +18,7 @@ export const metadata: Metadata = {
     title: "Devenir Zuriste — Développe ton activité avec Zuri",
     description:
       "Transforme ton talent beauté en revenus réguliers : plus de visibilité, plus de clientes, un agenda rempli.",
-    images: [{ url: "/devenir-photo.jpg" }],
+    images: [{ url: "/devenir-hero-full.jpg" }],
   },
 };
 
@@ -80,48 +76,6 @@ const CONCRET = [
   },
 ];
 
-const PRESTATIONS = [
-  {
-    icon: Scissors,
-    univers: "Coiffure",
-    items: [
-      ["Tresses", "15 000"],
-      ["Coupe", "20 000"],
-      ["Pose tissage", "20 000"],
-      ["Pose perruque", "10 000"],
-    ],
-  },
-  {
-    icon: Sparkles,
-    univers: "Onglerie",
-    items: [
-      ["Pose gel", "10 000"],
-      ["Pose capsules", "10 000"],
-      ["Vernis semi-permanent", "5 000"],
-      ["Pédicure", "10 000"],
-    ],
-  },
-  {
-    icon: Eye,
-    univers: "Regard",
-    items: [
-      ["Extensions de cils", "15 000"],
-      ["Rehaussement", "20 000"],
-      ["Brow lift", "10 000"],
-      ["Microblading", "25 000"],
-    ],
-  },
-  {
-    icon: Palette,
-    univers: "Maquillage",
-    items: [
-      ["Mariage", "250 000"],
-      ["Soirée", "20 000"],
-      ["Shooting", "25 000"],
-    ],
-  },
-];
-
 const ETAPES = [
   {
     n: "01",
@@ -147,59 +101,61 @@ const ETAPES = [
 
 export default function DevenirZuristePage() {
   return (
-    <div className="min-h-screen bg-white">
-      <PublicHeader />
+    <div className="bg-white">
+      <PublicHeader light />
 
-      {/* HERO */}
-      <section className="mx-auto max-w-6xl px-6 pb-10 pt-8 sm:px-10 md:pb-16 md:pt-12">
-        <div className="grid items-center gap-10 md:grid-cols-2">
-          <div>
-            <p className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.18em] text-or">
-              <Sparkles className="h-4 w-4" aria-hidden />
+      {/* HERO plein écran */}
+      <section className="relative flex min-h-screen items-center overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/devenir-hero-full.jpg"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover object-right"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-cacao/90 via-cacao/65 to-cacao/20"
+          aria-hidden
+        />
+        <div className="relative mx-auto w-full max-w-6xl px-6 py-28 sm:px-10">
+          <div className="max-w-xl text-ivoire">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-or">
               Rejoins la communauté Zuri
             </p>
-            <h1 className="mt-4 font-display text-4xl leading-tight text-cacao md:text-5xl">
-              Développe ton activité et gagne plus avec Zuri.
+            <h1 className="mt-5 font-display text-4xl leading-[1.05] sm:text-6xl">
+              Développe ton activité et{" "}
+              <span className="italic text-or">gagne plus</span> avec Zuri.
             </h1>
-            <p className="mt-4 text-lg text-cacao/70">
+            <p className="mt-5 text-lg text-ivoire/85">
               Plus de visibilité, plus de clientes, plus de revenus. Ton talent
               mérite d'être vu.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 rounded-xl2 bg-or px-6 py-3 font-medium text-cacao shadow-soft transition hover:bg-or-clair"
+                className="inline-flex items-center gap-2 rounded-xl2 bg-or px-6 py-3.5 font-medium text-cacao shadow-soft transition hover:bg-or-clair"
               >
                 Créer mon profil Zuriste
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <a
                 href="#gains"
-                className="inline-flex items-center gap-2 rounded-xl2 border border-sable px-6 py-3 font-medium text-cacao transition hover:bg-rose/30"
+                className="inline-flex items-center gap-2 rounded-xl2 border border-ivoire/40 px-6 py-3.5 font-medium text-ivoire transition hover:bg-ivoire/10"
               >
                 Combien je peux gagner ?
               </a>
             </div>
           </div>
-
-          <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-rose via-or-clair to-or shadow-soft">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/devenir-hero.webp"
-              alt="Une Zuriste consulte ses demandes de rendez-vous sur Zuri"
-              className="h-full w-full object-cover object-top"
-            />
-          </div>
         </div>
       </section>
 
       {/* POURQUOI — bandeau cacao */}
-      <section className="bg-cacao py-14 text-ivoire">
+      <section className="bg-cacao py-28 text-ivoire md:py-36">
         <div className="mx-auto max-w-6xl px-6 sm:px-10">
-          <h2 className="text-center font-display text-3xl">
-            Pourquoi rejoindre Zuri ?
+          <h2 className="text-center font-display text-3xl md:text-4xl">
+            Pourquoi rejoindre <span className="italic text-or">Zuri</span> ?
           </h2>
-          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {POURQUOI.map((p) => (
               <div key={p.titre}>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-or/20 text-or">
@@ -216,15 +172,19 @@ export default function DevenirZuristePage() {
       </section>
 
       {/* GAINS — la pièce maîtresse */}
-      <section id="gains" className="mx-auto max-w-6xl px-6 py-16 sm:px-10">
-        <h2 className="font-display text-3xl text-cacao">
-          Combien peux-tu gagner avec Zuri ?
+      <section
+        id="gains"
+        className="mx-auto max-w-6xl px-6 py-28 sm:px-10 md:py-36"
+      >
+        <h2 className="font-display text-3xl text-cacao md:text-4xl">
+          Combien peux-tu <span className="italic text-or">gagner</span> avec
+          Zuri ?
         </h2>
-        <p className="mt-2 text-cacao/60">
+        <p className="mt-3 text-cacao/60">
           Projections basées sur un panier moyen de 15 000 FCFA par cliente.
         </p>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
           {/* 6 mois */}
           <div className="rounded-[24px] border border-sable bg-rose/20 p-7">
             <span className="inline-block rounded-full bg-or px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cacao">
@@ -279,10 +239,10 @@ export default function DevenirZuristePage() {
         </div>
 
         {/* Concrètement */}
-        <h3 className="mt-14 font-display text-2xl text-cacao">
-          Ce que ça représente concrètement
+        <h3 className="mt-16 font-display text-2xl text-cacao md:text-3xl">
+          Ce que ça représente <span className="italic text-or">concrètement</span>
         </h3>
-        <div className="mt-6 grid gap-5 md:grid-cols-3">
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
           {CONCRET.map((c) => (
             <div
               key={c.montant}
@@ -311,53 +271,14 @@ export default function DevenirZuristePage() {
         </div>
       </section>
 
-      {/* PRESTATIONS LES PLUS DEMANDÉES */}
-      <section className="bg-ivoire/60 py-16">
-        <div className="mx-auto max-w-6xl px-6 sm:px-10">
-          <h2 className="font-display text-3xl text-cacao">
-            Les prestations les plus demandées
-          </h2>
-          <p className="mt-2 text-cacao/60">
-            Coût moyen constaté chez les clientes au Gabon.
-          </p>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {PRESTATIONS.map((g) => (
-              <div
-                key={g.univers}
-                className="rounded-[20px] border border-sable bg-white p-5"
-              >
-                <div className="flex items-center gap-2 text-cacao">
-                  <g.icon className="h-5 w-5 text-or" aria-hidden />
-                  <h3 className="font-display text-lg">{g.univers}</h3>
-                </div>
-                <ul className="mt-4 space-y-2.5">
-                  {g.items.map(([nom, prix]) => (
-                    <li
-                      key={nom}
-                      className="flex items-center justify-between border-b border-sable/60 pb-2 text-sm last:border-0 last:pb-0"
-                    >
-                      <span className="text-cacao/70">{nom}</span>
-                      <span className="font-medium text-cacao">{prix}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <p className="mt-6 inline-block rounded-xl2 bg-or/20 px-5 py-3 text-sm font-medium text-cacao">
-            Panier moyen constaté : <strong>15 000 FCFA</strong> par cliente.
-          </p>
-        </div>
-      </section>
-
       {/* COMMENT ÇA MARCHE */}
-      <section className="mx-auto max-w-6xl px-6 py-16 sm:px-10">
+      <section className="mx-auto max-w-6xl px-6 py-28 sm:px-10 md:py-36">
         <div className="grid gap-10 md:grid-cols-[1fr_0.9fr] md:items-center">
           <div>
-            <h2 className="font-display text-3xl text-cacao">
-              Comment ça marche ?
+            <h2 className="font-display text-3xl text-cacao md:text-4xl">
+              Comment ça <span className="italic text-or">marche</span> ?
             </h2>
-            <ol className="mt-8 space-y-6">
+            <ol className="mt-10 space-y-6">
               {ETAPES.map((e) => (
                 <li key={e.n} className="flex gap-4">
                   <span className="font-display text-2xl text-or">{e.n}</span>
@@ -374,15 +295,15 @@ export default function DevenirZuristePage() {
           <div className="overflow-hidden rounded-[24px] shadow-soft">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/devenir-photo.jpg"
-              alt="Une Zuriste sourit en gérant ses rendez-vous"
+              src="/devenir-step.jpg"
+              alt="Une Zuriste sourit, prête à accueillir ses clientes"
               className="h-full w-full object-cover"
             />
           </div>
         </div>
 
         {/* Important */}
-        <div className="mt-12 rounded-[20px] border border-or/40 bg-rose/20 p-6">
+        <div className="mt-14 rounded-[20px] border border-or/40 bg-rose/20 p-6">
           <p className="text-sm font-semibold uppercase tracking-wider text-or">
             Important
           </p>
@@ -398,15 +319,15 @@ export default function DevenirZuristePage() {
       <section className="relative overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/devenir-photo.jpg"
+          src="/devenir-cta.jpg"
           alt=""
           aria-hidden
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-cacao/80" aria-hidden />
-        <div className="relative mx-auto max-w-3xl px-6 py-20 text-center text-ivoire">
+        <div className="relative mx-auto max-w-3xl px-6 py-28 text-center text-ivoire md:py-36">
           <h2 className="font-display text-4xl leading-tight md:text-5xl">
-            Ton talent mérite d'être vu.
+            Ton talent mérite <span className="italic text-or">d'être vu</span>.
           </h2>
           <p className="mt-4 text-lg text-ivoire/80">
             Rejoins Zuri et transforme ta passion en revenus.

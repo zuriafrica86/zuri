@@ -11,21 +11,37 @@ const LINKS = [
   { href: "/aide", label: "Besoin d'aide ?" },
 ];
 
-export function PublicHeader({ overlay = false }: { overlay?: boolean }) {
+export function PublicHeader({
+  overlay = false,
+  light = false,
+}: {
+  overlay?: boolean;
+  light?: boolean;
+}) {
   const [open, setOpen] = useState(false);
+  const floating = overlay || light;
+
+  const linkClass = light
+    ? "font-medium text-ivoire/85 hover:text-ivoire"
+    : "font-medium text-cacao/70 hover:text-cacao";
+  const signupClass = light
+    ? "rounded-xl2 bg-ivoire px-4 py-2 font-medium text-cacao hover:bg-ivoire/90"
+    : "rounded-xl2 bg-cacao px-4 py-2 font-medium text-ivoire hover:bg-cacao/90";
+  const hamburgerClass = light
+    ? "rounded-lg p-2 text-ivoire transition hover:bg-ivoire/10 md:hidden"
+    : "rounded-lg p-2 text-cacao transition hover:bg-rose/30 md:hidden";
 
   return (
     <header
-      className={
-        overlay ? "absolute inset-x-0 top-0 z-50" : "relative z-50"
-      }
+      className={floating ? "absolute inset-x-0 top-0 z-50" : "relative z-50"}
     >
       <div className="flex items-center justify-between px-6 py-4 sm:px-10">
         <Link href="/" aria-label="Accueil Zuri">
-          {overlay ? (
+          {light ? (
+            <Logo variant="light" />
+          ) : overlay ? (
             <>
-              {/* Sur desktop le logo est au-dessus du panneau cacao -> version claire.
-                  Sur mobile (fond clair) -> version foncée. */}
+              {/* Auth : clair au-dessus du panneau cacao (desktop), foncé sur fond clair (mobile). */}
               <span className="hidden md:inline-flex">
                 <Logo variant="light" />
               </span>
@@ -41,24 +57,14 @@ export function PublicHeader({ overlay = false }: { overlay?: boolean }) {
         {/* Desktop */}
         <nav className="hidden items-center gap-5 text-sm md:flex">
           {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="font-medium text-cacao/70 hover:text-cacao"
-            >
+            <Link key={l.href} href={l.href} className={linkClass}>
               {l.label}
             </Link>
           ))}
-          <Link
-            href="/login"
-            className="font-medium text-cacao/70 hover:text-cacao"
-          >
+          <Link href="/login" className={linkClass}>
             Me connecter
           </Link>
-          <Link
-            href="/signup"
-            className="rounded-xl2 bg-cacao px-4 py-2 font-medium text-ivoire hover:bg-cacao/90"
-          >
+          <Link href="/signup" className={signupClass}>
             M&apos;inscrire
           </Link>
         </nav>
@@ -69,7 +75,7 @@ export function PublicHeader({ overlay = false }: { overlay?: boolean }) {
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={open}
-          className="rounded-lg p-2 text-cacao transition hover:bg-rose/30 md:hidden"
+          className={hamburgerClass}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
