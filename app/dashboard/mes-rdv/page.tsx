@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { contactWhatsApp } from "@/app/dashboard/contact-actions";
 import { ConfirmPrestation } from "@/components/confirm-prestation";
+import { CancelBooking } from "@/components/cancel-booking";
+import { isCancellable } from "@/lib/cancel-reasons";
 
 interface MyBooking {
   id: string;
@@ -98,6 +100,12 @@ export default async function MesRdvPage() {
                     <Check className="h-4 w-4" aria-hidden /> Prestation confirmée.
                   </p>
                 )}
+
+                {isCancellable(
+                  b.status,
+                  b.date_souhaitee,
+                  b.heure_souhaitee
+                ) && <CancelBooking bookingId={b.id} role="cliente" />}
               </li>
             ))}
           </ul>

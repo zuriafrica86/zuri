@@ -422,3 +422,68 @@ export async function notifyHelpRequest(data: {
     }),
   });
 }
+
+/* ====================================================================== */
+/*  Annulation de RDV — avis à l'autre partie (motif toujours inclus)      */
+/* ====================================================================== */
+export async function notifyCancellationNotice(
+  to: string,
+  data: {
+    cancellerName: string;
+    dateLabel: string;
+    heureLabel: string | null;
+    motif: string;
+    recipientIsProvider: boolean;
+  }
+) {
+  const quand = `${data.dateLabel}${
+    data.heureLabel ? ` à ${data.heureLabel}` : ""
+  }`;
+  const cta = data.recipientIsProvider
+    ? { label: "Voir mes RDV", href: appUrl("/dashboard/rdv") }
+    : { label: "Voir mes demandes", href: appUrl("/dashboard/mes-rdv") };
+  await sendEmail({
+    to,
+    subject: "Un rendez-vous a été annulé",
+    text: `${data.cancellerName} a annulé le rendez-vous du ${quand}. Motif : ${data.motif}.`,
+    html: layout({
+      title: "Rendez-vous annulé",
+      bodyHtml: `<p style="margin:0 0 8px"><strong>${esc(
+        data.cancellerName
+      )}</strong> a annulé le rendez-vous du <strong>${esc(quand)}</strong>.</p>
+        ${infoBox(
+          `<p style="margin:0"><strong>Motif&nbsp;:</strong> ${esc(
+            data.motif
+          )}</p>`
+        )}
+        <p style="margin:0">Le créneau est de nouveau libre de ton côté.</p>`,
+      cta,
+    }),
+  });
+}
+
+/* ====================================================================== */
+/*  Annulation de RDV — accusé à la personne qui annule                    */
+/* ====================================================================== */
+export async function notifyCancellationReceipt(
+  to: string,
+  data: { otherName: string; dateLabel: string; heureLabel: string | null }
+) {
+  const quand = `${data.dateLabel}${
+    data.heureLabel ? ` à ${data.heureLabel}` : ""
+  }`;
+  await sendEmail({
+    to,
+    subject: "Ton annulation est bien prise en compte",
+    text: `Ton annulation du rendez-vous du ${quand} avec ${data.otherName} est bien prise en compte.`,
+    html: layout({
+      title: "Annulation confirmée",
+      bodyHtml: `<p style="margin:0 0 8px">Ton annulation du rendez-vous du <strong>${esc(
+        quand
+      )}</strong> avec <strong>${esc(
+        data.otherName
+      )}</strong> est bien prise en compte.</p>
+        <p style="margin:0">Aucune action supplémentaire n'est nécessaire.</p>`,
+    }),
+  });
+}

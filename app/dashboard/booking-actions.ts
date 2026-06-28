@@ -10,7 +10,14 @@ import {
   notifyPrestationFinished,
   notifyNewReview,
   notifyCreditAlert,
+  notifyCancellationNotice,
+  notifyCancellationReceipt,
 } from "@/lib/notify";
+import {
+  reasonsFor,
+  canCancelByDelay,
+  type CancelResult,
+} from "@/lib/cancel-reasons";
 import { applyWalletTx } from "@/lib/wallet";
 import { commissionFor, ALERT_HIGH, ALERT_LOW } from "@/lib/credit";
 
@@ -289,4 +296,159 @@ export async function confirmPrestation(formData: FormData) {
     }
   }
   revalidatePath("/dashboard/mes-rdv");
+}
+
+/* ====================================================================== */
+/*  Annulation d'un RDV par la cliente OU la Zuriste                       */
+/* ====================================================================== */
+function frDate(d: string): string {
+  try {
+    return new Date(`${d}T12:00:00`).toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    });
+  } catch {
+    return d;
+  }
+}
+
+export async function cancelBooking(
+  _prev: CancelResult | null,
+  formData: FormData
+): Promise<CancelResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Tu dois être connectée." };
+
+  const id = String(formData.get("booking_id") || "");
+  const reasonKey = String(formData.get("reason") || "").trim();
+  const autre = String(formData.get("autre") || "").trim();
+  if (!id) return { error: "Réservation introuvable." };
+  if (!reasonKey) return { error: "Choisis un motif d'annulation." };
+
+  const admin = createAdminClient();
+
+  // On charge la réservation + la Zuriste (nom + propriétaire du compte).
+  const { data: bk } = await admin
+    .from("bookings")
+    .select(
+      "id, status, date_souhaitee, heure_souhaitee, cliente_id, provider_id, providers(business_name, user_id)"
+    )
+    .eq("id", id)
+    .maybeSingle();
+  if (!bk) return { error: "Réservation introuvable." };
+
+  const prov = (bk.providers ?? null) as
+    | { business_name: string; user_id: string | null }
+    | { business_name: string; user_id: string | null }[]
+    | null;
+  const provider = Array.isArray(prov) ? prov[0] ?? null : prov;
+
+  // Qui annule ? (déduit côté serveur, on ne fait pas confiance au client)
+  const isCliente = bk.cliente_id === user.id;
+  const isProvider = !!provider?.user_id && provider.user_id === user.id;
+  if (!isCliente && !isProvider) return { error: "Action non autorisée." };
+  const role: "cliente" | "prestataire" = isCliente ? "cliente" : "prestataire";
+
+  // Encore annulable ?
+  if (bk.status !== "en_attente" && bk.status !== "confirme") {
+    return { error: "Ce rendez-vous ne peut plus être annulé." };
+  }
+  if (!canCancelByDelay(bk.date_souhaitee, bk.heure_souhaitee)) {
+    return {
+      error:
+        "Trop tard : un rendez-vous ne peut plus être annulé à moins de 2h.",
+    };
+  }
+
+  // Motif lisible (selon le rôle), "Autre" => texte libre obligatoire.
+  let motif: string;
+  if (reasonKey === "autre") {
+    if (!autre) return { error: "Précise ton motif dans le champ « Autre »." };
+    motif = `Autre : ${autre}`;
+  } else {
+    const found = reasonsFor(role).find((r) => r.key === reasonKey);
+    if (!found) return { error: "Motif invalide." };
+    motif = found.label;
+  }
+
+  // Annulation (service-role) : libère le créneau (statut hors de la liste « occupé »).
+  const { error: updErr } = await admin
+    .from("bookings")
+    .update({ status: "annule", cancel_reason: motif, cancelled_by: role })
+    .eq("id", id);
+  if (updErr) return { error: "Échec de l'annulation. Réessaie." };
+
+  // Emails : on récupère les adresses des deux parties.
+  const heureLabel = bk.heure_souhaitee
+    ? bk.heure_souhaitee.slice(0, 5)
+    : null;
+  const dateLabel = frDate(bk.date_souhaitee);
+  const businessName = provider?.business_name || "ta Zuriste";
+
+  let clienteEmail: string | null = null;
+  let clienteName = "la cliente";
+  if (bk.cliente_id) {
+    const { data: cli } = await admin
+      .from("profiles")
+      .select("email, full_name")
+      .eq("id", bk.cliente_id)
+      .maybeSingle();
+    clienteEmail = cli?.email ?? null;
+    if (cli?.full_name) clienteName = cli.full_name;
+  }
+
+  let providerEmail: string | null = null;
+  if (provider?.user_id) {
+    const { data: prof } = await admin
+      .from("profiles")
+      .select("email")
+      .eq("id", provider.user_id)
+      .maybeSingle();
+    providerEmail = prof?.email ?? null;
+  }
+
+  // Avis (avec motif) à l'autre partie + accusé à celle qui annule.
+  if (isCliente) {
+    if (providerEmail) {
+      await notifyCancellationNotice(providerEmail, {
+        cancellerName: clienteName,
+        dateLabel,
+        heureLabel,
+        motif,
+        recipientIsProvider: true,
+      });
+    }
+    if (clienteEmail) {
+      await notifyCancellationReceipt(clienteEmail, {
+        otherName: businessName,
+        dateLabel,
+        heureLabel,
+      });
+    }
+  } else {
+    if (clienteEmail) {
+      await notifyCancellationNotice(clienteEmail, {
+        cancellerName: businessName,
+        dateLabel,
+        heureLabel,
+        motif,
+        recipientIsProvider: false,
+      });
+    }
+    if (providerEmail) {
+      await notifyCancellationReceipt(providerEmail, {
+        otherName: clienteName,
+        dateLabel,
+        heureLabel,
+      });
+    }
+  }
+
+  revalidatePath("/dashboard/mes-rdv");
+  revalidatePath("/dashboard/rdv");
+  return { ok: true };
 }

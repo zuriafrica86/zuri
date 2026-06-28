@@ -7,6 +7,8 @@ import {
   startPrestation,
 } from "@/app/dashboard/booking-actions";
 import { FinishPrestation } from "@/components/finish-prestation";
+import { CancelBooking } from "@/components/cancel-booking";
+import { canCancelByDelay } from "@/lib/cancel-reasons";
 
 interface BookingRow {
   id: string;
@@ -151,6 +153,14 @@ export default async function CoiffeuseRdvPage() {
                         : ""}
                     </p>
                   )}
+
+                  {b.status === "confirme" &&
+                    canCancelByDelay(
+                      b.date_souhaitee,
+                      b.heure_souhaitee
+                    ) && (
+                      <CancelBooking bookingId={b.id} role="prestataire" />
+                    )}
                 </li>
               );
             })}
