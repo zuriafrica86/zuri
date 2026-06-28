@@ -133,16 +133,20 @@ export default async function DashboardPage() {
               </Link>
             </div>
 
-            {providerId && (
+            {providerId && providerStatus === "approved" && providerSlug ? (
+              <div className="grid gap-4 md:grid-cols-2 md:items-start">
+                <PublicProfileLink
+                  path={`/zuriste/${providerSlug}`}
+                  approved
+                />
+                <QrCodeCard slug={providerSlug} name={providerName} />
+              </div>
+            ) : providerId ? (
               <PublicProfileLink
                 path={`/zuriste/${providerSlug ?? providerId}`}
                 approved={providerStatus === "approved"}
               />
-            )}
-
-            {providerStatus === "approved" && providerSlug && (
-              <QrCodeCard slug={providerSlug} name={providerName} />
-            )}
+            ) : null}
 
             {providerId && <ZuristeKpis providerId={providerId} />}
 

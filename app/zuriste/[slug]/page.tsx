@@ -1,4 +1,4 @@
-import { BadgeCheck, Sparkles, Star, MapPin, Calendar, Clock, Lock, Circle } from "lucide-react";
+import { BadgeCheck, Star, MapPin, Calendar, Clock, Lock, Circle } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -182,20 +182,21 @@ export default async function CoiffeusePage({
             ) : null}
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-display text-2xl">
-                {provider.business_name}
-              </h1>
-              {provider.verified && (
-                <span className="flex items-center gap-1 text-sm text-or"><BadgeCheck className="h-4 w-4" aria-hidden />Vérifiée</span>
-              )}
-              {provider.ambassadrice && (
-                <span className="rounded-full bg-or px-2 py-0.5 text-xs font-medium text-cacao">
-                  <Sparkles className="inline h-3.5 w-3.5 align-[-0.15em]" aria-hidden /> Ambassadrice
-                </span>
-              )}
-            </div>
-            <p className="text-cacao/70">
+            {provider.verified && (
+              <span className="mb-1 flex items-center gap-1 text-sm text-or">
+                <BadgeCheck className="h-4 w-4" aria-hidden />
+                Vérifiée
+              </span>
+            )}
+            <h1 className="font-display text-2xl">
+              {provider.business_name}
+            </h1>
+            {provider.ambassadrice && (
+              <span className="mt-1.5 inline-block rounded-full bg-or px-2.5 py-0.5 text-xs font-medium text-cacao">
+                Ambassadrice
+              </span>
+            )}
+            <p className="mt-1 text-cacao/70">
               {provider.quartier ? `${provider.quartier}, ` : ""}
               {provider.ville}
             </p>
