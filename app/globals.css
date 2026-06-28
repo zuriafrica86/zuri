@@ -29,3 +29,31 @@
     transition: none !important;
   }
 }
+
+/* ====================================================================== */
+/*  Fondations du Design System — typographie & confort de lecture        */
+/* ====================================================================== */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Titres éditoriaux : plus nets, équilibrés (pas de mots orphelins) */
+.font-display {
+  letter-spacing: -0.01em;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
+/* Sélection de texte aux couleurs de la marque */
+::selection {
+  background: theme("colors.rose");
+  color: theme("colors.cacao");
+}
