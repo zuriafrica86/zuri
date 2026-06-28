@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useActionState, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { saveProfile } from "@/app/dashboard/profil/actions";
@@ -9,8 +10,8 @@ import { SubmitButton } from "@/components/submit-button";
 import { VILLES } from "@/lib/catalog";
 
 const MONTHS = [
-  "janvier","février","mars","avril","mai","juin",
-  "juillet","août","septembre","octobre","novembre","décembre",
+  "janvier", "février", "mars", "avril", "mai", "juin",
+  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
 ];
 
 export interface ProviderInitial {
@@ -29,6 +30,9 @@ export interface ProviderInitial {
   profile_photo?: string | null;
   status?: string | null;
 }
+
+const fieldClass =
+  "h-12 w-full rounded-xl2 border border-sable bg-white px-4 text-cacao placeholder:text-cacao/30 transition focus:border-or focus:shadow-focus focus:outline-none";
 
 export function ProviderProfileForm({
   userId,
@@ -73,17 +77,30 @@ export function ProviderProfileForm({
   }
 
   return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-display text-2xl">Mon profil Zuriste</h1>
-        <Link href="/dashboard" className="text-sm text-cacao/60 hover:text-cacao">
-          ← Retour
+    <div className="animate-fade-in">
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-2xl sm:text-3xl">
+            Mon profil Zuriste
+          </h1>
+          <p className="mt-1 text-sm text-cacao/60">
+            Ta vitrine publique : photo, présentation, contact et disponibilité.
+          </p>
+        </div>
+        <Link
+          href="/dashboard"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-cacao/60 transition hover:bg-rose/30 hover:text-cacao"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden /> Retour
         </Link>
       </div>
 
       {initial?.status && <StatusBadge status={initial.status} />}
 
-      <form action={action} className="mt-6 space-y-5">
+      <form
+        action={action}
+        className="mt-5 space-y-5 rounded-4xl border border-sable bg-white p-5 shadow-soft md:p-6"
+      >
         {targetUserId && (
           <input type="hidden" name="target_user_id" value={targetUserId} />
         )}
@@ -100,7 +117,7 @@ export function ProviderProfileForm({
             ) : null}
           </div>
           <div>
-            <label className="inline-block cursor-pointer rounded-xl2 border border-sable px-4 py-2 text-sm font-medium hover:bg-rose/30">
+            <label className="inline-block cursor-pointer rounded-xl2 border border-sable px-4 py-2.5 text-sm font-medium text-cacao transition hover:bg-rose/30">
               {uploading ? "Envoi…" : "Choisir une photo"}
               <input
                 type="file"
@@ -156,13 +173,18 @@ export function ProviderProfileForm({
             defaultValue={initial?.birth_day ? String(initial.birth_day) : ""}
             options={[
               ["", "Jour"] as [string, string],
-              ...Array.from({ length: 31 }, (_, i) => [String(i + 1), String(i + 1)] as [string, string]),
+              ...Array.from(
+                { length: 31 },
+                (_, i) => [String(i + 1), String(i + 1)] as [string, string]
+              ),
             ]}
           />
           <Select
             label="Mois d'anniversaire"
             name="birth_month"
-            defaultValue={initial?.birth_month ? String(initial.birth_month) : ""}
+            defaultValue={
+              initial?.birth_month ? String(initial.birth_month) : ""
+            }
             options={[
               ["", "Mois"] as [string, string],
               ...MONTHS.map((m, i) => [String(i + 1), m] as [string, string]),
@@ -225,12 +247,12 @@ export function ProviderProfileForm({
         />
 
         {state?.error && (
-          <p className="rounded-xl2 bg-rose/60 px-4 py-2 text-sm text-cacao">
+          <p className="rounded-xl2 bg-rose/60 px-4 py-2.5 text-sm text-cacao">
             {state.error}
           </p>
         )}
         {state?.ok && (
-          <p className="rounded-xl2 bg-green-100 px-4 py-2 text-sm text-green-800">
+          <p className="rounded-xl2 bg-green-100 px-4 py-2.5 text-sm text-green-700">
             Profil enregistré
           </p>
         )}
@@ -238,7 +260,7 @@ export function ProviderProfileForm({
         <SubmitButton>Enregistrer mon profil</SubmitButton>
       </form>
 
-      <p className="mt-6 text-sm text-cacao/50">
+      <p className="mt-5 text-sm text-cacao/50">
         Ton profil doit être validé par l&apos;équipe ZURI avant d&apos;apparaître
         dans la recherche.
       </p>
@@ -248,13 +270,18 @@ export function ProviderProfileForm({
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    pending: { label: "En attente de validation", cls: "bg-rose/50 text-cacao" },
-    approved: { label: "Profil approuvé", cls: "bg-green-100 text-green-800" },
-    rejected: { label: "Profil refusé", cls: "bg-red-100 text-red-800" },
+    pending: {
+      label: "En attente de validation",
+      cls: "bg-rose/50 text-cacao",
+    },
+    approved: { label: "Profil approuvé", cls: "bg-green-100 text-green-700" },
+    rejected: { label: "Profil refusé", cls: "bg-red-100 text-red-700" },
   };
   const s = map[status] ?? map.pending;
   return (
-    <span className={`inline-block rounded-full px-3 py-1 text-sm ${s.cls}`}>
+    <span
+      className={`inline-block rounded-full px-3 py-1 text-sm font-medium ${s.cls}`}
+    >
       {s.label}
     </span>
   );
@@ -269,10 +296,7 @@ function Field({
       <span className="mb-1.5 block text-sm font-medium text-cacao/80">
         {label}
       </span>
-      <input
-        {...props}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
-      />
+      <input {...props} className={fieldClass} />
     </label>
   );
 }
@@ -289,7 +313,7 @@ function Textarea({
       <textarea
         {...props}
         rows={3}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 transition focus:border-or focus:shadow-focus focus:outline-none"
       />
     </label>
   );
@@ -311,11 +335,7 @@ function Select({
       <span className="mb-1.5 block text-sm font-medium text-cacao/80">
         {label}
       </span>
-      <select
-        name={name}
-        defaultValue={defaultValue}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3"
-      >
+      <select name={name} defaultValue={defaultValue} className={fieldClass}>
         {options.map(([value, text]) => (
           <option key={value} value={value}>
             {text}

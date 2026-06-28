@@ -25,7 +25,9 @@ export function AvailabilityEditor({ initial }: { initial: DayState }) {
     setDays((prev) => {
       const ranges = prev[d] ?? [];
       const last = ranges[ranges.length - 1];
-      const next = last ? { start: last.end, end: "" } : { start: "09:00", end: "18:00" };
+      const next = last
+        ? { start: last.end, end: "" }
+        : { start: "09:00", end: "18:00" };
       return { ...prev, [d]: [...ranges, next] };
     });
   }
@@ -46,10 +48,13 @@ export function AvailabilityEditor({ initial }: { initial: DayState }) {
     }));
   }
 
+  const timeInput =
+    "rounded-xl2 border border-sable bg-white px-3 py-2 text-cacao transition focus:border-or focus:shadow-focus focus:outline-none";
+
   return (
     <form
       action={saveAvailability}
-      className="space-y-2.5 rounded-xl2 border border-sable bg-white p-5"
+      className="space-y-1 rounded-4xl border border-sable bg-white p-5 shadow-soft"
     >
       <input type="hidden" name="payload" value={JSON.stringify(days)} />
 
@@ -58,14 +63,14 @@ export function AvailabilityEditor({ initial }: { initial: DayState }) {
         return (
           <div
             key={d}
-            className="border-b border-sable py-3 first:pt-0 last:border-0 last:pb-0"
+            className="border-b border-sable py-3.5 first:pt-0 last:border-0 last:pb-0"
           >
             <div className="flex items-center justify-between">
               <span className="font-medium text-cacao">{label}</span>
               <button
                 type="button"
                 onClick={() => addRange(d)}
-                className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-or hover:bg-or/10"
+                className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-or transition hover:bg-or/10"
               >
                 <Plus className="h-4 w-4" aria-hidden /> Ajouter une plage
               </button>
@@ -74,7 +79,7 @@ export function AvailabilityEditor({ initial }: { initial: DayState }) {
             {ranges.length === 0 ? (
               <p className="mt-1 text-sm text-cacao/40">Indisponible ce jour</p>
             ) : (
-              <div className="mt-2 space-y-2">
+              <div className="mt-2.5 space-y-2">
                 {ranges.map((r, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm">
                     <input
@@ -83,20 +88,20 @@ export function AvailabilityEditor({ initial }: { initial: DayState }) {
                       onChange={(e) =>
                         updateRange(d, i, "start", e.target.value)
                       }
-                      className="rounded-xl2 border border-sable bg-white px-3 py-1.5 text-cacao"
+                      className={timeInput}
                     />
-                    <span className="text-cacao/60">à</span>
+                    <span className="text-cacao/50">à</span>
                     <input
                       type="time"
                       value={r.end}
                       onChange={(e) => updateRange(d, i, "end", e.target.value)}
-                      className="rounded-xl2 border border-sable bg-white px-3 py-1.5 text-cacao"
+                      className={timeInput}
                     />
                     <button
                       type="button"
                       onClick={() => removeRange(d, i)}
                       aria-label="Retirer cette plage"
-                      className="ml-1 rounded-lg p-1.5 text-cacao/40 hover:bg-rose/30 hover:text-cacao"
+                      className="ml-1 flex h-9 w-9 items-center justify-center rounded-lg text-cacao/40 transition hover:bg-rose/30 hover:text-cacao"
                     >
                       <X className="h-4 w-4" aria-hidden />
                     </button>
@@ -108,7 +113,7 @@ export function AvailabilityEditor({ initial }: { initial: DayState }) {
         );
       })}
 
-      <div className="pt-1">
+      <div className="pt-4">
         <SubmitButton>Enregistrer mes disponibilités</SubmitButton>
       </div>
     </form>

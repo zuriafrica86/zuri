@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AvailabilityEditor } from "@/components/availability-editor";
@@ -44,22 +46,32 @@ export default async function DisponibilitesPage() {
   }
 
   return (
-    <>
-      <div className="mb-6">
-        <h1 className="font-display text-2xl">Mes disponibilités</h1>
-        <p className="mt-1 text-sm text-cacao/60">
-          Ajoute une ou plusieurs plages horaires par jour (par exemple 9h–12h
-          et 14h–18h). Elles apparaîtront sur ton profil.
-        </p>
+    <div className="animate-fade-in">
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-2xl sm:text-3xl">
+            Mes disponibilités
+          </h1>
+          <p className="mt-1 text-sm text-cacao/60">
+            Ajoute une ou plusieurs plages par jour (ex. 9h–12h et 14h–18h).
+            Elles apparaîtront sur ton profil.
+          </p>
+        </div>
+        <Link
+          href="/dashboard"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-cacao/60 transition hover:bg-rose/30 hover:text-cacao"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden /> Retour
+        </Link>
       </div>
 
       {!provider ? (
-        <div className="rounded-xl2 border border-sable bg-white p-5">
+        <div className="rounded-4xl border border-sable bg-white p-6 shadow-soft">
           <p className="text-cacao/70">Tu dois d&apos;abord créer ton profil.</p>
         </div>
       ) : (
         <AvailabilityEditor initial={initial} />
       )}
-    </>
+    </div>
   );
 }

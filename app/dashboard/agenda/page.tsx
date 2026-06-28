@@ -142,24 +142,26 @@ export default async function AgendaPage({
     .sort((a, b) => a - b);
 
   return (
-    <>
-      <div className="mb-5 flex items-center justify-between">
+    <div className="animate-fade-in">
+      <div className="mb-5 flex items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl capitalize">{monthLabel}</h1>
+          <h1 className="font-display text-2xl capitalize sm:text-3xl">
+            {monthLabel}
+          </h1>
           <p className="mt-1 text-sm text-cacao/60">Tes rendez-vous du mois.</p>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1.5">
           <Link
             href={`/dashboard/agenda?m=${monthShift(ym, -1)}`}
             aria-label="Mois précédent"
-            className="rounded-lg border border-sable p-2 text-cacao/70 hover:bg-rose/30"
+            className="rounded-xl2 border border-sable p-2 text-cacao/70 transition duration-250 ease-soft hover:bg-rose/30 hover:text-cacao"
           >
             <ChevronLeft className="h-5 w-5" aria-hidden />
           </Link>
           <Link
             href={`/dashboard/agenda?m=${monthShift(ym, 1)}`}
             aria-label="Mois suivant"
-            className="rounded-lg border border-sable p-2 text-cacao/70 hover:bg-rose/30"
+            className="rounded-xl2 border border-sable p-2 text-cacao/70 transition duration-250 ease-soft hover:bg-rose/30 hover:text-cacao"
           >
             <ChevronRight className="h-5 w-5" aria-hidden />
           </Link>
@@ -177,8 +179,8 @@ export default async function AgendaPage({
       </div>
 
       {/* Grille mensuelle */}
-      <div className="overflow-hidden rounded-xl2 border border-sable bg-white">
-        <div className="grid grid-cols-7 border-b border-sable bg-ivoire/40 text-center text-xs font-medium text-cacao/60">
+      <div className="overflow-hidden rounded-xl2 border border-sable bg-white shadow-soft">
+        <div className="grid grid-cols-7 border-b border-sable bg-rose/15 text-center text-xs font-medium text-cacao/50">
           {WEEKDAYS.map((w) => (
             <div key={w} className="py-2">
               {w}
@@ -191,26 +193,26 @@ export default async function AgendaPage({
             return (
               <div
                 key={i}
-                className={`min-h-[78px] border-b border-r border-sable/60 p-1 ${
-                  d === null ? "bg-ivoire/20" : ""
+                className={`min-h-[80px] border-b border-r border-sable/50 p-1 ${
+                  d === null ? "bg-sable/10" : ""
                 }`}
               >
                 {d && (
                   <>
-                    <div
-                      className={`mb-0.5 text-right text-xs ${
-                        d === todayDay
-                          ? "font-bold text-or"
-                          : "text-cacao/50"
-                      }`}
-                    >
-                      {d}
+                    <div className="mb-0.5 flex justify-end">
+                      {d === todayDay ? (
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-cacao text-[11px] font-semibold text-ivoire">
+                          {d}
+                        </span>
+                      ) : (
+                        <span className="px-0.5 text-xs text-cacao/45">{d}</span>
+                      )}
                     </div>
                     <div className="space-y-0.5">
                       {entries.slice(0, 3).map((e, j) => (
                         <div
                           key={j}
-                          className={`truncate rounded px-1 py-0.5 text-[10px] leading-tight ${
+                          className={`truncate rounded-md px-1 py-0.5 text-[10px] leading-tight ${
                             e.confirmed
                               ? "bg-green-100 text-green-800"
                               : "bg-orange-100 text-orange-800"
@@ -237,7 +239,7 @@ export default async function AgendaPage({
 
       {/* Détail chronologique */}
       {daysWithRdv.length > 0 && (
-        <div className="mt-5 space-y-3">
+        <div className="mt-6 space-y-4">
           {daysWithRdv.map((d) => {
             const label = new Intl.DateTimeFormat("fr-FR", {
               weekday: "long",
@@ -245,14 +247,14 @@ export default async function AgendaPage({
             }).format(new Date(Date.UTC(year, month - 1, d)));
             return (
               <div key={d}>
-                <p className="mb-1 text-sm font-medium capitalize text-cacao">
+                <p className="mb-1.5 text-sm font-medium capitalize text-cacao">
                   {label}
                 </p>
                 <ul className="space-y-1.5">
                   {byDay[d].map((e, j) => (
                     <li
                       key={j}
-                      className="flex items-center gap-2 rounded-xl2 border border-sable bg-white px-3 py-2 text-sm"
+                      className="flex items-center gap-2.5 rounded-xl2 border border-sable bg-white px-3.5 py-2.5 text-sm"
                     >
                       <span
                         className={`h-2.5 w-2.5 shrink-0 rounded-full ${
@@ -275,10 +277,13 @@ export default async function AgendaPage({
       )}
 
       {daysWithRdv.length === 0 && (
-        <p className="mt-5 rounded-xl2 border border-sable bg-white p-5 text-center text-sm text-cacao/50">
-          Aucun rendez-vous ce mois-ci.
-        </p>
+        <div className="mt-6 rounded-4xl border border-dashed border-sable bg-white px-6 py-12 text-center">
+          <p className="font-medium text-cacao">Aucun rendez-vous ce mois-ci</p>
+          <p className="mt-1 text-sm text-cacao/50">
+            Tes RDV confirmés et en attente s&apos;afficheront ici.
+          </p>
+        </div>
       )}
-    </>
+    </div>
   );
 }
