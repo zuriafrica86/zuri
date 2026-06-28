@@ -90,19 +90,32 @@ export default async function RecherchePage({
 
   return (
     <AppShell maxWidth="5xl">
-        <h1 className="font-display text-2xl">Trouve ta Zuriste</h1>
+      <div className="animate-fade-in">
+        <h1 className="font-display text-3xl sm:text-4xl">
+          Trouve ta <span className="italic text-or">Zuriste</span>
+        </h1>
+        <p className="mt-1.5 text-cacao/60">
+          Découvre les talents beauté près de chez toi et réserve en quelques
+          secondes.
+        </p>
+
         <SearchFilters current={{ ville, univers, categorie, lieu, prix }} />
 
-        <p className="mt-6 text-sm text-cacao/60">
+        <p className="mt-5 text-sm text-cacao/60">
           {providers.length} Zuriste{providers.length > 1 ? "s" : ""}
         </p>
 
         {providers.length === 0 ? (
-          <div className="mt-4 rounded-xl2 border border-dashed border-sable bg-white p-10 text-center text-cacao/50">
-            Aucune Zuriste ne correspond. Essaie d&apos;élargir tes filtres.
+          <div className="mt-3 rounded-4xl border border-dashed border-sable bg-white px-6 py-16 text-center">
+            <p className="font-display text-xl text-cacao">
+              Aucune Zuriste ne correspond
+            </p>
+            <p className="mt-1.5 text-sm text-cacao/50">
+              Essaie d&apos;élargir tes filtres pour découvrir plus de talents.
+            </p>
           </div>
         ) : (
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {providers.map((p) => (
               <ProviderCard
                 key={p.id}
@@ -124,6 +137,7 @@ export default async function RecherchePage({
             ))}
           </div>
         )}
-      </AppShell>
+      </div>
+    </AppShell>
   );
 }

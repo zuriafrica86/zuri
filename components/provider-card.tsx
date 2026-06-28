@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, BadgeCheck, Star, Circle } from "lucide-react";
+import { BadgeCheck, Star } from "lucide-react";
 
 export interface CardProvider {
   id: string;
@@ -17,73 +17,78 @@ export interface CardProvider {
 }
 
 export function ProviderCard({ provider: p }: { provider: CardProvider }) {
+  const disponible = p.dispo === "disponible";
   return (
     <Link
       href={`/zuriste/${p.slug}`}
-      className="group block overflow-hidden rounded-xl2 border border-sable bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-md"
+      className="group block overflow-hidden rounded-xl2 border border-sable bg-white transition duration-250 ease-soft hover:-translate-y-1 hover:shadow-card"
     >
-      <div className="relative aspect-[4/3] bg-rose/30">
+      <div className="relative aspect-[4/5] overflow-hidden bg-rose/30">
         {p.profile_photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={p.profile_photo}
             alt={p.business_name}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 ease-soft group-hover:scale-[1.05]"
           />
         ) : (
-          <div className="flex h-full items-center justify-center font-display text-2xl text-cacao/20">
+          <div className="flex h-full items-center justify-center font-display text-3xl text-cacao/15">
             ZURI
           </div>
         )}
+
         {p.ambassadrice && (
-          <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-or px-2 py-0.5 text-xs font-medium text-cacao shadow-soft">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden />
+          <span className="absolute left-2 top-2 rounded-full bg-or px-2.5 py-0.5 text-[11px] font-medium text-cacao shadow-soft">
             Ambassadrice
           </span>
         )}
+
+        <span className="absolute bottom-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-cacao/80 shadow-soft backdrop-blur">
+          <span
+            className={`h-2 w-2 rounded-full ${
+              disponible ? "bg-green-500" : "bg-cacao/30"
+            }`}
+            aria-hidden
+          />
+          {disponible ? "Disponible" : "Indisponible"}
+        </span>
       </div>
-      <div className="p-4">
-        <div className="flex items-center justify-between gap-2">
-          <h3 className="truncate font-medium">{p.business_name}</h3>
+
+      <div className="p-3.5">
+        <div className="flex items-center gap-1.5">
+          <h3 className="truncate font-medium text-cacao">
+            {p.business_name}
+          </h3>
           {p.verified && (
-            <span className="flex shrink-0 items-center gap-1 text-xs text-or">
-              <BadgeCheck className="h-4 w-4" aria-hidden />
-              Vérifiée
-            </span>
+            <BadgeCheck
+              className="h-4 w-4 shrink-0 text-or"
+              aria-label="Vérifiée"
+            />
           )}
         </div>
-        <p className="text-sm text-cacao/60">
+        <p className="truncate text-sm text-cacao/60">
           {p.quartier ? `${p.quartier}, ` : ""}
           {p.ville}
         </p>
-        <div className="mt-2 flex items-center justify-between text-sm">
+        <div className="mt-2 flex items-center justify-between gap-2 text-sm">
           <span className="flex items-center gap-1 text-cacao/70">
             {p.rating_count > 0 ? (
               <>
-                <Star className="h-4 w-4 text-or" aria-hidden />
-                {p.rating_avg.toFixed(1)} ({p.rating_count})
+                <Star className="h-4 w-4 fill-or text-or" aria-hidden />
+                {p.rating_avg.toFixed(1)}
+                <span className="text-cacao/40">({p.rating_count})</span>
               </>
             ) : (
-              "Nouvelle"
+              <span className="text-cacao/50">Nouvelle</span>
             )}
           </span>
           {p.minPrice != null && (
-            <span className="font-medium text-cacao">
-              dès {p.minPrice.toLocaleString("fr-FR")} FCFA
+            <span className="shrink-0 font-medium text-cacao">
+              dès {p.minPrice.toLocaleString("fr-FR")}
+              <span className="text-cacao/50"> FCFA</span>
             </span>
           )}
         </div>
-        <p className="mt-1 flex items-center gap-1 text-xs text-cacao/50">
-          <Circle
-            className={
-              p.dispo === "disponible"
-                ? "h-2.5 w-2.5 fill-green-500 text-green-500"
-                : "h-2.5 w-2.5 fill-cacao/30 text-cacao/30"
-            }
-            aria-hidden
-          />
-          {p.dispo === "disponible" ? "Disponible" : "Indisponible"}
-        </p>
       </div>
     </Link>
   );
