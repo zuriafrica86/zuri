@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { Pencil, Trash2, Plus } from "lucide-react";
 import {
   addService,
   updateService,
@@ -54,28 +55,42 @@ export function ServicesManager({
   return (
     <div className="space-y-6">
       {/* Liste des services */}
-      <div className="space-y-3">
-        {services.length === 0 && (
-          <p className="text-sm text-cacao/50">
-            Aucun service pour l&apos;instant. Ajoute ta première prestation
-            ci-dessous.
+      {services.length === 0 ? (
+        <div className="rounded-4xl border border-dashed border-sable bg-white px-6 py-12 text-center">
+          <p className="font-medium text-cacao">
+            Aucune prestation pour l&apos;instant
           </p>
-        )}
-        {services.map((s) => (
-          <ServiceCard key={s.id} service={s} targetUserId={targetUserId} />
-        ))}
-      </div>
+          <p className="mt-1 text-sm text-cacao/50">
+            Ajoute ta première prestation avec le formulaire ci-dessous.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <h2 className="font-display text-xl">
+            Tes prestations
+            <span className="ml-2 align-middle text-base font-normal text-cacao/40">
+              {services.length}
+            </span>
+          </h2>
+          {services.map((s) => (
+            <ServiceCard key={s.id} service={s} targetUserId={targetUserId} />
+          ))}
+        </div>
+      )}
 
       {/* Ajout d'un service */}
       <form
         key={formKey}
         action={action}
-        className="space-y-3 rounded-xl2 border border-sable bg-white p-5"
+        className="space-y-3.5 rounded-4xl border border-sable bg-white p-5 shadow-soft"
       >
         {targetUserId && (
           <input type="hidden" name="target_user_id" value={targetUserId} />
         )}
-        <h2 className="font-display text-xl">Ajouter un service</h2>
+        <h2 className="flex items-center gap-2 font-display text-xl">
+          <Plus className="h-5 w-5 text-or" aria-hidden />
+          Ajouter un service
+        </h2>
         <ServiceFields />
         {state?.error && (
           <p className="rounded-xl2 bg-rose/60 px-4 py-2 text-sm text-cacao">
@@ -110,7 +125,7 @@ function ServiceCard({
     return (
       <form
         action={action}
-        className="space-y-3 rounded-xl2 border border-or bg-white p-4"
+        className="space-y-3.5 rounded-xl2 border-2 border-or/70 bg-white p-4 shadow-soft animate-fade-in"
       >
         {targetUserId && (
           <input type="hidden" name="target_user_id" value={targetUserId} />
@@ -128,7 +143,7 @@ function ServiceCard({
           <button
             type="button"
             onClick={() => setEditing(false)}
-            className="rounded-xl2 border border-sable px-4 py-2 text-sm text-cacao/70 hover:bg-rose/30"
+            className="shrink-0 rounded-xl2 border border-sable px-4 py-3 text-sm font-medium text-cacao/70 transition hover:bg-rose/30"
           >
             Annuler
           </button>
@@ -138,42 +153,58 @@ function ServiceCard({
   }
 
   return (
-    <div className="flex items-start justify-between rounded-xl2 border border-sable bg-white p-4">
-      <div>
-        <p className="font-medium">{s.name}</p>
-        <p className="text-xs uppercase tracking-wide text-or">
-          {s.univers}
-          {s.categorie ? ` · ${s.categorie}` : ""}
-        </p>
-        <p className="mt-0.5 text-sm text-cacao/70">
-          {formatPrice(s.price_min, s.price_max)} FCFA
-          {s.duree_estim ? ` · ${s.duree_estim}` : ""}
-        </p>
-        {s.description && (
-          <p className="mt-1 text-sm text-cacao/60">{s.description}</p>
-        )}
-      </div>
-      <div className="flex shrink-0 flex-col items-end gap-1">
-        <button
-          type="button"
-          onClick={() => setEditing(true)}
-          className="rounded-lg px-2 py-1 text-sm text-cacao/70 hover:bg-rose/30 hover:text-cacao"
-        >
-          Modifier
-        </button>
-        <form action={deleteService}>
-          {targetUserId && (
-            <input type="hidden" name="target_user_id" value={targetUserId} />
+    <div className="rounded-xl2 border border-sable bg-white p-4 transition duration-250 ease-soft hover:shadow-soft">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          {s.univers && (
+            <p className="text-[11px] font-medium uppercase tracking-wide text-cacao/40">
+              {s.univers}
+              {s.categorie ? ` · ${s.categorie}` : ""}
+            </p>
           )}
-          <input type="hidden" name="service_id" value={s.id} />
+          <p className="font-medium text-cacao">{s.name}</p>
+          {s.description && (
+            <p className="mt-1 text-sm text-cacao/60">{s.description}</p>
+          )}
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
           <button
-            type="submit"
-            className="rounded-lg px-2 py-1 text-sm text-cacao/50 hover:bg-rose/30 hover:text-cacao"
-            aria-label={`Supprimer ${s.name}`}
+            type="button"
+            onClick={() => setEditing(true)}
+            aria-label={`Modifier ${s.name}`}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-cacao/50 transition hover:bg-rose/30 hover:text-cacao"
           >
-            Supprimer
+            <Pencil className="h-4 w-4" aria-hidden />
           </button>
-        </form>
+          <form action={deleteService}>
+            {targetUserId && (
+              <input type="hidden" name="target_user_id" value={targetUserId} />
+            )}
+            <input type="hidden" name="service_id" value={s.id} />
+            <button
+              type="submit"
+              aria-label={`Supprimer ${s.name}`}
+              onClick={(e) => {
+                if (!confirm(`Supprimer « ${s.name} » ?`)) e.preventDefault();
+              }}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-cacao/40 transition hover:bg-rose/30 hover:text-red-700"
+            >
+              <Trash2 className="h-4 w-4" aria-hidden />
+            </button>
+          </form>
+        </div>
+      </div>
+      <div className="mt-2 flex items-center gap-2 text-sm">
+        <span className="font-medium text-cacao">
+          {formatPrice(s.price_min, s.price_max)}
+          <span className="text-cacao/50"> FCFA</span>
+        </span>
+        {s.duree_estim && (
+          <>
+            <span className="text-cacao/30">·</span>
+            <span className="text-cacao/55">{s.duree_estim}</span>
+          </>
+        )}
       </div>
     </div>
   );
@@ -183,8 +214,7 @@ function ServiceCard({
 function buildInitial(s: ServiceItem): FieldsInitial {
   const univers = s.univers ?? "";
   const categorie = s.categorie ?? "";
-  const list =
-    univers && categorie ? prestationsOf(univers, categorie) : [];
+  const list = univers && categorie ? prestationsOf(univers, categorie) : [];
   const isCatalog = !!s.name && list.includes(s.name);
   return {
     univers,
@@ -266,7 +296,10 @@ function ServiceFields({ initial }: { initial?: FieldsInitial }) {
         required
       />
 
-      <DureeFields defaultH={initial?.dureeH ?? 0} defaultM={initial?.dureeM ?? 0} />
+      <DureeFields
+        defaultH={initial?.dureeH ?? 0}
+        defaultM={initial?.dureeM ?? 0}
+      />
 
       <Textarea
         label="Description (optionnel)"
@@ -282,6 +315,9 @@ function formatPrice(min: number, max: number | null): string {
   const f = (n: number) => n.toLocaleString("fr-FR");
   return max && max > min ? `${f(min)} – ${f(max)}` : f(min);
 }
+
+const fieldClass =
+  "h-12 w-full rounded-xl2 border border-sable bg-white px-4 text-cacao transition focus:border-or focus:shadow-focus focus:outline-none disabled:opacity-50";
 
 function DureeFields({
   defaultH = 0,
@@ -299,7 +335,7 @@ function DureeFields({
         <select
           name="duree_h"
           defaultValue={defaultH ? String(defaultH) : ""}
-          className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+          className={fieldClass}
         >
           <option value="">Heures</option>
           {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((h) => (
@@ -311,7 +347,7 @@ function DureeFields({
         <select
           name="duree_min"
           defaultValue={defaultM ? String(defaultM) : ""}
-          className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+          className={fieldClass}
         >
           <option value="">Minutes</option>
           {[0, 15, 30, 45].map((m) => (
@@ -352,7 +388,7 @@ function Select({
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao disabled:opacity-50"
+        className={fieldClass}
       >
         <option value="">{placeholder}</option>
         {options.map((o) => (
@@ -376,7 +412,7 @@ function Field({
       </span>
       <input
         {...props}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+        className="h-12 w-full rounded-xl2 border border-sable bg-white px-4 text-cacao placeholder:text-cacao/30 transition focus:border-or focus:shadow-focus focus:outline-none"
       />
     </label>
   );
@@ -394,7 +430,7 @@ function Textarea({
       <textarea
         {...props}
         rows={2}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 transition focus:border-or focus:shadow-focus focus:outline-none"
       />
     </label>
   );
