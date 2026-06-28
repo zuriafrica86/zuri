@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Download } from "lucide-react";
 
-const IVOIRE = "#F7F0E6";
+const BG = "#FFFFFF";
 const CACAO = "#2A1A12";
 const OR = "#E2B0A0";
 
@@ -51,7 +51,7 @@ async function buildCard(
   ctx.scale(S, S);
 
   // Fond ivoire + cadre or arrondi
-  ctx.fillStyle = IVOIRE;
+  ctx.fillStyle = BG;
   ctx.fillRect(0, 0, W, H);
   roundRect(ctx, 20, 20, W - 40, H - 40, 28);
   ctx.strokeStyle = OR;
@@ -61,7 +61,7 @@ async function buildCard(
   // Logo (wordmark)
   try {
     const logo = await loadImage("/logo-zuri.png");
-    const lw = 300;
+    const lw = 260;
     const lh = (logo.height / logo.width) * lw;
     ctx.drawImage(logo, (W - lw) / 2, 70, lw, lh);
   } catch {
@@ -91,7 +91,7 @@ async function buildCard(
   await QRCode.toCanvas(qrCanvas, url, {
     width: 380 * S,
     margin: 1,
-    color: { dark: CACAO, light: IVOIRE },
+    color: { dark: CACAO, light: BG },
   });
   const q = 360;
   ctx.drawImage(qrCanvas, (W - q) / 2, 330, q, q);

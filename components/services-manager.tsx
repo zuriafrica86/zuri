@@ -23,6 +23,17 @@ export interface ServiceItem {
   description: string | null;
 }
 
+interface FieldsInitial {
+  univers: string;
+  categorie: string;
+  prestation: string;
+  nameCustom: string;
+  price: number | "";
+  dureeH: number;
+  dureeM: number;
+  description: string;
+}
+
 export function ServicesManager({
   services,
   targetUserId,
@@ -34,23 +45,11 @@ export function ServicesManager({
     addService,
     null
   );
-  const [univers, setUnivers] = useState("");
-  const [categorie, setCategorie] = useState("");
-  const [prestation, setPrestation] = useState("");
   const [formKey, setFormKey] = useState(0);
 
   useEffect(() => {
-    if (state?.ok) {
-      setUnivers("");
-      setCategorie("");
-      setPrestation("");
-      setFormKey((k) => k + 1);
-    }
+    if (state?.ok) setFormKey((k) => k + 1);
   }, [state]);
-
-  const categories = univers ? categoriesOf(univers).map((c) => c.nom) : [];
-  const prestations =
-    univers && categorie ? prestationsOf(univers, categorie) : [];
 
   return (
     <div className="space-y-6">
@@ -77,82 +76,19 @@ export function ServicesManager({
           <input type="hidden" name="target_user_id" value={targetUserId} />
         )}
         <h2 className="font-display text-xl">Ajouter un service</h2>
-
-        <Select
-          label="Univers"
-          name="univers"
-          value={univers}
-          onChange={(v) => {
-            setUnivers(v);
-            setCategorie("");
-            setPrestation("");
-          }}
-          options={universList()}
-          placeholder="Choisir un univers"
-        />
-
-        <Select
-          label="Catégorie"
-          name="categorie"
-          value={categorie}
-          onChange={(v) => {
-            setCategorie(v);
-            setPrestation("");
-          }}
-          options={categories}
-          placeholder="Choisir une catégorie"
-          disabled={!univers}
-        />
-
-        <Select
-          label="Prestation"
-          name="prestation"
-          value={prestation}
-          onChange={setPrestation}
-          options={prestations}
-          placeholder="Choisir une prestation"
-          disabled={!categorie}
-        />
-
-        {prestation === AUTRE && (
-          <Field
-            label="Précise ta prestation"
-            name="name_custom"
-            placeholder="Nom de la prestation"
-            required
-          />
-        )}
-
-        <Field
-          label="Prix (FCFA)"
-          name="price_min"
-          type="number"
-          inputMode="numeric"
-          placeholder="15000"
-          required
-        />
-
-        <DureeFields />
-
-        <Textarea
-          label="Description (optionnel)"
-          name="description"
-          placeholder="Détails, ce qui est inclus…"
-        />
-
+        <ServiceFields />
         {state?.error && (
           <p className="rounded-xl2 bg-rose/60 px-4 py-2 text-sm text-cacao">
             {state.error}
           </p>
         )}
-
         <SubmitButton>Ajouter le service</SubmitButton>
       </form>
     </div>
   );
 }
 
-/* ---------- Une carte de service : affichage + édition en ligne ---------- */
+/* ---------- Carte de service : affichage + édition complète en ligne ---------- */
 function ServiceCard({
   service: s,
   targetUserId,
@@ -171,8 +107,6 @@ function ServiceCard({
   }, [state]);
 
   if (editing) {
-    const h = s.duree_minutes ? Math.floor(s.duree_minutes / 60) : 0;
-    const m = s.duree_minutes ? s.duree_minutes % 60 : 0;
     return (
       <form
         action={action}
@@ -182,36 +116,13 @@ function ServiceCard({
           <input type="hidden" name="target_user_id" value={targetUserId} />
         )}
         <input type="hidden" name="service_id" value={s.id} />
-        <p className="font-medium">{s.name}</p>
-        <p className="text-xs uppercase tracking-wide text-or">
-          {s.univers}
-          {s.categorie ? ` · ${s.categorie}` : ""}
-        </p>
-
-        <Field
-          label="Prix (FCFA)"
-          name="price_min"
-          type="number"
-          inputMode="numeric"
-          defaultValue={s.price_min}
-          required
-        />
-
-        <DureeFields defaultH={h} defaultM={m} />
-
-        <Textarea
-          label="Description (optionnel)"
-          name="description"
-          defaultValue={s.description ?? ""}
-          placeholder="Détails, ce qui est inclus…"
-        />
-
+        <h3 className="font-display text-lg">Modifier le service</h3>
+        <ServiceFields initial={buildInitial(s)} />
         {state?.error && (
           <p className="rounded-xl2 bg-rose/60 px-4 py-2 text-sm text-cacao">
             {state.error}
           </p>
         )}
-
         <div className="flex gap-2">
           <SubmitButton>Enregistrer</SubmitButton>
           <button
@@ -268,12 +179,110 @@ function ServiceCard({
   );
 }
 
+// Valeurs initiales pour l'édition : déduit si la prestation vient du catalogue ou est "Autre".
+function buildInitial(s: ServiceItem): FieldsInitial {
+  const univers = s.univers ?? "";
+  const categorie = s.categorie ?? "";
+  const list =
+    univers && categorie ? prestationsOf(univers, categorie) : [];
+  const isCatalog = !!s.name && list.includes(s.name);
+  return {
+    univers,
+    categorie,
+    prestation: isCatalog ? s.name : s.name ? AUTRE : "",
+    nameCustom: isCatalog ? "" : s.name ?? "",
+    price: s.price_min,
+    dureeH: s.duree_minutes ? Math.floor(s.duree_minutes / 60) : 0,
+    dureeM: s.duree_minutes ? s.duree_minutes % 60 : 0,
+    description: s.description ?? "",
+  };
+}
+
+/* ---------- Champs d'un service (cascade univers/catégorie/prestation + prix/durée/desc) ---------- */
+function ServiceFields({ initial }: { initial?: FieldsInitial }) {
+  const [univers, setUnivers] = useState(initial?.univers ?? "");
+  const [categorie, setCategorie] = useState(initial?.categorie ?? "");
+  const [prestation, setPrestation] = useState(initial?.prestation ?? "");
+
+  const categories = univers ? categoriesOf(univers).map((c) => c.nom) : [];
+  const prestations =
+    univers && categorie ? prestationsOf(univers, categorie) : [];
+
+  return (
+    <>
+      <Select
+        label="Univers"
+        name="univers"
+        value={univers}
+        onChange={(v) => {
+          setUnivers(v);
+          setCategorie("");
+          setPrestation("");
+        }}
+        options={universList()}
+        placeholder="Choisir un univers"
+      />
+
+      <Select
+        label="Catégorie"
+        name="categorie"
+        value={categorie}
+        onChange={(v) => {
+          setCategorie(v);
+          setPrestation("");
+        }}
+        options={categories}
+        placeholder="Choisir une catégorie"
+        disabled={!univers}
+      />
+
+      <Select
+        label="Prestation"
+        name="prestation"
+        value={prestation}
+        onChange={setPrestation}
+        options={prestations}
+        placeholder="Choisir une prestation"
+        disabled={!categorie}
+      />
+
+      {prestation === AUTRE && (
+        <Field
+          label="Précise ta prestation"
+          name="name_custom"
+          defaultValue={initial?.nameCustom ?? ""}
+          placeholder="Nom de la prestation"
+          required
+        />
+      )}
+
+      <Field
+        label="Prix (FCFA)"
+        name="price_min"
+        type="number"
+        inputMode="numeric"
+        defaultValue={initial?.price ?? ""}
+        placeholder="15000"
+        required
+      />
+
+      <DureeFields defaultH={initial?.dureeH ?? 0} defaultM={initial?.dureeM ?? 0} />
+
+      <Textarea
+        label="Description (optionnel)"
+        name="description"
+        defaultValue={initial?.description ?? ""}
+        placeholder="Détails, ce qui est inclus…"
+      />
+    </>
+  );
+}
+
 function formatPrice(min: number, max: number | null): string {
   const f = (n: number) => n.toLocaleString("fr-FR");
   return max && max > min ? `${f(min)} – ${f(max)}` : f(min);
 }
 
-/* ---------- Durée (heures + minutes), réutilisable ---------- */
 function DureeFields({
   defaultH = 0,
   defaultM = 0,

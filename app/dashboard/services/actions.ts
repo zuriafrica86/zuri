@@ -111,8 +111,13 @@ export async function updateService(
   const id = String(formData.get("service_id") || "").trim();
   if (!id) return { error: "Service introuvable." };
 
+  const univers = String(formData.get("univers") || "").trim();
+  const categorie = String(formData.get("categorie") || "").trim();
+  const prestation = String(formData.get("prestation") || "").trim();
+  const name_custom = String(formData.get("name_custom") || "").trim();
+  const name = prestation === AUTRE ? name_custom : prestation;
+
   const price_min = parseInt(String(formData.get("price_min") || ""), 10);
-  if (Number.isNaN(price_min)) return { error: "Le prix est obligatoire." };
 
   const dh = parseInt(String(formData.get("duree_h") || ""), 10);
   const dm = parseInt(String(formData.get("duree_min") || ""), 10);
@@ -125,9 +130,18 @@ export async function updateService(
   const duree_minutes = h * 60 + m > 0 ? h * 60 + m : null;
   const description = String(formData.get("description") || "").trim() || null;
 
+  if (!univers || !categorie || !name) {
+    return { error: "Choisis un univers, une catégorie et une prestation." };
+  }
+  if (Number.isNaN(price_min)) return { error: "Le prix est obligatoire." };
+
   const { error } = await db
     .from("services")
     .update({
+      name,
+      univers,
+      categorie,
+      category: categorie,
       price_min,
       price_max: null,
       duree_estim,
