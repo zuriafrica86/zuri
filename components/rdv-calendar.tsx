@@ -32,6 +32,13 @@ function ymd(d: Date): string {
   ).padStart(2, "0")}`;
 }
 
+function priceLabel(s: RdvService): string {
+  const f = (n: number) => n.toLocaleString("fr-FR");
+  return s.price_max && s.price_max > s.price_min
+    ? `${f(s.price_min)} – ${f(s.price_max)}`
+    : f(s.price_min);
+}
+
 export function RdvCalendar({
   providerId,
   services,
@@ -82,18 +89,18 @@ export function RdvCalendar({
 
   if (state?.ok) {
     return (
-      <div className="mt-6 rounded-xl2 border border-sable bg-white p-5 text-center">
+      <div className="mt-7 rounded-4xl border border-sable bg-white p-8 text-center shadow-soft animate-fade-in-up">
         <CheckCircle className="mx-auto h-12 w-12 text-green-600" aria-hidden />
-        <h2 className="mt-2 font-display text-xl">Demande envoyée !</h2>
+        <h2 className="mt-3 font-display text-xl">Demande envoyée !</h2>
         <p className="mt-2 text-cacao/70">
           La Zuriste va confirmer ton rendez-vous. Tu recevras son contact
           WhatsApp dès qu&apos;elle aura accepté.
         </p>
         <Link
           href="/recherche"
-          className="mt-4 inline-block rounded-xl2 bg-or px-4 py-2 font-medium text-cacao hover:bg-or-clair"
+          className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl2 bg-cacao px-5 py-2.5 font-medium text-ivoire transition duration-250 ease-soft hover:bg-cacao/90 active:scale-[0.98]"
         >
-          Découvrir d&apos;autres Zuristes →
+          Découvrir d&apos;autres Zuristes
         </Link>
       </div>
     );
@@ -101,7 +108,7 @@ export function RdvCalendar({
 
   if (services.length === 0) {
     return (
-      <div className="mt-6 rounded-xl2 border border-sable bg-white p-5 text-cacao/70">
+      <div className="mt-7 rounded-xl2 border border-sable bg-white p-5 text-cacao/70">
         Cette Zuriste n&apos;a pas encore de prestations réservables.
       </div>
     );
@@ -132,30 +139,27 @@ export function RdvCalendar({
   const noAvailability = availableWeekdays.length === 0;
 
   return (
-    <form action={action} className="mt-6 space-y-4">
+    <form action={action} className="mt-7 space-y-5">
       <input type="hidden" name="provider_id" value={providerId} />
       <input type="hidden" name="service_id" value={serviceId} />
       <input type="hidden" name="date_souhaitee" value={selectedDate ?? ""} />
       <input type="hidden" name="heure_souhaitee" value={selectedTime ?? ""} />
 
       {/* 1. Prestation */}
-      <label className="block">
-        <span className="mb-1.5 block text-sm font-medium text-cacao/80">
-          1. Choisis ta prestation
-        </span>
+      <Step n={1} label="Choisis ta prestation">
         <select
           value={serviceId}
           onChange={(e) => setServiceId(e.target.value)}
-          className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+          className="h-12 w-full rounded-xl2 border border-sable bg-white px-4 text-cacao transition focus:border-or focus:shadow-focus focus:outline-none"
         >
           <option value="">— Choisir —</option>
           {services.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.name} — dès {s.price_min.toLocaleString("fr-FR")} FCFA
+              {s.name} — {priceLabel(s)} FCFA
             </option>
           ))}
         </select>
-      </label>
+      </Step>
 
       {noAvailability && (
         <p className="rounded-xl2 bg-rose/50 px-4 py-3 text-sm text-cacao">
@@ -166,10 +170,7 @@ export function RdvCalendar({
 
       {/* 2. Jour */}
       {serviceId && !noAvailability && (
-        <div>
-          <span className="mb-1.5 block text-sm font-medium text-cacao/80">
-            2. Choisis un jour
-          </span>
+        <Step n={2} label="Choisis un jour">
           <div className="rounded-xl2 border border-sable bg-white p-3">
             <div className="mb-2 flex items-center justify-between">
               <button
@@ -177,7 +178,7 @@ export function RdvCalendar({
                 onClick={() => shiftMonth(-1)}
                 disabled={atCurrentMonth}
                 aria-label="Mois précédent"
-                className="rounded-lg p-1.5 text-cacao/70 hover:bg-rose/30 disabled:opacity-30"
+                className="rounded-lg p-1.5 text-cacao/70 transition hover:bg-rose/30 disabled:opacity-30"
               >
                 <ChevronLeft className="h-5 w-5" aria-hidden />
               </button>
@@ -188,12 +189,12 @@ export function RdvCalendar({
                 type="button"
                 onClick={() => shiftMonth(1)}
                 aria-label="Mois suivant"
-                className="rounded-lg p-1.5 text-cacao/70 hover:bg-rose/30"
+                className="rounded-lg p-1.5 text-cacao/70 transition hover:bg-rose/30"
               >
                 <ChevronRight className="h-5 w-5" aria-hidden />
               </button>
             </div>
-            <div className="grid grid-cols-7 text-center text-[11px] text-cacao/50">
+            <div className="grid grid-cols-7 text-center text-[11px] font-medium text-cacao/40">
               {WEEKDAYS.map((w) => (
                 <div key={w} className="py-1">
                   {w}
@@ -210,18 +211,21 @@ export function RdvCalendar({
                 const open = availableWeekdays.includes(weekday);
                 const disabled = isPast || !open;
                 const isSelected = selectedDate === dateStr;
+                const isToday = dateStr === todayStr;
                 return (
                   <button
                     key={i}
                     type="button"
                     disabled={disabled}
                     onClick={() => pickDay(dateStr)}
-                    className={`aspect-square rounded-lg text-sm transition ${
+                    className={`aspect-square rounded-lg text-sm transition duration-250 ease-soft ${
                       isSelected
-                        ? "bg-or font-semibold text-cacao"
+                        ? "bg-cacao font-semibold text-ivoire"
                         : disabled
                           ? "text-cacao/25"
-                          : "text-cacao hover:bg-ivoire"
+                          : isToday
+                            ? "text-cacao ring-1 ring-inset ring-or hover:bg-rose/30"
+                            : "text-cacao hover:bg-rose/30"
                     }`}
                   >
                     {d}
@@ -230,15 +234,12 @@ export function RdvCalendar({
               })}
             </div>
           </div>
-        </div>
+        </Step>
       )}
 
       {/* 3. Créneau */}
       {selectedDate && (
-        <div>
-          <span className="mb-1.5 block text-sm font-medium text-cacao/80">
-            3. Choisis un créneau
-          </span>
+        <Step n={3} label="Choisis un créneau">
           {loading ? (
             <div className="flex items-center gap-2 rounded-xl2 border border-sable bg-white px-4 py-4 text-sm text-cacao/60">
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> Recherche
@@ -251,9 +252,9 @@ export function RdvCalendar({
                   key={t}
                   type="button"
                   onClick={() => setSelectedTime(t)}
-                  className={`rounded-xl2 border px-2 py-2.5 text-sm transition ${
+                  className={`rounded-full border px-2 py-2.5 text-sm transition duration-250 ease-soft ${
                     selectedTime === t
-                      ? "border-or bg-or font-semibold text-cacao"
+                      ? "border-cacao bg-cacao font-semibold text-ivoire"
                       : "border-sable bg-white text-cacao hover:border-or"
                   }`}
                 >
@@ -266,12 +267,12 @@ export function RdvCalendar({
               Aucun créneau disponible ce jour. Essaie une autre date.
             </p>
           )}
-        </div>
+        </Step>
       )}
 
       {/* 4. Mot + envoi */}
       {selectedTime && (
-        <>
+        <div className="space-y-4 animate-fade-in">
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium text-cacao/80">
               Un mot pour la Zuriste (optionnel)
@@ -280,7 +281,7 @@ export function RdvCalendar({
               name="note"
               rows={3}
               placeholder="Ex : box braids longueur taille"
-              className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+              className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 transition focus:border-or focus:shadow-focus focus:outline-none"
             />
           </label>
 
@@ -291,15 +292,34 @@ export function RdvCalendar({
           )}
 
           <SubmitButton>Réserver ce créneau</SubmitButton>
-          <p className="text-center text-xs text-cacao/50">
-            <Lock
-              className="mr-1 inline h-3.5 w-3.5 align-[-0.15em]"
-              aria-hidden
-            />
+          <p className="flex items-center justify-center gap-1.5 text-center text-xs text-cacao/50">
+            <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden />
             Le numéro de la Zuriste te sera communiqué une fois le RDV confirmé.
           </p>
-        </>
+        </div>
       )}
     </form>
+  );
+}
+
+function Step({
+  n,
+  label,
+  children,
+}: {
+  n: number;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="mb-2 flex items-center gap-2">
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-cacao text-xs font-semibold text-ivoire">
+          {n}
+        </span>
+        <span className="text-sm font-medium text-cacao">{label}</span>
+      </div>
+      {children}
+    </div>
   );
 }
