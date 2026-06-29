@@ -218,3 +218,61 @@ export async function createZuriste(
     ok: `Compte créé pour ${email}. Elle apparaît dans « En attente » et peut se connecter avec ce mot de passe.`,
   };
 }
+
+/* ====================================================================== */
+/*  Rendez-vous — contrôle total admin                                     */
+/* ====================================================================== */
+const BOOKING_STATUSES = [
+  "en_attente",
+  "confirme",
+  "en_cours",
+  "termine",
+  "refuse",
+  "annule",
+];
+
+// Modifie un rendez-vous : statut, date et/ou heure (override direct).
+export async function adminUpdateBooking(formData: FormData) {
+  const ctx = await assertAdmin();
+  if (!ctx) return;
+
+  const id = String(formData.get("booking_id") || "").trim();
+  if (!id) return;
+
+  const status = String(formData.get("status") || "").trim();
+  const date = String(formData.get("date_souhaitee") || "").trim();
+  const heure = String(formData.get("heure_souhaitee") || "").trim();
+
+  const patch: Record<string, unknown> = {};
+  if (status && BOOKING_STATUSES.includes(status)) patch.status = status;
+  if (date) patch.date_souhaitee = date;
+  patch.heure_souhaitee = heure || null;
+
+  const admin = createAdminClient();
+  await admin.from("bookings").update(patch).eq("id", id);
+  refresh();
+}
+
+// Annule un rendez-vous (statut annulé, attribué à l'administration).
+export async function adminCancelBooking(formData: FormData) {
+  const ctx = await assertAdmin();
+  if (!ctx) return;
+
+  const id = String(formData.get("booking_id") || "").trim();
+  if (!id) return;
+
+  const reason =
+    String(formData.get("cancel_reason") || "").trim() ||
+    "Annulé par l'administration";
+
+  const admin = createAdminClient();
+  await admin
+    .from("bookings")
+    .update({
+      status: "annule",
+      cancelled_by: "admin",
+      cancel_reason: reason,
+    })
+    .eq("id", id);
+  refresh();
+}

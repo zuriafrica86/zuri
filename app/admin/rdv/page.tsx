@@ -1,101 +1,144 @@
-import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { AdminRdvTable, type ARow } from "@/components/admin-rdv-table";
 
-interface Booking {
+interface BookingRow {
   id: string;
   status: string;
   date_souhaitee: string;
   heure_souhaitee: string | null;
+  note: string | null;
   created_at: string;
+  provider_id: string | null;
   cliente_id: string | null;
+  service_id: string | null;
   providers: { business_name: string } | null;
 }
 
-const STATUS: Record<string, { label: string; cls: string }> = {
-  en_attente: { label: "En attente", cls: "bg-rose/50 text-cacao" },
-  confirme: { label: "Confirmé", cls: "bg-green-100 text-green-800" },
-  refuse: { label: "Refusé", cls: "bg-red-100 text-red-800" },
-  annule: { label: "Annulé", cls: "bg-ivoire text-cacao/60" },
-  termine: { label: "Terminé", cls: "bg-ivoire text-cacao/60" },
-};
+const FILTERS = [
+  { key: "", label: "Tous" },
+  { key: "en_attente", label: "En attente" },
+  { key: "confirme", label: "Confirmés" },
+  { key: "en_cours", label: "En cours" },
+  { key: "termine", label: "Terminés" },
+  { key: "annule", label: "Annulés" },
+  { key: "refuse", label: "Refusés" },
+];
 
-export default async function AdminRdvPage() {
-  const supabase = await createClient();
+export default async function AdminRdvPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ statut?: string }>;
+}) {
+  const { statut } = await searchParams;
+  const admin = createAdminClient();
 
-  const { data } = await supabase
+  let q = admin
     .from("bookings")
     .select(
-      "id, status, date_souhaitee, heure_souhaitee, created_at, cliente_id, providers(business_name)"
+      "id, status, date_souhaitee, heure_souhaitee, note, created_at, provider_id, cliente_id, service_id, providers(business_name)"
     )
     .order("created_at", { ascending: false })
-    .limit(100);
-  const bookings = (data as Booking[] | null) ?? [];
+    .limit(200);
+  if (statut) q = q.eq("status", statut);
+  const { data } = await q;
+  const bookings = (data as BookingRow[] | null) ?? [];
 
+  // Clientes (nom + téléphone)
   const clienteIds = [
     ...new Set(bookings.map((b) => b.cliente_id).filter(Boolean) as string[]),
   ];
-  let names: Record<string, string> = {};
+  const cli: Record<string, { name: string; phone: string | null }> = {};
   if (clienteIds.length) {
-    const { data: profs } = await supabase
+    const { data: profs } = await admin
       .from("profiles")
-      .select("id, full_name")
+      .select("id, full_name, phone")
       .in("id", clienteIds);
-    names = Object.fromEntries(
-      ((profs as { id: string; full_name: string }[] | null) ?? []).map((p) => [
-        p.id,
-        p.full_name,
-      ])
-    );
+    for (const p of (profs as
+      | { id: string; full_name: string | null; phone: string | null }[]
+      | null) ?? [])
+      cli[p.id] = { name: p.full_name || "Cliente", phone: p.phone };
   }
+
+  // Services (nom + tarif + durée)
+  const serviceIds = [
+    ...new Set(bookings.map((b) => b.service_id).filter(Boolean) as string[]),
+  ];
+  const svc: Record<
+    string,
+    { name: string; price: string; duree: string | null }
+  > = {};
+  if (serviceIds.length) {
+    const { data: ss } = await admin
+      .from("services")
+      .select("id, name, price_min, price_max, duree_estim")
+      .in("id", serviceIds);
+    const f = (n: number) => n.toLocaleString("fr-FR");
+    for (const s of (ss as
+      | {
+          id: string;
+          name: string;
+          price_min: number;
+          price_max: number | null;
+          duree_estim: string | null;
+        }[]
+      | null) ?? []) {
+      const price =
+        s.price_max && s.price_max > s.price_min
+          ? `${f(s.price_min)} – ${f(s.price_max)} FCFA`
+          : `${f(s.price_min)} FCFA`;
+      svc[s.id] = { name: s.name, price, duree: s.duree_estim };
+    }
+  }
+
+  const rows: ARow[] = bookings.map((b) => ({
+    id: b.id,
+    status: b.status,
+    date: b.date_souhaitee ? b.date_souhaitee.slice(0, 10) : "",
+    heure: b.heure_souhaitee ? b.heure_souhaitee.slice(0, 5) : null,
+    note: b.note,
+    created_at: b.created_at,
+    zuriste: b.providers?.business_name ?? "Zuriste",
+    cliente: (b.cliente_id && cli[b.cliente_id]?.name) || "Cliente",
+    clientePhone: (b.cliente_id && cli[b.cliente_id]?.phone) || null,
+    serviceName: (b.service_id && svc[b.service_id]?.name) || null,
+    price: (b.service_id && svc[b.service_id]?.price) || null,
+    duree: (b.service_id && svc[b.service_id]?.duree) || null,
+  }));
 
   return (
-    <div>
-      <h1 className="font-display text-2xl">Rendez-vous</h1>
+    <div className="animate-fade-in">
+      <h1 className="font-display text-2xl sm:text-3xl">Rendez-vous</h1>
       <p className="mt-1 text-sm text-cacao/60">
-        Toutes les demandes de la plateforme ({bookings.length})
+        {statut
+          ? `${rows.length} rendez-vous · filtre actif`
+          : `Toutes les demandes de la plateforme (${rows.length})`}
+        . Clique une ligne pour voir le détail et agir.
       </p>
 
-      {bookings.length === 0 ? (
-        <p className="mt-6 text-sm text-cacao/50">Aucun rendez-vous.</p>
-      ) : (
-        <ul className="mt-6 space-y-3">
-          {bookings.map((b) => {
-            const s = STATUS[b.status] ?? STATUS.en_attente;
-            return (
-              <li
-                key={b.id}
-                className="flex items-center justify-between gap-3 rounded-xl2 border border-sable bg-white p-4"
-              >
-                <div>
-                  <p className="font-medium">
-                    {b.providers?.business_name ?? "Zuriste"}
-                  </p>
-                  <p className="text-sm text-cacao/60">
-                    {b.cliente_id ? names[b.cliente_id] ?? "Cliente" : "Cliente"}{" "}
-                    · {fmt(b.date_souhaitee)}
-                    {b.heure_souhaitee ? ` ${b.heure_souhaitee}` : ""}
-                  </p>
-                </div>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs ${s.cls}`}
-                >
-                  {s.label}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      <div className="mt-5 flex flex-wrap gap-2">
+        {FILTERS.map((f) => {
+          const active = (statut ?? "") === f.key;
+          const href = f.key ? `/admin/rdv?statut=${f.key}` : "/admin/rdv";
+          return (
+            <Link
+              key={f.key || "all"}
+              href={href}
+              className={
+                active
+                  ? "rounded-full bg-cacao px-4 py-1.5 text-sm font-medium text-ivoire"
+                  : "rounded-full border border-sable px-4 py-1.5 text-sm text-cacao/70 transition duration-250 ease-soft hover:bg-rose/30 hover:text-cacao"
+              }
+            >
+              {f.label}
+            </Link>
+          );
+        })}
+      </div>
+
+      <div className="mt-6">
+        <AdminRdvTable rows={rows} />
+      </div>
     </div>
   );
-}
-
-function fmt(d: string): string {
-  try {
-    return new Date(d).toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "short",
-    });
-  } catch {
-    return d;
-  }
 }
