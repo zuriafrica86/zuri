@@ -83,9 +83,9 @@ export default async function ZuristesPage({
   }));
 
   return (
-    <div className="space-y-5">
+    <div className="animate-fade-in space-y-5">
       <div>
-        <h1 className="font-display text-2xl">Zuristes</h1>
+        <h1 className="font-display text-2xl sm:text-3xl">Zuristes</h1>
         <p className="mt-1 text-sm text-cacao/60">
           Clique sur une ligne pour voir le détail et agir.
         </p>
@@ -103,8 +103,8 @@ export default async function ZuristesPage({
               href={href}
               className={
                 active
-                  ? "rounded-xl2 bg-cacao px-3 py-1.5 text-sm font-medium text-ivoire"
-                  : "rounded-xl2 border border-sable px-3 py-1.5 text-sm text-cacao/70 hover:bg-rose/30"
+                  ? "rounded-full bg-cacao px-4 py-1.5 text-sm font-medium text-ivoire"
+                  : "rounded-full border border-sable px-4 py-1.5 text-sm text-cacao/70 transition duration-250 ease-soft hover:bg-rose/30 hover:text-cacao"
               }
             >
               {f.label}
