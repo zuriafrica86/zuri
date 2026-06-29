@@ -11,7 +11,7 @@ export default function SignupPage() {
   const [role, setRole] = useState<"cliente" | "prestataire">("cliente");
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <h2 className="font-display text-2xl">Créer un compte</h2>
       <p className="mt-2 text-sm text-cacao/60">
         Quelques infos et c&apos;est parti.
@@ -24,8 +24,8 @@ export default function SignupPage() {
             key={r}
             type="button"
             onClick={() => setRole(r)}
-            className={`rounded-xl2 px-3 py-2 text-sm font-medium transition ${
-              role === r ? "bg-ivoire text-cacao shadow-soft" : "text-cacao/60"
+            className={`rounded-lg px-3 py-2 text-sm font-medium transition duration-250 ease-soft ${
+              role === r ? "bg-white text-cacao shadow-soft" : "text-cacao/60 hover:text-cacao"
             }`}
           >
             {r === "cliente" ? "En tant que cliente" : "En tant que Zuriste"}
@@ -84,7 +84,7 @@ function Field({
       <span className="mb-1.5 block text-sm font-medium text-cacao/80">{label}</span>
       <input
         {...props}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+        className="h-12 w-full rounded-xl2 border border-sable bg-white px-4 text-cacao placeholder:text-cacao/30 transition focus:border-or focus:shadow-focus focus:outline-none"
       />
     </label>
   );

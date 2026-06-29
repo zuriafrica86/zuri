@@ -24,7 +24,7 @@ export function KpiCard({
 }) {
   return (
     <div
-      className={`rounded-xl2 border p-4 ${
+      className={`rounded-xl2 border p-4 shadow-soft ${
         accent ? "border-or/40 bg-or/10" : "border-sable bg-white"
       }`}
     >
@@ -54,7 +54,7 @@ export function BarList({
           <span className="w-28 shrink-0 truncate text-sm text-cacao/80 sm:w-36">
             {it.label}
           </span>
-          <div className="h-5 flex-1 overflow-hidden rounded bg-ivoire/60">
+          <div className="h-5 flex-1 overflow-hidden rounded bg-sable/40">
             <div
               className={`h-full rounded ${color}`}
               style={{ width: `${Math.max(2, (it.value / max) * 100)}%` }}

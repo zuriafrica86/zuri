@@ -222,8 +222,8 @@ export default async function AdminOverviewPage() {
     .filter((s) => s.value > 0);
 
   return (
-    <div>
-      <h1 className="font-display text-2xl">Vue d&apos;ensemble</h1>
+    <div className="animate-fade-in">
+      <h1 className="font-display text-2xl sm:text-3xl">Vue d&apos;ensemble</h1>
       <p className="mt-1 text-sm text-cacao/60">
         Les chiffres et dynamiques clés de ZURI
       </p>
@@ -242,11 +242,11 @@ export default async function AdminOverviewPage() {
 
       {/* Tendances */}
       <div className="mt-6 grid gap-3 lg:grid-cols-2">
-        <div className="rounded-xl2 border border-sable bg-white p-5">
+        <div className="rounded-xl2 border border-sable bg-white p-5 shadow-soft">
           <h2 className="mb-4 font-display text-lg">Demandes de RDV par mois</h2>
           <TrendBars points={trendBookings} />
         </div>
-        <div className="rounded-xl2 border border-sable bg-white p-5">
+        <div className="rounded-xl2 border border-sable bg-white p-5 shadow-soft">
           <h2 className="mb-4 font-display text-lg">Volume d&apos;affaires par mois</h2>
           <TrendBars points={trendGmv} color="bg-cacao" />
         </div>
@@ -254,11 +254,11 @@ export default async function AdminOverviewPage() {
 
       {/* Classements */}
       <div className="mt-6 grid gap-3 lg:grid-cols-2">
-        <div className="rounded-xl2 border border-sable bg-white p-5">
+        <div className="rounded-xl2 border border-sable bg-white p-5 shadow-soft">
           <h2 className="mb-4 font-display text-lg">Qui vend le plus</h2>
           <BarList items={topRevenue} empty="Aucune prestation terminée pour l'instant." />
         </div>
-        <div className="rounded-xl2 border border-sable bg-white p-5">
+        <div className="rounded-xl2 border border-sable bg-white p-5 shadow-soft">
           <h2 className="mb-4 font-display text-lg">Les plus demandées</h2>
           <BarList items={topRequested} color="bg-or-clair" empty="Aucune demande pour l'instant." />
         </div>
@@ -266,11 +266,11 @@ export default async function AdminOverviewPage() {
 
       {/* Univers + statuts */}
       <div className="mt-6 grid gap-3 lg:grid-cols-2">
-        <div className="rounded-xl2 border border-sable bg-white p-5">
+        <div className="rounded-xl2 border border-sable bg-white p-5 shadow-soft">
           <h2 className="mb-4 font-display text-lg">Demandes par univers</h2>
           <BarList items={byUnivers} color="bg-or" />
         </div>
-        <div className="rounded-xl2 border border-sable bg-white p-5">
+        <div className="rounded-xl2 border border-sable bg-white p-5 shadow-soft">
           <h2 className="mb-4 font-display text-lg">Répartition des RDV</h2>
           <BarList items={statusItems} color="bg-cacao" empty="Aucun RDV pour l'instant." />
         </div>
@@ -283,7 +283,7 @@ export default async function AdminOverviewPage() {
           Rien à afficher pour l&apos;instant.
         </p>
       ) : (
-        <ul className="mt-3 divide-y divide-sable rounded-xl2 border border-sable bg-white">
+        <ul className="mt-3 divide-y divide-sable overflow-hidden rounded-xl2 border border-sable bg-white shadow-soft">
           {recent.map((a, i) => (
             <li key={i} className="flex items-center gap-3 px-4 py-3">
               <a.icon className="h-4 w-4 text-cacao/50" aria-hidden />

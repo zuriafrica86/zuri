@@ -21,7 +21,7 @@ function LoginForm() {
   const justVerified = params.get("verifie") === "1";
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <h2 className="font-display text-2xl">Bon retour</h2>
       <p className="mt-2 text-sm text-cacao/60">Connecte-toi à ton espace ZURI.</p>
 
@@ -69,7 +69,7 @@ function Field({
       <span className="mb-1.5 block text-sm font-medium text-cacao/80">{label}</span>
       <input
         {...props}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
+        className="h-12 w-full rounded-xl2 border border-sable bg-white px-4 text-cacao placeholder:text-cacao/30 transition focus:border-or focus:shadow-focus focus:outline-none"
       />
     </label>
   );

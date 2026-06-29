@@ -22,13 +22,15 @@ export default async function AdminLayout({
   if (me?.role !== "admin") redirect("/dashboard");
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen flex-col md:flex-row">
       <AdminSidebar />
       <div className="min-w-0 flex-1">
-        <header className="flex items-center justify-end border-b border-sable px-6 py-3">
+        <header className="sticky top-0 z-20 flex items-center justify-end border-b border-sable/70 bg-white/85 px-5 py-3 backdrop-blur md:px-8">
           <LogoutButton />
         </header>
-        <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+        <main className="mx-auto max-w-6xl px-5 py-7 md:px-8 md:py-9">
+          {children}
+        </main>
       </div>
     </div>
   );
