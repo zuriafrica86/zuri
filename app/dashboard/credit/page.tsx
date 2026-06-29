@@ -3,6 +3,8 @@ import { ArrowLeft, Wallet } from "lucide-react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatZuri, creditLevel, ALERT_HIGH, ALERT_LOW } from "@/lib/credit";
+import { singpayConfigured } from "@/lib/singpay";
+import { RechargePanel } from "@/components/recharge-panel";
 
 interface Tx {
   id: string;
@@ -25,9 +27,9 @@ const TYPE_LABEL: Record<string, string> = {
 export default async function CreditPage({
   searchParams,
 }: {
-  searchParams: Promise<{ insufficient?: string }>;
+  searchParams: Promise<{ insufficient?: string; recharge?: string }>;
 }) {
-  const { insufficient } = await searchParams;
+  const { insufficient, recharge } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -76,6 +78,24 @@ export default async function CreditPage({
         </div>
       )}
 
+      {recharge === "succes" && (
+        <div className="mb-5 rounded-xl2 bg-green-50 px-4 py-3 text-sm text-green-700">
+          Paiement reçu — ton Crédit Zuri a été rechargé. ✨
+        </div>
+      )}
+      {recharge === "attente" && (
+        <div className="mb-5 rounded-xl2 bg-rose/40 px-4 py-3 text-sm text-cacao">
+          Paiement en cours de confirmation. Ton solde se mettra à jour dès
+          réception — tu peux rafraîchir la page dans un instant.
+        </div>
+      )}
+      {(recharge === "echec" || recharge === "retour") && (
+        <div className="mb-5 rounded-xl2 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          Le paiement n&apos;a pas abouti. Aucun crédit n&apos;a été débité — tu
+          peux réessayer.
+        </div>
+      )}
+
       {/* Solde — carte portefeuille */}
       <div className="rounded-4xl bg-cacao p-6 text-ivoire shadow-card">
         <div className="flex items-center gap-2 text-ivoire/70">
@@ -104,18 +124,22 @@ export default async function CreditPage({
         </div>
       )}
 
-      {/* Comment recharger */}
-      <div className="mt-5 rounded-4xl border border-sable bg-white p-5 text-sm text-cacao/80 shadow-soft">
-        <p className="font-medium text-cacao">Comment recharger ?</p>
-        <p className="mt-1.5 leading-relaxed">
-          Envoie le montant souhaité par Mobile Money à l&apos;équipe Zuri, puis
-          préviens-nous : ton Crédit Zuri sera ajouté à ton portefeuille.
-          <br />
-          <span className="text-cacao/50">
-            (Le rechargement automatique par Mobile Money arrive bientôt.)
-          </span>
-        </p>
-      </div>
+      {/* Recharge */}
+      {singpayConfigured() ? (
+        <RechargePanel />
+      ) : (
+        <div className="mt-5 rounded-4xl border border-sable bg-white p-5 text-sm text-cacao/80 shadow-soft">
+          <p className="font-medium text-cacao">Comment recharger ?</p>
+          <p className="mt-1.5 leading-relaxed">
+            Envoie le montant souhaité par Mobile Money à l&apos;équipe Zuri, puis
+            préviens-nous : ton Crédit Zuri sera ajouté à ton portefeuille.
+            <br />
+            <span className="text-cacao/50">
+              (Le rechargement automatique par Mobile Money arrive bientôt.)
+            </span>
+          </p>
+        </div>
+      )}
 
       {/* Historique */}
       <h2 className="mt-7 font-display text-xl">Historique</h2>
