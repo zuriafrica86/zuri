@@ -7,9 +7,12 @@ import type { ProfileResult } from "@/app/dashboard/mon-profil/types";
 import { SubmitButton } from "@/components/submit-button";
 
 const MONTHS = [
-  "janvier","février","mars","avril","mai","juin",
-  "juillet","août","septembre","octobre","novembre","décembre",
+  "janvier", "février", "mars", "avril", "mai", "juin",
+  "juillet", "août", "septembre", "octobre", "novembre", "décembre",
 ];
+
+const fieldClass =
+  "h-12 w-full rounded-xl2 border border-sable bg-white px-4 text-cacao placeholder:text-cacao/30 transition focus:border-or focus:shadow-focus focus:outline-none";
 
 export function ClienteProfileForm({
   initial,
@@ -32,7 +35,7 @@ export function ClienteProfileForm({
   return (
     <form
       action={action}
-      className="space-y-3 rounded-xl2 border border-sable bg-white p-5"
+      className="space-y-4 rounded-4xl border border-sable bg-white p-5 shadow-soft md:p-6"
     >
       <Field label="Prénom" name="prenom" defaultValue={initial.prenom} required />
       <Field label="Nom" name="nom" defaultValue={initial.nom} />
@@ -52,7 +55,7 @@ export function ClienteProfileForm({
           <select
             name="birth_day"
             defaultValue={initial.birth_day ? String(initial.birth_day) : ""}
-            className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+            className={fieldClass}
           >
             <option value="">Jour</option>
             {Array.from({ length: 31 }, (_, i) => (
@@ -69,7 +72,7 @@ export function ClienteProfileForm({
           <select
             name="birth_month"
             defaultValue={initial.birth_month ? String(initial.birth_month) : ""}
-            className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao focus:border-or"
+            className={fieldClass}
           >
             <option value="">Mois</option>
             {MONTHS.map((m, i) => (
@@ -88,7 +91,7 @@ export function ClienteProfileForm({
         <input
           value={email}
           disabled
-          className="w-full rounded-xl2 border border-sable bg-ivoire/40 px-4 py-3 text-cacao/60"
+          className="h-12 w-full rounded-xl2 border border-sable bg-sable/20 px-4 text-cacao/60"
         />
         <span className="mt-1 block text-xs text-cacao/40">
           L&apos;email ne peut pas être modifié ici.
@@ -96,12 +99,12 @@ export function ClienteProfileForm({
       </label>
 
       {state?.error && (
-        <p className="rounded-xl2 bg-rose/60 px-4 py-2 text-sm text-cacao">
+        <p className="rounded-xl2 bg-rose/60 px-4 py-2.5 text-sm text-cacao">
           {state.error}
         </p>
       )}
       {state?.ok && (
-        <p className="flex items-center gap-1.5 rounded-xl2 bg-green-50 px-4 py-2 text-sm text-green-800">
+        <p className="flex items-center gap-1.5 rounded-xl2 bg-green-50 px-4 py-2.5 text-sm text-green-700">
           <CheckCircle className="h-4 w-4" aria-hidden /> Profil mis à jour.
         </p>
       )}
@@ -120,10 +123,7 @@ function Field({
       <span className="mb-1.5 block text-sm font-medium text-cacao/80">
         {label}
       </span>
-      <input
-        {...props}
-        className="w-full rounded-xl2 border border-sable bg-white px-4 py-3 text-cacao placeholder:text-cacao/30 focus:border-or"
-      />
+      <input {...props} className={fieldClass} />
     </label>
   );
 }

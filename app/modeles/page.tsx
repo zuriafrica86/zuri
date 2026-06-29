@@ -19,28 +19,29 @@ export default async function ModelesPage({
 
   return (
     <AppShell maxWidth="5xl">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-2xl">Bibliothèque de modèles</h1>
-            <p className="mt-1 text-sm text-cacao/60">
-              Trouve un modèle qui te plaît et réserve en un clic.
-            </p>
-          </div>
-        </div>
+      <div className="animate-fade-in">
+        <h1 className="font-display text-2xl sm:text-3xl">
+          Bibliothèque de <span className="italic text-or">modèles</span>
+        </h1>
+        <p className="mt-1.5 text-cacao/60">
+          Trouve un modèle qui te plaît et réserve en un clic.
+        </p>
 
         {/* Filtres par univers */}
-        <div className="mb-5 flex flex-wrap gap-2">
+        <div className="mt-5 flex flex-wrap gap-2">
           {tabs.map((t) => {
             const active = (univers ?? "") === t.key;
-            const href = t.key ? `/modeles?u=${encodeURIComponent(t.key)}` : "/modeles";
+            const href = t.key
+              ? `/modeles?u=${encodeURIComponent(t.key)}`
+              : "/modeles";
             return (
               <Link
                 key={t.key || "all"}
                 href={href}
                 className={
                   active
-                    ? "rounded-xl2 bg-cacao px-3 py-1.5 text-sm font-medium text-ivoire"
-                    : "rounded-xl2 border border-sable px-3 py-1.5 text-sm text-cacao/70 hover:bg-rose/30"
+                    ? "rounded-full bg-cacao px-4 py-1.5 text-sm font-medium text-ivoire"
+                    : "rounded-full border border-sable px-4 py-1.5 text-sm text-cacao/70 transition duration-250 ease-soft hover:bg-rose/30 hover:text-cacao"
                 }
               >
                 {t.label}
@@ -50,12 +51,16 @@ export default async function ModelesPage({
         </div>
 
         {models.length === 0 ? (
-          <div className="rounded-xl2 border border-sable bg-white p-6 text-center text-sm text-cacao/60">
-            Aucun modèle pour l&apos;instant dans cette catégorie. Reviens
-            bientôt — les Zuristes ajoutent leurs réalisations !
+          <div className="mt-5 rounded-4xl border border-dashed border-sable bg-white px-6 py-16 text-center">
+            <p className="font-medium text-cacao">
+              Aucun modèle dans cette catégorie
+            </p>
+            <p className="mt-1 text-sm text-cacao/50">
+              Reviens bientôt — les Zuristes ajoutent leurs réalisations !
+            </p>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="mt-6 space-y-9">
             {groupByCategorie(models).map(([categorie, items]) => (
               <section key={categorie}>
                 <h2 className="mb-3 font-display text-xl">{categorie}</h2>
@@ -68,14 +73,13 @@ export default async function ModelesPage({
             ))}
           </div>
         )}
-      </AppShell>
+      </div>
+    </AppShell>
   );
 }
 
 // Regroupe les modèles par catégorie (en conservant l'ordre d'apparition).
-function groupByCategorie(
-  models: ModelItem[]
-): [string, ModelItem[]][] {
+function groupByCategorie(models: ModelItem[]): [string, ModelItem[]][] {
   const groups = new Map<string, ModelItem[]>();
   for (const m of models) {
     const key = m.categorie ?? "Autres";
