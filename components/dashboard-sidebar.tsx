@@ -11,6 +11,7 @@ import {
   Calendar,
   Clock,
   Wallet,
+  Rocket,
   Lock,
   Search,
   type LucideIcon,
@@ -28,6 +29,7 @@ const ZURISTE: Item[] = [
   { href: "/dashboard/rdv", label: "Demandes reçues", Icon: CalendarDays },
   { href: "/dashboard/agenda", label: "Agenda", Icon: Calendar },
   { href: "/dashboard/credit", label: "Crédit Zuri", Icon: Wallet },
+  { href: "/dashboard/booster", label: "Booster mon activité", Icon: Rocket },
   { href: "/dashboard/securite", label: "Sécurité", Icon: Lock },
 ];
 

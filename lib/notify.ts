@@ -543,3 +543,29 @@ export async function notifyNewLogin(
     }),
   });
 }
+
+// Mise en avant activée (achat d'un boost via Crédit Zuri).
+export async function notifyBoostActivated(
+  to: string,
+  data: { label: string; days: number; endsAt: string }
+): Promise<{ ok: boolean; error?: string }> {
+  const fin = new Date(data.endsAt).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+  });
+  const html = layout({
+    title: "Ta mise en avant est active ✨",
+    bodyHtml: `<p style="margin:0 0 8px">Bonne nouvelle : ta visibilité vient de monter d'un cran.</p>
+      ${infoBox(
+        `<strong>${data.label}</strong><br/>Durée : ${data.days} jours · jusqu'au ${fin}`
+      )}
+      <p style="margin:12px 0 0">Tu n'as rien à faire : la mise en avant s'arrête toute seule à l'échéance.</p>`,
+    cta: { label: "Voir mes mises en avant", href: appUrl("/dashboard/booster") },
+  });
+  return sendEmail({
+    to,
+    subject: "Ta mise en avant Zuri est active",
+    html,
+    text: `${data.label} — actif ${data.days} jours, jusqu'au ${fin}.`,
+  });
+}

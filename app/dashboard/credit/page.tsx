@@ -18,6 +18,8 @@ const TYPE_LABEL: Record<string, string> = {
   commission: "Consommation (RDV confirmé)",
   refund: "Remboursement",
   adjust: "Ajustement",
+  boost: "Mise en avant (boost)",
+  boost_refund: "Remboursement de boost",
 };
 
 export default async function CreditPage({

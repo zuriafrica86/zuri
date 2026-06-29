@@ -1,6 +1,13 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 
-type TxType = "bonus" | "recharge" | "commission" | "refund" | "adjust";
+type TxType =
+  | "bonus"
+  | "recharge"
+  | "commission"
+  | "refund"
+  | "adjust"
+  | "boost"
+  | "boost_refund";
 
 // Applique un mouvement (montant signé) : insère la transaction,
 // met à jour le solde et l'état de pause. Toujours côté serveur.
