@@ -17,7 +17,7 @@ const RESEND_URL = "https://api.resend.com/emails";
 // ----- Couleurs de marque (réutilisées dans le gabarit) -----
 const IVOIRE = "#F7F0E6";
 const CACAO = "#2A1A12";
-const GOLD = "#C9892F"; // Or Zuri — accent de marque (nouveau logo doré)
+const ROSE = "#E2B0A0"; // rose poudré — accent de marque (comme dans l'app)
 const SABLE = "#EBD9CF";
 
 async function sendEmail(opts: {
@@ -78,7 +78,7 @@ function adminEmail(): string {
 
 // Encadré pour mettre en avant une info (service, date, nom…), liseré Or Zuri.
 function infoBox(html: string): string {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:10px 0 4px;background:#FAF3EB;border:1px solid ${SABLE};border-left:3px solid ${GOLD};border-radius:12px"><tr><td style="padding:14px 16px;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:${CACAO}">${html}</td></tr></table>`;
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:10px 0 4px;background:#FAF3EB;border:1px solid ${SABLE};border-left:3px solid ${ROSE};border-radius:12px"><tr><td style="padding:14px 16px;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:${CACAO}">${html}</td></tr></table>`;
 }
 
 // Gabarit commun à tous les emails Zuri.
@@ -100,9 +100,8 @@ function layout(opts: {
 <body style="margin:0;padding:0;background:${IVOIRE}">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${IVOIRE}">
     <tr><td align="center" style="padding:32px 16px">
-      <table role="presentation" width="540" cellpadding="0" cellspacing="0" style="width:540px;max-width:100%;background:#ffffff;border-radius:16px;border:1px solid ${SABLE};box-shadow:0 1px 2px rgba(42,26,18,0.04),0 10px 30px rgba(42,26,18,0.07);overflow:hidden">
-        <tr><td style="height:4px;background:${GOLD};border-radius:16px 16px 0 0;font-size:0;line-height:0">&nbsp;</td></tr>
-        <tr><td style="padding:30px 36px 16px;text-align:center">
+      <table role="presentation" width="540" cellpadding="0" cellspacing="0" style="width:540px;max-width:100%;background:#ffffff;border-radius:16px;border:1px solid ${SABLE}">
+        <tr><td style="padding:32px 36px 16px;text-align:center">
           <img src="${logo}" alt="Zuri" width="132" style="display:inline-block;width:132px;height:auto;border:0;outline:none;text-decoration:none" />
         </td></tr>
         <tr><td style="padding:0 36px"><div style="height:1px;background:#f1e8da;line-height:1px;font-size:0">&nbsp;</div></td></tr>
@@ -115,7 +114,7 @@ function layout(opts: {
       <p style="margin:18px auto 0;max-width:540px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#a9988a;text-align:center">
         ${footerNote ? footerNote + "<br/>" : ""}
         Zuri — la beauté près de chez toi.<br/>
-        <a href="${appUrl("")}" style="color:${GOLD};text-decoration:none">zuriafrica.app</a>
+        <a href="${appUrl("")}" style="color:${ROSE};text-decoration:none">zuriafrica.app</a>
       </p>
     </td></tr>
   </table>
@@ -274,7 +273,7 @@ export async function notifyNewReview(
     html: layout({
       title: "Tu as reçu un nouvel avis",
       bodyHtml: `<p style="margin:0 0 8px">Une cliente vient de noter sa prestation&nbsp;:</p>
-        ${infoBox(`<span style="color:${GOLD};font-size:18px;letter-spacing:2px">${stars}</span>${commentHtml}`)}
+        ${infoBox(`<span style="color:${ROSE};font-size:18px;letter-spacing:2px">${stars}</span>${commentHtml}`)}
         <p style="margin:14px 0 0">Les avis renforcent ta réputation et ta visibilité sur Zuri. Bravo&nbsp;!</p>`,
       cta: { label: "Voir mon profil", href: data.profileUrl },
     }),
