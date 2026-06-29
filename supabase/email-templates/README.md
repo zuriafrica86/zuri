@@ -20,6 +20,6 @@ dans le tableau de bord Supabase, pas dans le code.
 Le bouton utilise la variable Supabase `{{ .ConfirmationURL }}` : ne la modifie
 pas, c'est elle qui contient le lien de validation.
 
-Le logo pointe vers `https://zuriafrica.app/logo-zuri-email.png` (nouveau fichier
+Le logo pointe vers `https://zuriafrica.app/logo-zuri-email-rose.png` (nouveau fichier
 doré, en ligne) : un nom de fichier neuf évite que les boîtes mail réaffichent
 l'ancien logo depuis leur cache.

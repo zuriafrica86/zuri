@@ -89,7 +89,7 @@ function layout(opts: {
   footerNote?: string;
 }): string {
   const { title, bodyHtml, cta, footerNote } = opts;
-  const logo = appUrl("/logo-zuri-email.png");
+  const logo = appUrl("/logo-zuri-email-rose.png");
 
   const button = cta
     ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:26px auto 4px"><tr><td align="center" style="border-radius:14px;background:${CACAO}"><a href="${cta.href}" style="display:inline-block;padding:13px 30px;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;color:${IVOIRE};text-decoration:none;border-radius:14px">${cta.label}</a></td></tr></table>`
