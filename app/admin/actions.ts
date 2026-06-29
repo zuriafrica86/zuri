@@ -276,3 +276,67 @@ export async function adminCancelBooking(formData: FormData) {
     .eq("id", id);
   refresh();
 }
+
+/* ====================================================================== */
+/*  Mises en avant (boosts) — supervision admin                            */
+/* ====================================================================== */
+
+// Met une mise en avant en pause (elle disparaît aussitôt de la recherche /
+// bibliothèque, sans remboursement).
+export async function pauseBoost(formData: FormData) {
+  const ctx = await assertAdmin();
+  if (!ctx) return;
+  const id = String(formData.get("boost_id") || "").trim();
+  if (!id) return;
+  const admin = createAdminClient();
+  await admin.from("boosts").update({ status: "paused" }).eq("id", id);
+  refresh();
+}
+
+// Réactive une mise en avant en pause (reprend jusqu'à sa date de fin).
+export async function resumeBoost(formData: FormData) {
+  const ctx = await assertAdmin();
+  if (!ctx) return;
+  const id = String(formData.get("boost_id") || "").trim();
+  if (!id) return;
+  const admin = createAdminClient();
+  await admin.from("boosts").update({ status: "active" }).eq("id", id);
+  refresh();
+}
+
+// Annule une mise en avant et rembourse le temps restant (prorata) en Crédit Zuri.
+export async function refundBoost(formData: FormData) {
+  const ctx = await assertAdmin();
+  if (!ctx) return;
+  const id = String(formData.get("boost_id") || "").trim();
+  if (!id) return;
+
+  const admin = createAdminClient();
+  const { data: b } = await admin
+    .from("boosts")
+    .select("id, provider_id, cost, starts_at, ends_at, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (!b || b.status === "cancelled") return;
+
+  const start = new Date(b.starts_at as string).getTime();
+  const end = new Date(b.ends_at as string).getTime();
+  const total = Math.max(1, end - start);
+  const remaining = Math.max(0, end - Date.now());
+  const refund = Math.round((b.cost ?? 0) * (remaining / total));
+
+  await admin
+    .from("boosts")
+    .update({ status: "cancelled", ends_at: new Date().toISOString() })
+    .eq("id", id);
+
+  if (refund > 0) {
+    await applyWalletTx(
+      b.provider_id as string,
+      refund,
+      "boost_refund",
+      "Remboursement mise en avant (prorata)"
+    );
+  }
+  refresh();
+}
