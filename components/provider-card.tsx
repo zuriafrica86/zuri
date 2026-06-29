@@ -14,6 +14,7 @@ export interface CardProvider {
   rating_avg: number;
   rating_count: number;
   minPrice: number | null;
+  sponsored?: boolean;
 }
 
 export function ProviderCard({ provider: p }: { provider: CardProvider }) {
@@ -40,6 +41,12 @@ export function ProviderCard({ provider: p }: { provider: CardProvider }) {
         {p.ambassadrice && (
           <span className="absolute left-2 top-2 rounded-full bg-or px-2.5 py-0.5 text-[11px] font-medium text-cacao shadow-soft">
             Ambassadrice
+          </span>
+        )}
+
+        {p.sponsored && (
+          <span className="absolute right-2 top-2 rounded-full bg-cacao/75 px-2 py-0.5 text-[10px] font-medium text-ivoire shadow-soft backdrop-blur">
+            Mise en avant
           </span>
         )}
 

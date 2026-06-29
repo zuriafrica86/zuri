@@ -6,7 +6,7 @@ export function ModelCard({ m }: { m: ModelItem }) {
     <div className="group overflow-hidden rounded-xl2 border border-sable bg-white transition duration-250 ease-soft hover:shadow-card">
       <Link
         href={`/zuriste/${m.providerSlug}`}
-        className="block aspect-[4/5] overflow-hidden bg-rose/30"
+        className="relative block aspect-[4/5] overflow-hidden bg-rose/30"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -14,6 +14,11 @@ export function ModelCard({ m }: { m: ModelItem }) {
           alt={m.serviceName}
           className="h-full w-full object-cover transition-transform duration-500 ease-soft group-hover:scale-[1.05]"
         />
+        {m.sponsored && (
+          <span className="absolute left-2 top-2 rounded-full bg-cacao/75 px-2 py-0.5 text-[10px] font-medium text-ivoire shadow-soft backdrop-blur">
+            Mise en avant
+          </span>
+        )}
       </Link>
       <div className="p-3">
         <p className="truncate text-sm font-medium text-cacao">

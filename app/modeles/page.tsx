@@ -3,6 +3,7 @@ import { AppShell } from "@/components/app-shell";
 import { ModelCard } from "@/components/model-card";
 import { fetchModels, type ModelItem } from "@/lib/models";
 import { universList } from "@/lib/catalog";
+import { shuffle } from "@/lib/boosts-active";
 
 export default async function ModelesPage({
   searchParams,
@@ -78,7 +79,8 @@ export default async function ModelesPage({
   );
 }
 
-// Regroupe les modèles par catégorie (en conservant l'ordre d'apparition).
+// Regroupe les modèles par catégorie. Dans chaque catégorie, les réalisations
+// mises en avant remontent en tête, mélangées à chaque chargement (rotation).
 function groupByCategorie(models: ModelItem[]): [string, ModelItem[]][] {
   const groups = new Map<string, ModelItem[]>();
   for (const m of models) {
@@ -86,5 +88,9 @@ function groupByCategorie(models: ModelItem[]): [string, ModelItem[]][] {
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key)!.push(m);
   }
-  return Array.from(groups.entries());
+  return Array.from(groups.entries()).map(([cat, items]) => {
+    const sponsored = shuffle(items.filter((m) => m.sponsored));
+    const rest = items.filter((m) => !m.sponsored);
+    return [cat, [...sponsored, ...rest]] as [string, ModelItem[]];
+  });
 }

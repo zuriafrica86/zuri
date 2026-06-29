@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getActiveBoosts } from "@/lib/boosts-active";
 
 export interface ModelItem {
   id: string;
@@ -11,6 +12,7 @@ export interface ModelItem {
   providerId: string;
   providerSlug: string;
   providerName: string;
+  sponsored?: boolean;
 }
 
 type Rel<T> = T | T[] | null;
@@ -61,7 +63,7 @@ export async function fetchModels(opts?: {
   const { data } = await q;
   const rows = (data as unknown as RawRow[] | null) ?? [];
 
-  return rows
+  const items = rows
     .map((r): ModelItem | null => {
       const svc = one(r.services);
       const prov = one(r.providers);
@@ -84,4 +86,8 @@ export async function fetchModels(opts?: {
       };
     })
     .filter((m): m is ModelItem => m !== null);
+
+  // Marque les réalisations mises en avant (boost actif).
+  const { realisations } = await getActiveBoosts();
+  return items.map((m) => ({ ...m, sponsored: realisations.has(m.id) }));
 }

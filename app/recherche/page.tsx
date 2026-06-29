@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { AppShell } from "@/components/app-shell";
 import { ProviderCard } from "@/components/provider-card";
 import { SearchFilters } from "@/components/search-filters";
+import { getActiveBoosts, shuffle } from "@/lib/boosts-active";
 
 interface ServiceRow {
   price_min: number;
@@ -88,6 +89,13 @@ export default async function RecherchePage({
       (p) => p.minPrice != null && p.minPrice <= maxPrice
     );
 
+  // Mise en avant : les profils boostés remontent en tête, mélangés à chaque
+  // chargement (rotation équitable). Le reste garde l'ordre par note.
+  const { profiles: boostedSet } = await getActiveBoosts();
+  const boosted = shuffle(providers.filter((p) => boostedSet.has(p.id)));
+  const rest = providers.filter((p) => !boostedSet.has(p.id));
+  providers = [...boosted, ...rest];
+
   return (
     <AppShell maxWidth="5xl">
       <div className="animate-fade-in">
@@ -132,6 +140,7 @@ export default async function RecherchePage({
                   rating_avg: p.rating_avg,
                   rating_count: p.rating_count,
                   minPrice: p.minPrice,
+                  sponsored: boostedSet.has(p.id),
                 }}
               />
             ))}
